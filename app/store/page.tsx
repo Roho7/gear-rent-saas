@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Navbar from "../_components/navbar";
+import ProductCard from "../_components/product-card";
 
 type Props = {};
 
@@ -75,24 +76,7 @@ const StorePage = (props: Props) => {
       </div>
       <div className="grid gap-2 grid-cols-4 ">
         {data?.map((d, index) => {
-          return (
-            <Card className="">
-              <CardHeader>
-                <CardTitle>{d.product_title}</CardTitle>
-                <CardDescription>{d.product_title}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <img src={d.image_url} alt="img" />
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <span className="text-gray-400 flex items-center gap-2">
-                  <h2 className=" text-xl">${d.price}</h2>
-                  <p className="text-xs">/day</p>
-                </span>
-                <Button>Rent</Button>
-              </CardFooter>
-            </Card>
-          );
+          return <ProductCard product={d} key={d.product_id} />;
         })}
       </div>
     </div>

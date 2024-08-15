@@ -12,17 +12,6 @@ interface AuthContextValue {
 // Create the context
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-// Create a custom hook to access the context value
-export const useAuth = (): AuthContextValue => {
-  const authContext = useContext(AuthContext);
-
-  if (!authContext) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-
-  return authContext;
-};
-
 // Create the AuthProvider component
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClientComponentClient();
@@ -103,4 +92,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+// Create a custom hook to access the context value
+export const useAuth = (): AuthContextValue => {
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
+  return authContext;
 };

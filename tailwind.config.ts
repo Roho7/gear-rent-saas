@@ -21,7 +21,7 @@ const config = {
       glass:
         "h-full w-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-20 border border-gray-100",
       backgroundImage: {
-        ski: "url('https://img.freepik.com/free-photo/hiker-going-up-aiguille-du-midi_53876-139593.jpg?t=st=1723647700~exp=1723651300~hmac=cf5872e04d19ae237dcd4f8f4807e7fc328f2a0d937a8e832afb6b91408cbee7&w=1800')",
+        ski: "url('https://images.pexels.com/photos/257961/pexels-photo-257961.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')",
       },
       colors: {
         border: "hsl(var(--border))",
