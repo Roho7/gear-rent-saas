@@ -26,7 +26,7 @@ const Hero = (props: Props) => {
   const router = useRouter();
   return (
     <section>
-      <div className="p-4 px-16 flex justify-between items-center  w-screen h-screen bg-opacity-15 relative">
+      <div className="p-4 px-16 flex justify-between items-center h-screen bg-opacity-15 relative">
         <div className="text-white">
           <h1 className="text-5xl font-bold text-white glass p-2">Gear Town</h1>
           <h2>Adventure freely</h2>
@@ -69,7 +69,7 @@ const Hero = (props: Props) => {
           </CardFooter>
         </Card>
       </div>
-      <div className="bg-ski w-screen h-screen absolute top-0 -z-10"></div>
+      <div className="bg-ski w-full h-screen absolute top-0 -z-10"></div>
     </section>
   );
 };

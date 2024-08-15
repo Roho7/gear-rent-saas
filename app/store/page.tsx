@@ -24,31 +24,15 @@ import {
 } from "@/components/ui/select";
 import Navbar from "../_components/navbar";
 import ProductCard from "../_components/product-card";
+import { useAuth } from "../_providers/useAuth";
 
 type Props = {};
 
 const StorePage = (props: Props) => {
-  const [data, setData] = useState<any[] | null>(null);
-  const fetchData = async () => {
-    // const data = await fetchProducts();
-    // setData(data);
-    const supabase = createClientComponentClient();
-    const { data: product_data, error } = await supabase
-      .from("tbl_products")
-      .select("*");
+  const { products } = useAuth();
 
-    if (error) {
-      console.log("error", error);
-    }
-    console.log("data", product_data);
-    setData(product_data);
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
   return (
     <div className="flex flex-col gap-2">
-      <Navbar />
       <h1 className="text-xl">Adventure Rental Store</h1>
       <div className="flex gap-2 justify-start max-w-fit">
         <Select>
@@ -75,7 +59,7 @@ const StorePage = (props: Props) => {
         </Select>
       </div>
       <div className="grid gap-2 grid-cols-4 ">
-        {data?.map((d, index) => {
+        {products?.map((d, index) => {
           return <ProductCard product={d} key={d.product_id} />;
         })}
       </div>

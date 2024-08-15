@@ -1,12 +1,22 @@
-import React, { createContext, useCallback, useContext, useMemo } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { createClientComponentClient } from "../_utils/supabase";
 import { useRouter } from "next/navigation";
+import { ProductType } from "@/supabase/types";
 
 // Define the shape of your context value
 interface AuthContextValue {
   handleSignUpWithEmail: (email: string, password: string) => void;
   handleLoginWithEmail: (email: string, password: string) => void;
   handleLogout: () => void;
+  products: ProductType[];
+  setProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
 }
 
 // Create the context
@@ -16,6 +26,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClientComponentClient();
   const router = useRouter();
+  const [products, setProducts] = useState<ProductType[]>([]);
 
   const handleSignUpWithEmail = useCallback(
     async (email: string, password: string) => {
@@ -47,6 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     },
     [supabase],
   );
+
   const handleLoginWithEmail = useCallback(
     async (email: string, password: string) => {
       const loginPromise = new Promise(async (resolve, reject) => {
@@ -82,13 +94,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Implement your logout logic here
   };
 
+  const fetchData = async () => {
+    const supabase = createClientComponentClient();
+    const { data: product_data, error } = await supabase
+      .from("tbl_products")
+      .select("*");
+
+    if (error) {
+      console.log("error", error);
+    }
+    console.log("data", product_data);
+    setProducts(product_data as ProductType[]);
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const value: AuthContextValue = useMemo(
     () => ({
       handleSignUpWithEmail,
       handleLoginWithEmail,
       handleLogout,
+      products,
+      setProducts,
     }),
-    [],
+    [products],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
