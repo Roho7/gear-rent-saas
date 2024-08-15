@@ -9,38 +9,87 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { OutdoorHireData } from "@/data/contants";
 import { Button } from "@/components/ui/button";
-import { Label } from "@radix-ui/react-label";
+import {
+  createClientComponentClient,
+  supabaseAdminClient,
+} from "../_utils/supabase";
+import { fetchProducts } from "./actions/fetch-products";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
-} from "@radix-ui/react-select";
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Navbar from "../_components/navbar";
 
 type Props = {};
 
 const StorePage = (props: Props) => {
-  return (
-    <div>
-      <h1>Store Page</h1>
+  const [data, setData] = useState<any[] | null>(null);
+  const fetchData = async () => {
+    // const data = await fetchProducts();
+    // setData(data);
+    const supabase = createClientComponentClient();
+    const { data: product_data, error } = await supabase
+      .from("tbl_products")
+      .select("*");
 
+    if (error) {
+      console.log("error", error);
+    }
+    console.log("data", product_data);
+    setData(product_data);
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+  return (
+    <div className="flex flex-col gap-2">
+      <Navbar />
+      <h1 className="text-xl">Adventure Rental Store</h1>
+      <div className="flex gap-2 justify-start max-w-fit">
+        <Select>
+          <SelectTrigger id="framework">
+            <SelectValue placeholder="Filter" />
+          </SelectTrigger>
+          <SelectContent position="popper">
+            <SelectItem value="next">Next.js</SelectItem>
+            <SelectItem value="sveltekit">SvelteKit</SelectItem>
+            <SelectItem value="astro">Astro</SelectItem>
+            <SelectItem value="nuxt">Nuxt.js</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select>
+          <SelectTrigger id="framework">
+            <SelectValue placeholder="Sort" />
+          </SelectTrigger>
+          <SelectContent position="popper">
+            <SelectItem value="next">Next.js</SelectItem>
+            <SelectItem value="sveltekit">SvelteKit</SelectItem>
+            <SelectItem value="astro">Astro</SelectItem>
+            <SelectItem value="nuxt">Nuxt.js</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <div className="grid gap-2 grid-cols-4 ">
-        {OutdoorHireData.map((d, index) => {
+        {data?.map((d, index) => {
           return (
             <Card className="">
               <CardHeader>
-                <CardTitle>{d.title}</CardTitle>
-                <CardDescription>{d.title}</CardDescription>
+                <CardTitle>{d.product_title}</CardTitle>
+                <CardDescription>{d.product_title}</CardDescription>
               </CardHeader>
               <CardContent>
-                <img height={100} width={100} src={d.img} alt="img" />
+                <img src={d.image_url} alt="img" />
               </CardContent>
               <CardFooter className="flex justify-between">
-                {/* <Button variant="outline">Cancel</Button> */}
-                <Button>Search</Button>
+                <span className="text-gray-400 flex items-center gap-2">
+                  <h2 className=" text-xl">${d.price}</h2>
+                  <p className="text-xs">/day</p>
+                </span>
+                <Button>Rent</Button>
               </CardFooter>
             </Card>
           );
