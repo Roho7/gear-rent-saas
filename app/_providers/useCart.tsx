@@ -1,5 +1,5 @@
 import { CartItemType } from "@/supabase/types";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 type CartContextType = {
   cartItems: CartItemType;
@@ -9,7 +9,10 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartItemType>({});
+  const [cartItems, setCartItems] = useState<CartItemType>(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
   const addToCart = (productId: string) => {
     setCartItems((cart) => ({
@@ -33,18 +36,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       },
     }));
   };
-
-  //   const modifyCartItemQuantity = (productId: string, newQuantity: number) => {
-  //     if (newQuantity <= 0) {
-  //       return removeFromCart(cart, productId);
-  //     }
-  //     return {
-  //       ...cart,
-  //       [productId]: {
-  //         quantity: newQuantity,
-  //       },
-  //     };
-  //   };
+  useEffect(() => {
+    // Save cart to localStorage whenever it changes
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const values = useMemo(
     () => ({
@@ -52,7 +47,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       addToCart,
       removeFromCart,
     }),
-    [cartItems, addToCart, removeFromCart],
+    [cartItems],
   );
 
   return <CartContext.Provider value={values}>{children}</CartContext.Provider>;

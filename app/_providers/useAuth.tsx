@@ -9,8 +9,15 @@ import React, {
 import { createClientComponentClient } from "../_utils/supabase";
 import { useRouter } from "next/navigation";
 import { ProductType } from "@/supabase/types";
+import { openDB, DBSchema } from "idb";
 
-// Define the shape of your context value
+interface ProductDB extends DBSchema {
+  products: {
+    key: string;
+    value: ProductType[];
+  };
+}
+
 interface AuthContextValue {
   handleSignUpWithEmail: (email: string, password: string) => void;
   handleLoginWithEmail: (email: string, password: string) => void;
@@ -19,14 +26,18 @@ interface AuthContextValue {
   setProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
 }
 
-// Create the context
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-// Create the AuthProvider component
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClientComponentClient();
   const router = useRouter();
   const [products, setProducts] = useState<ProductType[]>([]);
+
+  const dbPromise = openDB<ProductDB>("ProductDatabase", 1, {
+    upgrade(db) {
+      db.createObjectStore("products");
+    },
+  });
 
   const handleSignUpWithEmail = useCallback(
     async (email: string, password: string) => {
@@ -95,18 +106,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const fetchData = async () => {
-    const supabase = createClientComponentClient();
-    const { data: product_data, error } = await supabase
-      .from("tbl_products")
-      .select("*");
+    const db = await dbPromise;
+    const cachedProducts = await db.get("products", "allProducts");
 
-    if (error) {
-      console.log("error", error);
+    if (cachedProducts) {
+      console.log("Using cached data");
+      setProducts(cachedProducts);
+    } else {
+      console.log("Fetching from Supabase");
+      const supabase = createClientComponentClient();
+      const { data: product_data, error } = await supabase
+        .from("tbl_products")
+        .select("*");
+
+      if (error) {
+        console.log("error", error);
+      } else {
+        console.log("data", product_data);
+        const typedProducts = product_data as ProductType[];
+        setProducts(typedProducts);
+        await db.put("products", typedProducts, "allProducts");
+      }
     }
-    console.log("data", product_data);
-    setProducts(product_data as ProductType[]);
   };
+
   useEffect(() => {
+    console.log("data fetched");
     fetchData();
   }, []);
 
@@ -124,7 +149,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Create a custom hook to access the context value
 export const useAuth = (): AuthContextValue => {
   const authContext = useContext(AuthContext);
 

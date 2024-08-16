@@ -10,12 +10,14 @@ import { BiShoppingBag } from "react-icons/bi";
 import { useCart } from "../_providers/useCart";
 import CartItemCard from "./cart-item-cart";
 import { useAuth } from "../_providers/useAuth";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
 const CartPopup = (props: Props) => {
   const { products } = useAuth();
   const { cartItems } = useCart();
+  const router = useRouter();
 
   const cartQuantity = useMemo(
     () => Object.keys(cartItems).length,
@@ -25,7 +27,12 @@ const CartPopup = (props: Props) => {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <Button variant="default" className="rounded-full relative">
+        <Button
+          variant="default"
+          className="rounded-full relative"
+          onClick={() => {
+            router.replace("/cart");
+          }}>
           <div className="rounded-full text-xs  bg-stone-100 text-black flex items-center justify-center h-5 w-5 absolute -right-2 -top-2">
             {cartQuantity}
           </div>

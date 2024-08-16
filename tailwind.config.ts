@@ -21,7 +21,8 @@ const config = {
       glass:
         "h-full w-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-20 border border-gray-100",
       backgroundImage: {
-        ski: "url('https://images.pexels.com/photos/257961/pexels-photo-257961.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')",
+        ski:
+          "url('https://images.pexels.com/photos/257961/pexels-photo-257961.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')",
       },
       colors: {
         border: "hsl(var(--border))",
