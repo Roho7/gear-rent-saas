@@ -25,6 +25,7 @@ import {
 import Navbar from "../_components/navbar";
 import ProductCard from "../_components/product-card";
 import { useAuth } from "../_providers/useAuth";
+import StoreHeader from "./_components/store-header";
 
 type Props = {};
 
@@ -33,7 +34,10 @@ const StorePage = (props: Props) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <h1 className="text-xl">Adventure Rental Store</h1>
+      <StoreHeader
+        title="Adventure Store"
+        image="https://images.pexels.com/photos/848612/pexels-photo-848612.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+      />
       <div className="flex gap-2 justify-start max-w-fit">
         <Select>
           <SelectTrigger id="framework">

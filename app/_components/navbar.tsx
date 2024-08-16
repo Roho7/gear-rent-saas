@@ -11,8 +11,15 @@ import {
 import CartPopup from "./cart-popup";
 
 const Navbar: React.FC = () => {
+  window.onscroll = function () {
+    if (window.scrollY > 5) {
+      document.querySelector(".navbar")?.classList.add("mx-4");
+    } else {
+      document.querySelector(".navbar")?.classList.remove("mx-4");
+    }
+  };
   return (
-    <div className="mx-12 px-4 py-0.5 glass sticky top-4 max-h-14 z-10 flex items-center">
+    <div className="navbar mx-12 px-4 py-0.5 glass sticky top-4 max-h-14 z-10 flex items-center transition-all delay-75 ease-in-out">
       <a href="/" className="text-white font-bold">
         Home
       </a>
