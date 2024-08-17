@@ -1,25 +1,26 @@
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import CartPopup from "./cart-popup";
 
 const Navbar: React.FC = () => {
   window.onscroll = function () {
-    if (window.scrollY > 5) {
-      document.querySelector(".navbar")?.classList.add("mx-4");
+    if (window.scrollY > 18) {
+      document.querySelector(".navbar")?.classList.remove("mx-8");
+
+      document.querySelector(".navbar")?.classList.add("mx-16");
     } else {
-      document.querySelector(".navbar")?.classList.remove("mx-4");
+      document.querySelector(".navbar")?.classList.remove("mx-16");
+      document.querySelector(".navbar")?.classList.add("mx-8");
     }
   };
   return (
-    <div className="navbar mx-12 px-4 py-0.5 glass sticky top-4 max-h-14 z-10 flex items-center transition-all delay-75 ease-in-out">
+    <div className="navbar mx-8 px-4 mb-8 py-0.5 glass sticky top-4 max-h-14 z-10 flex items-center transition-all delay-75 ease-in-out">
       <a href="/" className="text-white font-bold">
         Home
       </a>
@@ -55,7 +56,7 @@ const Navbar: React.FC = () => {
                   <NavigationMenuLink asChild>
                     <a
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none hover:shadow-md"
-                      href="/store">
+                      href="/seller">
                       <div className="mb-2 mt-4 text-lg font-medium">
                         Connect your store
                       </div>

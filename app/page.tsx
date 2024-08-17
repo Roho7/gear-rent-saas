@@ -5,7 +5,7 @@ import { AuthProvider } from "./_providers/useAuth";
 
 export default function Home() {
   return (
-    <main className="">
+    <main className="px-8">
       <Hero />
     </main>
   );

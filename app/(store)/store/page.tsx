@@ -1,20 +1,4 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { read, utils } from "xlsx";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  createClientComponentClient,
-  supabaseAdminClient,
-} from "../_utils/supabase";
-import { fetchProducts } from "./actions/fetch-products";
 import {
   Select,
   SelectContent,
@@ -22,15 +6,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Navbar from "../_components/navbar";
-import ProductCard from "../_components/product-card";
-import { useAuth } from "../_providers/useAuth";
+import ProductCard from "../../_components/product-card";
+import { useAuth } from "../../_providers/useAuth";
 import StoreHeader from "./_components/store-header";
 
 type Props = {};
 
 const StorePage = (props: Props) => {
-  const { products } = useAuth();
+  const { products, stores } = useAuth();
 
   return (
     <div className="flex flex-col gap-2">
@@ -38,6 +21,7 @@ const StorePage = (props: Props) => {
         title="Adventure Store"
         image="https://images.pexels.com/photos/848612/pexels-photo-848612.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
       />
+
       <div className="flex gap-2 justify-start max-w-fit">
         <Select>
           <SelectTrigger id="framework">

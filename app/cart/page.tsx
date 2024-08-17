@@ -36,7 +36,7 @@ const CartPage = (props: Props) => {
             );
           })}
         </Card>
-        <Card className="flex-1">
+        <Card className="flex-1 max-h-min">
           <CardHeader>
             <CardTitle className="text-xl">Your total</CardTitle>
             <CardDescription>Checkout in one click</CardDescription>

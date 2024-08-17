@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 type Props = {
@@ -5,7 +6,7 @@ type Props = {
 };
 
 const StoreLayout = ({ children }: Props) => {
-  return <div className="p-4">{children}</div>;
+  return <div className="px-8">{children}</div>;
 };
 
 export default StoreLayout;
