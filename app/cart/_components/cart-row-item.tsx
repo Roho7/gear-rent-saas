@@ -1,6 +1,5 @@
 import { useCart } from "@/app/_providers/useCart";
 import { ProductType } from "@/supabase/types";
-import React from "react";
 
 type Props = {
   product: ProductType | undefined;
@@ -17,7 +16,7 @@ const CartRowItem = ({ product }: Props) => {
         <p className="text-xl">{product?.product_title}</p>
         <p>${product?.price}</p>
         <p className="text-gray-400">
-          Qt. {cartItems[product?.product_id || ""]?.quantity}
+          Qt. {cartItems?.[product?.product_id || ""]?.quantity}
         </p>
       </div>
     </div>

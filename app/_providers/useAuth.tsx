@@ -41,12 +41,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [stores, setStores] = useState<StoreType[]>([]);
 
-  const dbPromise = openDB<ProductDB>("ProductDatabase", 1, {
-    upgrade(db) {
-      db.createObjectStore("products");
-      db.createObjectStore("stores");
-    },
-  });
+  const dbPromise = useMemo(() => {
+    return openDB<ProductDB>("ProductDatabase", 1, {
+      upgrade(db) {
+        db.createObjectStore("products");
+        db.createObjectStore("stores");
+      },
+    });
+  }, []);
 
   const handleSignUpWithEmail = useCallback(
     async (email: string, password: string) => {
@@ -99,7 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setter: React.Dispatch<React.SetStateAction<any[]>>,
   ) => {
     const db = await dbPromise;
-    const cachedData = await db.get(storeName, "all" + storeName);
+    const cachedData = await db?.get(storeName, "all" + storeName);
 
     if (cachedData) {
       console.log(`Using cached ${storeName} data`);
@@ -113,7 +115,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } else {
         console.log(`${storeName} data:`, data);
         setter(data as T[]);
-        await db.put(storeName, data, "all" + storeName);
+        await db?.put(storeName, data, "all" + storeName);
       }
     }
   };

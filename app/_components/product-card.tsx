@@ -1,25 +1,30 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
-import { Tables } from "@/supabase/supabase.types";
 import { ProductType } from "@/supabase/types";
-import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+import AddToCartButton from "../(store)/store/_components/add-to-cart.button";
 import { useCart } from "../_providers/useCart";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
-  const { addToCart, cartItems, removeFromCart } = useCart();
+  const { cartItems } = useCart();
+  const router = useRouter();
 
   const addedToCart = useMemo(() => {
-    return cartItems[product.product_id]?.quantity || 0;
+    if (!cartItems) return false;
+    return cartItems[product.product_id]?.quantity > 0 || false;
   }, [cartItems]);
+
   return (
-    <Card className="">
+    <Card
+      className=""
+      onClick={() => router.push(`/store/${product.product_id}`)}>
       <CardHeader>
         <CardTitle>{product.product_title}</CardTitle>
         <CardDescription>{product.product_title}</CardDescription>
@@ -32,24 +37,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
           <h2 className=" text-xl">${product.price}</h2>
           <p className="text-xs">/day</p>
         </span>
-        {addedToCart ? (
-          <div className="flex">
-            <Button
-              onClick={() => {
-                removeFromCart(product.product_id);
-              }}>
-              -
-            </Button>
-            <div className="p-2 px-4">
-              {cartItems[product.product_id]?.quantity || 0}
-            </div>
-            <Button onClick={() => addToCart(product.product_id)}>+</Button>
-          </div>
-        ) : (
-          <Button onClick={() => addToCart(product.product_id)}>
-            Add to cart
-          </Button>
-        )}
+        <AddToCartButton addedToCart={addedToCart} product={product} />
       </CardFooter>
     </Card>
   );

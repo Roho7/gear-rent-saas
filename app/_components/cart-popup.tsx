@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   HoverCard,
@@ -5,12 +6,12 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
-import React, { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { BiShoppingBag } from "react-icons/bi";
+import { useAuth } from "../_providers/useAuth";
 import { useCart } from "../_providers/useCart";
 import CartItemCard from "./cart-item-cart";
-import { useAuth } from "../_providers/useAuth";
-import { useRouter } from "next/navigation";
 
 type Props = {};
 
@@ -19,10 +20,10 @@ const CartPopup = (props: Props) => {
   const { cartItems } = useCart();
   const router = useRouter();
 
-  const cartQuantity = useMemo(
-    () => Object.keys(cartItems).length,
-    [cartItems],
-  );
+  const cartQuantity = useMemo(() => {
+    if (!cartItems) return 0;
+    return Object.keys(cartItems).length;
+  }, [cartItems]);
 
   return (
     <HoverCard>
@@ -53,7 +54,7 @@ const CartPopup = (props: Props) => {
               </p>
             )}
             <div className="flex gap-1">
-              {Object.keys(cartItems)
+              {Object.keys(cartItems || {})
                 .filter((item, index) => index < 4)
                 .map((item, key) => {
                   return (

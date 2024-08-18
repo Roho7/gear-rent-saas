@@ -1,3 +1,4 @@
+"use client";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -9,6 +10,9 @@ import {
 import CartPopup from "./cart-popup";
 
 const Navbar: React.FC = () => {
+  if (typeof window === "undefined") {
+    return null;
+  }
   window.onscroll = function () {
     if (window.scrollY > 18) {
       document.querySelector(".navbar")?.classList.remove("mx-8");
@@ -22,7 +26,7 @@ const Navbar: React.FC = () => {
   return (
     <div className="navbar mx-8 px-4 mb-8 py-0.5 glass sticky top-4 max-h-14 z-10 flex items-center transition-all delay-75 ease-in-out">
       <a href="/" className="text-white font-bold">
-        Home
+        <img src="/logo-short.png" alt="" className="w-8" />
       </a>
       <NavigationMenu className="bg-none mx-auto py-2">
         <NavigationMenuList>
@@ -45,6 +49,11 @@ const Navbar: React.FC = () => {
                     </a>
                   </NavigationMenuLink>
                 </li>
+                <li>
+                  <a href="/seller" className="text-sm w-full">
+                    See all sellers
+                  </a>
+                </li>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -56,7 +65,7 @@ const Navbar: React.FC = () => {
                   <NavigationMenuLink asChild>
                     <a
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none hover:shadow-md"
-                      href="/seller">
+                      href="/register">
                       <div className="mb-2 mt-4 text-lg font-medium">
                         Connect your store
                       </div>

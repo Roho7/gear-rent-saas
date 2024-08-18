@@ -72,5 +72,5 @@
 }
 
 .glass {
-  @apply bg-gray-900 rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-50;
+  @apply bg-gray-300 rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-50;
 }

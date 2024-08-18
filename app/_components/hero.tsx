@@ -28,11 +28,14 @@ type Props = {};
 const Hero = (props: Props) => {
   const router = useRouter();
   return (
-    <section className="rounded-lg h-[80vh]">
+    <section className="rounded-lg max-h-[80vh]">
       <div className="grid grid-cols-3 gap-2 grid-rows-2 items-center h-full relative">
         <div className="text-white col-span-2 bg-ski rounded-lg bg-cover p-4 h-full relative row-span-2">
-          <h1 className="text-[100px]  text-white">Gear Town</h1>
-          <p>An open marketplace to rent adventure gear</p>
+          {/* <h1 className="text-[100px]  text-white">Gear Town</h1> */}
+          <img src="/logo-white-large.svg" alt="" width={2000} />
+          <p className="text-right mt-4">
+            An open marketplace to rent adventure gear
+          </p>
           <CTA
             callback={() => router.replace("/store")}
             classNames="absolute right-8 bottom-8">

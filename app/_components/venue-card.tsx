@@ -14,7 +14,7 @@ const VenueCard = ({ link, title }: Props) => {
       className={clsx(
         "relative flex-1 overflow-hidden p-4 flex flex-col group",
       )}>
-      <h2 className="text-white text-5xl bold z-20 break-words ">{title}</h2>
+      <h2 className="text-white text-4xl bold z-20 break-words ">{title}</h2>
       <div className="absolute inset-0 ">
         <img
           className=" w-full h-full object-cover group-hover:scale-110 transition-transform"

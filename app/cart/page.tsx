@@ -1,9 +1,5 @@
 "use client";
-import React from "react";
-import { BiShoppingBag } from "react-icons/bi";
-import { useCart } from "../_providers/useCart";
-import CartRowItem from "./_components/cart-row-item";
-import { useAuth } from "../_providers/useAuth";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,7 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { BiShoppingBag } from "react-icons/bi";
+import { useAuth } from "../_providers/useAuth";
+import { useCart } from "../_providers/useCart";
+import CartRowItem from "./_components/cart-row-item";
 
 type Props = {};
 
@@ -27,7 +26,7 @@ const CartPage = (props: Props) => {
       </h1>
       <div className="flex gap-2 w-full">
         <Card className=" w-[70%]">
-          {Object.keys(cartItems).map((item, key) => {
+          {Object.keys(cartItems || {}).map((item, key) => {
             return (
               <CartRowItem
                 key={key}
@@ -42,7 +41,7 @@ const CartPage = (props: Props) => {
             <CardDescription>Checkout in one click</CardDescription>
           </CardHeader>
           <CardContent className=" flex flex-col">
-            {Object.keys(cartItems).map((d) => (
+            {Object.keys(cartItems || {}).map((d) => (
               <div className="flex justify-between">
                 <p>
                   {
@@ -50,7 +49,7 @@ const CartPage = (props: Props) => {
                       ?.product_title
                   }
                   <span className="text-gray-400 ml-4">
-                    x{cartItems[d].quantity}
+                    x{cartItems?.[d].quantity}
                   </span>
                 </p>
                 <span>$$$</span>

@@ -1,29 +1,28 @@
+"use client";
 import { CartItemType } from "@/supabase/types";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 type CartContextType = {
-  cartItems: CartItemType;
+  cartItems: CartItemType | null;
   addToCart: (product_id: string) => void;
   removeFromCart: (product_id: string) => void;
 };
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartItemType>(() => {
-    const savedCart = localStorage.getItem("cart");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const [cartItems, setCartItems] = useState<CartItemType | null>(null);
 
   const addToCart = (productId: string) => {
     setCartItems((cart) => ({
       ...cart,
       [productId]: {
-        quantity: (cart[productId]?.quantity || 0) + 1,
+        quantity: (cart?.[productId]?.quantity || 0) + 1,
       },
     }));
   };
 
   const removeFromCart = (productId: string) => {
+    if (!cartItems) return;
     if (cartItems[productId]?.quantity <= 1) {
       const { [productId]: removedItem, ...restOfCart } = cartItems;
       setCartItems(restOfCart);
@@ -32,7 +31,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setCartItems((cart) => ({
       ...cart,
       [productId]: {
-        quantity: (cart[productId]?.quantity || 0) - 1,
+        quantity: (cart?.[productId]?.quantity || 0) - 1,
       },
     }));
   };
