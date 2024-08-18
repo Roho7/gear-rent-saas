@@ -6,7 +6,7 @@ type Props = {
 };
 
 const StoreLayout = ({ children }: Props) => {
-  return <div className="px-8">{children}</div>;
+  return <div className="">{children}</div>;
 };
 
 export default StoreLayout;

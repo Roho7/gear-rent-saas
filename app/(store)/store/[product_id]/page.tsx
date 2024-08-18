@@ -1,5 +1,6 @@
 "use client";
 
+import ProductRibbon from "@/app/_components/product-ribbon";
 import { useAuth } from "@/app/_providers/useAuth";
 import { useCart } from "@/app/_providers/useCart";
 import {
@@ -30,26 +31,29 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
 
   return (
     activeProduct && (
-      <div className="flex gap-2 w-full h-full">
-        <Card className="flex-1 overflow-hidden">
-          <img
-            src={activeProduct?.image_url || ""}
-            alt=""
-            className="object-contain w-full"
-          />
-        </Card>
-        <Card className="flex-1">
-          <CardHeader>
-            <h1 className="text-2xl">{activeProduct?.product_title}</h1>
-            <CardDescription>{activeProduct?.description}</CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <AddToCartButton
-              addedToCart={addedToCart}
-              product={activeProduct}
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2 w-full h-full">
+          <Card className="flex-1 overflow-hidden">
+            <img
+              src={activeProduct?.image_url || ""}
+              alt=""
+              className="object-contain w-full"
             />
-          </CardFooter>
-        </Card>
+          </Card>
+          <Card className="flex-1">
+            <CardHeader>
+              <h1 className="text-2xl">{activeProduct?.product_title}</h1>
+              <CardDescription>{activeProduct?.description}</CardDescription>
+            </CardHeader>
+            <CardFooter>
+              <AddToCartButton
+                addedToCart={addedToCart}
+                product={activeProduct}
+              />
+            </CardFooter>
+          </Card>
+        </div>
+        <ProductRibbon />
       </div>
     )
   );

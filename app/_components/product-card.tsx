@@ -23,7 +23,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
 
   return (
     <Card
-      className="min-w-60 flex flex-col gap-2"
+      className="min-w-80 flex flex-col gap-2"
       onClick={() => router.push(`/store/${product.product_id}`)}>
       <CardHeader>
         <CardTitle>{product.product_title}</CardTitle>

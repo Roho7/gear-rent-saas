@@ -17,10 +17,7 @@ const StorePage = (props: Props) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <StoreHeader
-        title="Adventure Store"
-        image="https://images.pexels.com/photos/848612/pexels-photo-848612.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-      />
+      <StoreHeader title="Adventure Store" image="/store-cover.jpg" />
 
       <div className="flex gap-2 justify-start max-w-fit">
         <Select>
