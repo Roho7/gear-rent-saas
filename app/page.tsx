@@ -1,12 +1,14 @@
 "use client";
-import Navbar from "./_components/navbar";
+import AdCard from "./_components/ad-card";
 import Hero from "./_components/hero";
-import { AuthProvider } from "./_providers/useAuth";
+import ProductRibbon from "./_components/product-ribbon";
 
 export default function Home() {
   return (
     <main className="px-8">
       <Hero />
+      <ProductRibbon />
+      <AdCard />
     </main>
   );
 }

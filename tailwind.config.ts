@@ -22,6 +22,7 @@ const config = {
         "h-full w-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-20 border border-gray-100",
       backgroundImage: {
         ski: "url('/ski.jpg')",
+        snowski: "url('/snow.jpg')",
       },
       colors: {
         border: "hsl(var(--border))",

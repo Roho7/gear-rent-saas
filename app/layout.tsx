@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import Footer from "./_components/footer";
 import Navbar from "./_components/navbar";
 import { AuthProvider } from "./_providers/useAuth";
 import { CartProvider } from "./_providers/useCart";
@@ -24,6 +25,7 @@ export default function RootLayout({
           <CartProvider>
             <Navbar />
             {children}
+            <Footer />
           </CartProvider>
         </AuthProvider>
       </body>

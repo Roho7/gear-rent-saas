@@ -23,21 +23,25 @@ const ProductCard = ({ product }: { product: ProductType }) => {
 
   return (
     <Card
-      className=""
+      className="min-w-60 flex flex-col gap-2"
       onClick={() => router.push(`/store/${product.product_id}`)}>
       <CardHeader>
         <CardTitle>{product.product_title}</CardTitle>
         <CardDescription>{product.product_title}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <img src={product.image_url || ""} alt="img" />
+      <CardContent className="flex justify-center">
+        <img src={product.image_url || ""} alt="img" className="max-h-40" />
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <span className="text-gray-400 flex items-center gap-2">
+      <CardFooter className="flex flex-col items-start gap-1 mt-auto">
+        <p className="text-gray-400 flex items-center gap-2">
           <h2 className=" text-xl">${product.price}</h2>
           <p className="text-xs">/day</p>
-        </span>
-        <AddToCartButton addedToCart={addedToCart} product={product} />
+        </p>
+        <AddToCartButton
+          addedToCart={addedToCart}
+          product={product}
+          className=""
+        />
       </CardFooter>
     </Card>
   );

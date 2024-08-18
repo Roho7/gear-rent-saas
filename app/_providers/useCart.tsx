@@ -10,7 +10,10 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartItemType | null>(null);
+  const [cartItems, setCartItems] = useState<CartItemType | null>(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
   const addToCart = (productId: string) => {
     setCartItems((cart) => ({

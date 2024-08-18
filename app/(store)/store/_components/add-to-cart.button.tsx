@@ -1,16 +1,18 @@
 import { useCart } from "@/app/_providers/useCart";
 import { Button } from "@/components/ui/button";
 import { ProductType } from "@/supabase/types";
+import clsx from "clsx";
 
 type Props = {
   addedToCart: boolean;
   product: ProductType;
+  className?: string;
 };
 
-const AddToCartButton = ({ addedToCart, product }: Props) => {
+const AddToCartButton = ({ addedToCart, product, className }: Props) => {
   const { addToCart, cartItems, removeFromCart } = useCart();
   return addedToCart ? (
-    <div className="flex">
+    <div className={clsx("flex items-center", className)}>
       <Button
         onClick={(e) => {
           e.stopPropagation();
@@ -18,7 +20,7 @@ const AddToCartButton = ({ addedToCart, product }: Props) => {
         }}>
         -
       </Button>
-      <div className="p-2 px-4">
+      <div className="px-4">
         {cartItems?.[product.product_id]?.quantity || 0}
       </div>
       <Button
