@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
 import {
   Select,
   SelectContent,
@@ -22,9 +23,10 @@ import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { createClientComponentClient } from "../_utils/supabase";
 
 const FormSchema = z.object({
-  business_name: z.string().min(2, {
+  store_name: z.string().min(2, {
     message: "Business name must be at least 2 characters.",
   }),
   country_code: z.string().min(2, {
@@ -36,7 +38,7 @@ const FormSchema = z.object({
   business_email: z.string().email({
     message: "Please enter a valid email.",
   }),
-  business_address: z.string().min(10, {
+  address: z.string().min(10, {
     message: "Address must be at least 10 characters.",
   }),
 });
@@ -45,15 +47,33 @@ const RegisterBusinessPage = () => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      business_name: "",
+      store_name: "",
       country_code: "",
       business_number: "",
       business_email: "",
-      business_address: "",
+      address: "",
     },
   });
+  const supabase = createClientComponentClient();
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const formattedData = {
+      ...data,
+      business_number: `${data.country_code}${data.business_number}`,
+    };
+    const { country_code, ...insertedData } = formattedData;
+
+    const { data: insertData, error } = await supabase
+      .from("tbl_stores")
+      .insert(insertedData);
+
+    if (error) {
+      console.error("Error inserting data:", error);
+      toast({
+        title: "Error submitting form",
+      });
+      return;
+    }
     toast({
       title: "You submitted the following values:",
       description: (
@@ -65,25 +85,26 @@ const RegisterBusinessPage = () => {
   }
 
   return (
-    <section className="flex flex-col items-center gap-4">
+    <section className="flex flex-col items-center gap-4 text-gray-700">
       <h1 className="text-xl p-4 ">Register your store</h1>
-
       <Card className="p-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 min-w-[60vw]">
             <FormField
               control={form.control}
-              name="business_name"
+              name="store_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Business Name</FormLabel>
+                  <FormLabel className="text-gray-700">Business Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter business name" {...field} />
                   </FormControl>
                   <FormDescription>
                     This is your public display name.
                   </FormDescription>
-                  <FormMessage />
+                  <FormMessage className="text-red-700" />
                 </FormItem>
               )}
             />
@@ -93,9 +114,13 @@ const RegisterBusinessPage = () => {
                 name="country_code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Country Code</FormLabel>
+                    <FormLabel className="text-gray-700">
+                      Country Code
+                    </FormLabel>
                     <FormControl>
-                      <Select>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}>
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
@@ -107,7 +132,7 @@ const RegisterBusinessPage = () => {
                       </Select>
                     </FormControl>
                     <FormDescription>e.g., +91, +44, +33.</FormDescription>
-                    <FormMessage />
+                    <FormMessage className="text-red-700" />
                   </FormItem>
                 )}
               />
@@ -117,14 +142,16 @@ const RegisterBusinessPage = () => {
                 name="business_number"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Business Phone Number</FormLabel>
+                    <FormLabel className="text-gray-700">
+                      Business Phone Number
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Enter phone number" {...field} />
                     </FormControl>
                     <FormDescription>
                       Your business contact number.
                     </FormDescription>
-                    <FormMessage />
+                    <FormMessage className="text-red-700" />
                   </FormItem>
                 )}
               />
@@ -134,31 +161,35 @@ const RegisterBusinessPage = () => {
               name="business_email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Business Email</FormLabel>
+                  <FormLabel className="text-gray-700">
+                    Business Email
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter business email" {...field} />
                   </FormControl>
                   <FormDescription>
                     Your business email address.
                   </FormDescription>
-                  <FormMessage />
+                  <FormMessage className="text-red-700" />
                 </FormItem>
               )}
             />
 
             <FormField
               control={form.control}
-              name="business_address"
+              name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Business Address</FormLabel>
+                  <FormLabel className="text-gray-700">
+                    Business Address
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter business address" {...field} />
                   </FormControl>
                   <FormDescription>
                     Your business's physical address.
                   </FormDescription>
-                  <FormMessage />
+                  <FormMessage className="text-red-700" />
                 </FormItem>
               )}
             />
@@ -168,7 +199,7 @@ const RegisterBusinessPage = () => {
           name="business_description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Business Description</FormLabel>
+              FormLabel className="text-gray-700"Business Description</FormLabel>
               <FormControl>
                 <Input
                   placeholder="Enter a brief description of your business"
@@ -178,7 +209,8 @@ const RegisterBusinessPage = () => {
               <FormDescription>
                 A short description of your business and its services.
               </FormDescription>
-              <FormMessage />
+                                <FormMessage className="text-red-700" />
+
             </FormItem>
           )}
         /> */}

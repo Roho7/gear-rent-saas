@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/toaster";
 import { Inter } from "next/font/google";
 import Footer from "./_components/footer";
 import Navbar from "./_components/navbar";
@@ -28,6 +29,7 @@ export default function RootLayout({
           <CartProvider>
             <Navbar />
             <main className="flex-grow px-8 py-4">{children}</main>
+            <Toaster />
             <Footer />
           </CartProvider>
         </AuthProvider>

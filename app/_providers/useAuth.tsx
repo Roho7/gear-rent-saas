@@ -31,6 +31,7 @@ interface AuthContextValue {
   stores: StoreType[];
   setProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
   setStores: React.Dispatch<React.SetStateAction<StoreType[]>>;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [products, setProducts] = useState<ProductType[]>([]);
   const [stores, setStores] = useState<StoreType[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const dbPromise = useMemo(() => {
     return openDB<ProductDB>("ProductDatabase", 1, {
@@ -102,7 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   ) => {
     const db = await dbPromise;
     const cachedData = await db?.get(storeName, "all" + storeName);
-
+    setLoading(true);
     if (cachedData) {
       console.log(`Using cached ${storeName} data`);
       setter(cachedData);
@@ -118,6 +120,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await db?.put(storeName, data, "all" + storeName);
       }
     }
+    setLoading(false);
   };
 
   const fetchData = useCallback(async () => {
@@ -142,6 +145,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       stores,
       setProducts,
       setStores,
+      loading,
     }),
     [
       handleSignUpWithEmail,
@@ -149,6 +153,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       handleLogout,
       products,
       stores,
+      loading,
     ],
   );
 

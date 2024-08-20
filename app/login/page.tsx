@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../_providers/useAuth";
 
 type Props = {};
@@ -18,8 +18,9 @@ const LoginPage = (props: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
-    <main className="h-screen w-full flex justify-center items-center">
-      <Card className="">
+    <main className="w-full h-[70vh] flex flex-col gap-8 justify-center items-center">
+      <img src="/logo-black.svg" alt="" />
+      <Card className="w-[20vw]">
         <CardHeader>
           <CardTitle>Login</CardTitle>
         </CardHeader>
@@ -35,7 +36,9 @@ const LoginPage = (props: Props) => {
         </CardContent>
         <CardFooter className="flex justify-between">
           {/* <Button variant="outline">Cancel</Button> */}
-          <Button onClick={() => handleLoginWithEmail(email, password)}>
+          <Button
+            className="w-full"
+            onClick={() => handleLoginWithEmail(email, password)}>
             Login
           </Button>
         </CardFooter>

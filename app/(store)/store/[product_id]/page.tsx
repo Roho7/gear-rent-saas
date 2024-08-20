@@ -1,61 +1,123 @@
 "use client";
-
 import ProductRibbon from "@/app/_components/product-ribbon";
 import { useAuth } from "@/app/_providers/useAuth";
 import { useCart } from "@/app/_providers/useCart";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
-import { useMemo } from "react";
-import AddToCartButton from "../_components/add-to-cart.button";
+import { Separator } from "@/components/ui/separator";
 
-type Props = {};
+import { useMemo } from "react";
+import { BiDollar } from "react-icons/bi";
+import { FaClock } from "react-icons/fa";
+import AddToCartButton from "../_components/add-to-cart.button";
 
 const ProductPage = ({ params }: { params: { product_id: string } }) => {
   const { products } = useAuth();
   const { cartItems } = useCart();
 
   const activeProduct = useMemo(() => {
-    return products.find((p) => {
-      return p.product_id === params.product_id;
-    });
+    return products.find((p) => p.product_id === params.product_id);
   }, [params.product_id, products]);
 
   const addedToCart = useMemo(() => {
     if (!activeProduct || !cartItems) return false;
     return cartItems[activeProduct?.product_id || ""]?.quantity > 0 || false;
-  }, [cartItems]);
+  }, [cartItems, activeProduct]);
+
+  if (!activeProduct) {
+    return <div className="text-center p-8">Product not found</div>;
+  }
 
   return (
-    activeProduct && (
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-2 w-full h-full">
-          <Card className="flex-1 overflow-hidden">
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row gap-8">
+        <Card className="flex-1 overflow-hidden">
+          <CardContent className="p-0">
             <img
-              src={activeProduct?.image_url || ""}
-              alt=""
-              className="object-contain w-full"
+              src={activeProduct.image_url || "/placeholder-image.jpg"}
+              alt={activeProduct.product_title || ""}
+              className="w-full h-[400px] object-cover"
             />
-          </Card>
-          <Card className="flex-1">
-            <CardHeader>
-              <h1 className="text-2xl">{activeProduct?.product_title}</h1>
-              <CardDescription>{activeProduct?.description}</CardDescription>
-            </CardHeader>
-            <CardFooter>
-              <AddToCartButton
-                addedToCart={addedToCart}
-                product={activeProduct}
-              />
-            </CardFooter>
-          </Card>
-        </div>
+          </CardContent>
+        </Card>
+
+        <Card className="flex-1">
+          <CardHeader>
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle className="text-3xl font-bold mb-2">
+                  {activeProduct.product_title}
+                </CardTitle>
+                <Badge variant="secondary" className="mb-4">
+                  {activeProduct.category}
+                </Badge>
+              </div>
+              <div className="text-2xl font-bold text-primary">
+                ${activeProduct.price}{" "}
+                <span className="text-sm text-muted-foreground">
+                  / {activeProduct.price_granularity}
+                </span>
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent>
+            <CardDescription className="text-lg mb-6">
+              {activeProduct.description}
+            </CardDescription>
+
+            <Separator className="my-6" />
+
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <FaClock className="w-5 h-5 mr-2" />
+                <span>
+                  Available for rent:{" "}
+                  {/* {activeProduct.closing_time || "Contact for details"} */}
+                </span>
+              </div>
+              <div className="flex items-center">
+                <BiDollar className="w-5 h-5 mr-2" />
+                <span>
+                  Price: ${activeProduct.price} per{" "}
+                  {activeProduct.price_granularity}
+                </span>
+              </div>
+              {activeProduct.product_link && (
+                <div className="flex items-center">
+                  <a
+                    href={activeProduct.product_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline">
+                    More product details
+                  </a>
+                </div>
+              )}
+            </div>
+          </CardContent>
+
+          <CardFooter>
+            <AddToCartButton
+              addedToCart={addedToCart}
+              product={activeProduct}
+            />
+          </CardFooter>
+        </Card>
+      </div>
+
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-4">You might also like</h2>
         <ProductRibbon />
       </div>
-    )
+    </div>
   );
 };
 
