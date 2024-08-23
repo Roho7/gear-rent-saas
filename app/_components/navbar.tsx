@@ -8,6 +8,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import CartPopup from "./cart-popup";
+import UserButton from "./user-button";
 
 const Navbar: React.FC = () => {
   if (typeof window === "undefined") {
@@ -126,12 +127,20 @@ const Navbar: React.FC = () => {
                     Licenses
                   </a>
                 </li>
+                <li>
+                  <a href="/all-products" className="text-sm w-full">
+                    Admin
+                  </a>
+                </li>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <CartPopup />
+      <div className="flex gap-2 items-center">
+        <CartPopup />
+        <UserButton />
+      </div>
     </div>
   );
 };

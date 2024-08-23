@@ -1,5 +1,6 @@
 "use client";
 import { ProductType, StoreType } from "@/supabase/types";
+import { User } from "@supabase/supabase-js";
 import dayjs from "dayjs";
 import { DBSchema, openDB } from "idb";
 import { useRouter } from "next/navigation";
@@ -38,6 +39,7 @@ interface AuthContextValue {
   setStores: React.Dispatch<React.SetStateAction<StoreType[]>>;
   loading: boolean;
   updateProductMetadata: (product: ProductType) => Promise<void>;
+  user: User | null;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -47,6 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [products, setProducts] = useState<ProductType[]>([]);
   const [stores, setStores] = useState<StoreType[]>([]);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
   const dbPromise = useMemo(() => {
@@ -112,10 +115,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const cachedData = await db?.get(storeName, "all" + storeName);
     setLoading(true);
     const last_updated_at = localStorage.getItem("last_updated_at");
-    const setter: React.Dispatch<React.SetStateAction<any[]>>= storeName === "products" ? setProducts : setStores;
+    const setter: React.Dispatch<React.SetStateAction<any[]>> =
+      storeName === "products" ? setProducts : setStores;
     const tableName = storeName === "products" ? "tbl_products" : "tbl_stores";
     if (
-      cachedData && !refresh &&
+      cachedData &&
+      !refresh &&
       !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
     ) {
       console.log(`Using cached ${storeName} data`);
@@ -136,16 +141,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const fetchData = useCallback(async () => {
-    await fetchAndCacheData<ProductType>(
-      "products",
-    );
+    await fetchAndCacheData<ProductType>("products");
     await fetchAndCacheData<StoreType>("stores");
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error("Error fetching user:", error);
+    } else {
+      setUser(data.user);
+      console.log("User:", data.user);
+    }
   }, []);
 
   const updateProductMetadata = useCallback(async (product: ProductType) => {
-    const { data, error } = await supabase
-      .from("tbl_products")
-      .upsert(product);
+    const { data, error } = await supabase.from("tbl_products").upsert(product);
     if (error) {
       console.error("Error updating product metadata:", error);
     } else {
@@ -155,11 +163,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     fetchData();
+
     const last_updated_at = localStorage.getItem("last_updated_at");
     if (!last_updated_at)
       localStorage.setItem("last_updated_at", new Date().toISOString());
   }, [fetchData]);
-
 
   const value: AuthContextValue = useMemo(
     () => ({
@@ -173,6 +181,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       loading,
       fetchAndCacheData,
       updateProductMetadata,
+      user,
     }),
     [
       handleSignUpWithEmail,
@@ -181,6 +190,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       products,
       stores,
       loading,
+      user,
     ],
   );
 

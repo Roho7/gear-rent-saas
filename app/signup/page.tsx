@@ -1,11 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -38,12 +38,16 @@ const LoginPage = (props: Props) => {
           {/* <Button variant="outline">Cancel</Button> */}
           <Button
             className="w-full"
-            onClick={() => handleSignUpWithEmail(email, password)}>
+            onClick={() => handleSignUpWithEmail(email, password)}
+          >
             Login
           </Button>
         </CardFooter>
       </Card>
-          <Button onClick={() => handleLogout()}>Logout</Button>
+      <a href="/login">Already have an account?</a>
+      <Button variant="ghost" onClick={() => handleLogout()}>
+        Logout
+      </Button>
     </main>
   );
 };

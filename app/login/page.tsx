@@ -38,11 +38,13 @@ const LoginPage = (props: Props) => {
           {/* <Button variant="outline">Cancel</Button> */}
           <Button
             className="w-full"
-            onClick={() => handleLoginWithEmail(email, password)}>
+            onClick={() => handleLoginWithEmail(email, password)}
+          >
             Login
           </Button>
         </CardFooter>
       </Card>
+      <a href="/signup">Create an account</a>
     </main>
   );
 };

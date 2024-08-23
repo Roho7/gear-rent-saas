@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { useAuth } from "../../_providers/useAuth";
@@ -260,10 +261,11 @@ const ProductRow = ({ product }: { product: ProductType }) => {
 };
 
 const AllProducstPage = (props: Props) => {
-  const { products, fetchAndCacheData } = useAuth();
+  const { products, fetchAndCacheData, user } = useAuth();
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [genderFilter, setGenderFilter] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const router = useRouter();
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -291,6 +293,10 @@ const AllProducstPage = (props: Props) => {
     });
   }, [products, categoryFilter, genderFilter, searchQuery]);
 
+  if (!user) {
+    router.replace("/login");
+    return;
+  }
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2">
