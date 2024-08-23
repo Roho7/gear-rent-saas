@@ -263,10 +263,18 @@ const AllProducstPage = (props: Props) => {
   const { products, fetchAndCacheData } = useAuth();
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [genderFilter, setGenderFilter] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       let foundProduct = true;
+      if (searchQuery) {
+        foundProduct = product.product_title
+          ? product.product_title
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
+          : false;
+      }
       if (categoryFilter.length) {
         foundProduct = categoryFilter.length
           ? categoryFilter.includes(product.category || "")
@@ -281,11 +289,15 @@ const AllProducstPage = (props: Props) => {
       }
       return foundProduct;
     });
-  }, [products, categoryFilter, genderFilter]);
+  }, [products, categoryFilter, genderFilter, searchQuery]);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2">
+        <Input
+          placeholder="Search"
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
         <Select>
           <SelectTrigger id="category">
             <SelectValue placeholder="Category" />
