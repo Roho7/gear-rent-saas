@@ -60,9 +60,9 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
                 </Badge>
               </div>
               <div className="text-2xl font-bold text-primary">
-                ${activeProduct.price}{" "}
+                $
                 <span className="text-sm text-muted-foreground">
-                  / {activeProduct.price_granularity}
+                  / day
                 </span>
               </div>
             </div>
@@ -86,8 +86,8 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
               <div className="flex items-center">
                 <BiDollar className="w-5 h-5 mr-2" />
                 <span>
-                  Price: ${activeProduct.price} per{" "}
-                  {activeProduct.price_granularity}
+                  Price: $ per{" "}
+                  day
                 </span>
               </div>
               {activeProduct.product_link && (

@@ -13,5 +13,6 @@
     "class",
     "className",
     "\\b[_a-zA-Z+]*ClassName"
-  ]
+  ],
+  "prettier.configPath": ""
 }

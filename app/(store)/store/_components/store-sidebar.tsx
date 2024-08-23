@@ -1,3 +1,4 @@
+import { useAuth } from "@/app/_providers/useAuth";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -77,6 +78,7 @@ const filterMap: Record<string, FilterObjectType[]> = {
 } as const;
 
 const StoreSidebar = () => {
+  const { fetchAndCacheData } = useAuth();
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
   return (
