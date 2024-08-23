@@ -14,7 +14,7 @@ const CartRowItem = ({ product }: Props) => {
       </div>
       <div>
         <p className="text-xl">{product?.product_title}</p>
-        <p>${product?.price}</p>
+        <p>$</p>
         <p className="text-gray-400">
           Qt. {cartItems?.[product?.product_id || ""]?.quantity}
         </p>

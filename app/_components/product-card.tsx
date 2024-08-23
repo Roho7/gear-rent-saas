@@ -33,7 +33,8 @@ const ProductCard = ({
   ) : (
     <Card
       className="min-w-80 flex flex-col gap-2"
-      onClick={() => router.push(`/store/${product.product_id}`)}>
+      onClick={() => router.push(`/store/${product.product_id}`)}
+    >
       <CardHeader>
         <CardTitle>{product.product_title}</CardTitle>
         <CardDescription>{product.product_title}</CardDescription>
@@ -43,7 +44,7 @@ const ProductCard = ({
       </CardContent>
       <CardFooter className="flex flex-col items-start gap-1 mt-auto">
         <p className="text-gray-400 flex items-center gap-2">
-          <span className=" text-xl">${product.price}</span>
+          <span className=" text-xl">$</span>
           <span className="text-xs">/day</span>
         </p>
         <AddToCartButton
