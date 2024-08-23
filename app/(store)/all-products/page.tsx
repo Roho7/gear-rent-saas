@@ -172,7 +172,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
         <div className="flex flex-col gap-2 flex-1">
           <Label htmlFor="gender">Gender</Label>
           {genderMap.map((d: string) => (
-            <div className="flex gap-1 text-sm items-center">
+            <div className="flex gap-1 text-sm items-center" key={d}>
               <Checkbox
                 checked={selectedGender.includes(d)}
                 key={d}
@@ -291,8 +291,8 @@ const AllProducstPage = (props: Props) => {
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent position="popper" className="gap-2 flex flex-col">
-            {categoryMap.map((d: string) => (
-              <div className="flex gap-1 text-sm items-center my-2">
+            {categoryMap.map((d: string, index) => (
+              <div className="flex gap-1 text-sm items-center my-2" key={d}>
                 <Checkbox
                   checked={categoryFilter.includes(d)}
                   key={d}
@@ -315,7 +315,7 @@ const AllProducstPage = (props: Props) => {
           </SelectTrigger>
           <SelectContent position="popper" className="gap-2 flex flex-col">
             {genderMap.map((d: string) => (
-              <div className="flex items-center gap-2 my-1">
+              <div className="flex items-center gap-2 my-1" key={d}>
                 <Checkbox
                   checked={genderFilter.includes(d)}
                   key={d}

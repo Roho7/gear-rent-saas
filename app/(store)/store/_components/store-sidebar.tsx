@@ -85,10 +85,10 @@ const StoreSidebar = () => {
     <aside className="flex gap-2 justify-start max-w-fit flex-col min-w-[20vw] bg-slate-100 p-4 rounded-lg">
       <div className="flex flex-col">
         {Object.keys(filterMap).map((item) => (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2" key={item}>
             <h2 className="font-medium text-slate-500 capitalize">{item}</h2>
             {filterMap[item].map((d: FilterObjectType) => (
-              <div className="flex gap-1 text-sm items-center">
+              <div className="flex gap-1 text-sm items-center" key={d.id}>
                 <Checkbox
                   checked={selectedValues.includes(d.id)}
                   key={d.id}

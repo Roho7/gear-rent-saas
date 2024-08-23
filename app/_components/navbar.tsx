@@ -38,7 +38,8 @@ const Navbar: React.FC = () => {
                   <NavigationMenuLink asChild>
                     <a
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none hover:shadow-md"
-                      href="/store">
+                      href="/store"
+                    >
                       <div className="mb-2 mt-4 text-lg font-medium">
                         Our store
                       </div>
@@ -65,12 +66,13 @@ const Navbar: React.FC = () => {
                   <NavigationMenuLink asChild>
                     <a
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none hover:shadow-md"
-                      href="/register">
+                      href="/register"
+                    >
                       <div className="mb-2 mt-4 text-lg font-medium">
                         Connect your store
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
-                        If you're a renter, connect your store to our platform
+                        If you are a renter, connect your store to our platform
                         and start renting your gear to a wider audience.
                       </p>
                     </a>
@@ -102,13 +104,14 @@ const Navbar: React.FC = () => {
                   <NavigationMenuLink asChild>
                     <a
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none hover:shadow-md"
-                      href="/store">
+                      href="/store"
+                    >
                       <div className="mb-2 mt-4 text-lg font-medium">
                         About Us
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
-                        We're just two dudes tyring to make adventure more about
-                        adventureing.
+                        We are just two dudes tyring to make adventure more
+                        about adventureing.
                       </p>
                     </a>
                   </NavigationMenuLink>

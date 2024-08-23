@@ -91,7 +91,8 @@ const RegisterBusinessPage = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 min-w-[60vw]">
+            className="space-y-6 min-w-[60vw]"
+          >
             <FormField
               control={form.control}
               name="store_name"
@@ -120,7 +121,8 @@ const RegisterBusinessPage = () => {
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}>
+                        defaultValue={field.value}
+                      >
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
@@ -187,7 +189,7 @@ const RegisterBusinessPage = () => {
                     <Input placeholder="Enter business address" {...field} />
                   </FormControl>
                   <FormDescription>
-                    Your business's physical address.
+                    Your business&apos;s physical address.
                   </FormDescription>
                   <FormMessage className="text-red-700" />
                 </FormItem>

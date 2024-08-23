@@ -26,7 +26,7 @@ const StoreCard = ({ store }: { store: StoreType }) => {
           <li className="text-gray-400">{store.description}</li>
           <li className="flex items-center gap-1">
             <MdCall />
-            {store.contact}
+            {/* {store.contact} */}
           </li>
           <li className="flex items-center gap-1">
             <FaAddressCard />

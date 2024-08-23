@@ -42,7 +42,7 @@ const CartPage = (props: Props) => {
           </CardHeader>
           <CardContent className=" flex flex-col">
             {Object.keys(cartItems || {}).map((d) => (
-              <div className="flex justify-between">
+              <div className="flex justify-between" key={d}>
                 <p>
                   {
                     products.find((item) => item.product_id === d)

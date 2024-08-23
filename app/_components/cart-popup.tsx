@@ -33,7 +33,8 @@ const CartPopup = (props: Props) => {
           className="rounded-full relative"
           onClick={() => {
             router.replace("/cart");
-          }}>
+          }}
+        >
           <div className="rounded-full text-xs  bg-stone-100 text-black flex items-center justify-center h-5 w-5 absolute -right-2 -top-2">
             {cartQuantity}
           </div>
@@ -60,6 +61,7 @@ const CartPopup = (props: Props) => {
                   return (
                     <CartItemCard
                       product={products.find((p) => p.product_id === item)}
+                      key={item}
                     />
                   );
                 })}
