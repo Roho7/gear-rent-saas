@@ -21,9 +21,10 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { User } from "@supabase/supabase-js";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createClientComponentClient } from "../_utils/supabase";
+import { createClientComponentClient } from "../../_utils/supabase";
 
 const FormSchema = z.object({
   store_name: z.string().min(2, {
@@ -59,6 +60,7 @@ const RegisterBusinessPage = () => {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const formattedData = {
       ...data,
+      user_id: (JSON.parse(localStorage.getItem("user") || "{}") as User).id,
       business_number: `${data.country_code}${data.business_number}`,
     };
     const { country_code, ...insertedData } = formattedData;

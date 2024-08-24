@@ -4,6 +4,7 @@ export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
   product_metadata: ProductMetadataType;
 };
 export type StoreType = Tables<"tbl_stores">;
+export type InventoryType = Tables<"tbl_inventory">;
 
 export type CartItemType = {
   [product_id: string]: {
