@@ -1,6 +1,8 @@
 import { Tables } from "./supabase.types";
 
-export type ProductType = Tables<"tbl_products">;
+export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
+  product_metadata: ProductMetadataType;
+};
 export type StoreType = Tables<"tbl_stores">;
 
 export type CartItemType = {
@@ -8,3 +10,19 @@ export type CartItemType = {
     quantity: number;
   };
 };
+
+export type ProductMetadataKeys =
+  | "gender"
+  | "sizes"
+  | "colors"
+  | "heights"
+  | "widths"
+  | "lengths";
+
+export type ProductMetadataType =
+  & {
+    [K in ProductMetadataKeys]: string[];
+  }
+  & {
+    [key: string]: string[];
+  };

@@ -13,10 +13,32 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
+import { ProductMetadataKeys } from "@/supabase/types";
 import { useMemo } from "react";
 import { BiDollar } from "react-icons/bi";
 import { FaClock } from "react-icons/fa";
 import AddToCartButton from "../_components/add-to-cart.button";
+
+const MetadataMap: Record<ProductMetadataKeys, any> = {
+  gender: {
+    label: "For:",
+  },
+  heights: {
+    label: "Heights:",
+  },
+  sizes: {
+    label: "Sizes:",
+  },
+  colors: {
+    label: "Colors:",
+  },
+  widths: {
+    label: "Widths:",
+  },
+  lengths: {
+    label: "Lengths:",
+  },
+};
 
 const ProductPage = ({ params }: { params: { product_id: string } }) => {
   const { products } = useAuth();
@@ -60,10 +82,7 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
                 </Badge>
               </div>
               <div className="text-2xl font-bold text-primary">
-                $
-                <span className="text-sm text-muted-foreground">
-                  / day
-                </span>
+                $<span className="text-sm text-muted-foreground">/ day</span>
               </div>
             </div>
           </CardHeader>
@@ -76,6 +95,24 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
             <Separator className="my-6" />
 
             <div className="space-y-4">
+              <div className="flex flex-col text-gray-500 text-sm">
+                Product details:
+                {Object.keys(MetadataMap).map((key) => {
+                  const metadata = activeProduct.product_metadata[key];
+                  if (metadata?.length) {
+                    return (
+                      <div className="flex gap-1">
+                        {MetadataMap[key as ProductMetadataKeys].label}{" "}
+                        {metadata.map((g: string) => (
+                          <span className="flex gap-0.5 capitalize">{g}</span>
+                        ))}
+                      </div>
+                    );
+                  } else {
+                    return null;
+                  }
+                })}
+              </div>
               <div className="flex items-center">
                 <FaClock className="w-5 h-5 mr-2" />
                 <span>
@@ -85,10 +122,7 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
               </div>
               <div className="flex items-center">
                 <BiDollar className="w-5 h-5 mr-2" />
-                <span>
-                  Price: $ per{" "}
-                  day
-                </span>
+                <span>Price: $ per day</span>
               </div>
               {activeProduct.product_link && (
                 <div className="flex items-center">
@@ -96,7 +130,8 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
                     href={activeProduct.product_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary hover:underline">
+                    className="text-primary hover:underline"
+                  >
                     More product details
                   </a>
                 </div>

@@ -4,14 +4,13 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { BiUser } from "react-icons/bi";
-import { useAuth } from "../_providers/useAuth";
 
 type Props = {};
 
 const UserButton = (props: Props) => {
-  const { user } = useAuth();
   const router = useRouter();
   return (
     <HoverCard>
@@ -31,7 +30,9 @@ const UserButton = (props: Props) => {
               <BiUser /> Your account
             </h4>
             <p className="text-sm">Logged in as:</p>
-            <p className="text-sm">{user?.email}</p>
+            <p className="text-sm">
+              {(JSON.parse(localStorage.getItem("user") ?? "{}") as User).email}
+            </p>
           </div>
         </div>
       </HoverCardContent>

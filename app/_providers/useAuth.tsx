@@ -1,6 +1,5 @@
 "use client";
 import { ProductType, StoreType } from "@/supabase/types";
-import { User } from "@supabase/supabase-js";
 import dayjs from "dayjs";
 import { DBSchema, openDB } from "idb";
 import { useRouter } from "next/navigation";
@@ -39,7 +38,6 @@ interface AuthContextValue {
   setStores: React.Dispatch<React.SetStateAction<StoreType[]>>;
   loading: boolean;
   updateProductMetadata: (product: ProductType) => Promise<void>;
-  user: User | null;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -49,7 +47,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [products, setProducts] = useState<ProductType[]>([]);
   const [stores, setStores] = useState<StoreType[]>([]);
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
   const dbPromise = useMemo(() => {
@@ -103,6 +100,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleLogout = useCallback(async () => {
     await supabase.auth.signOut();
+    localStorage.removeItem("user");
     router.push("/login");
   }, [supabase, router]);
 
@@ -147,8 +145,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (error) {
       console.error("Error fetching user:", error);
     } else {
-      setUser(data.user);
-      console.log("User:", data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
     }
   }, []);
 
@@ -181,7 +178,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       loading,
       fetchAndCacheData,
       updateProductMetadata,
-      user,
     }),
     [
       handleSignUpWithEmail,
@@ -190,7 +186,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       products,
       stores,
       loading,
-      user,
     ],
   );
 

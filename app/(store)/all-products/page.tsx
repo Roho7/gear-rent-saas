@@ -1,7 +1,11 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ProductType } from "@/supabase/types";
+import {
+  ProductMetadataKeys,
+  ProductMetadataType,
+  ProductType,
+} from "@/supabase/types";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -17,17 +21,16 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { z } from "zod";
 import { useAuth } from "../../_providers/useAuth";
 
 type Props = {};
 
-const FormSchema = z.object({
-  gender: z.string().min(0),
-  sizes: z.string().array().min(2),
-});
-
-const metadataOptions = ["Height", "Length", "Width", "Area", "Color"];
+const metadataOptions: ProductMetadataKeys[] = [
+  "heights",
+  "lengths",
+  "widths",
+  "colors",
+];
 
 const genderMap = ["male", "female", "unisex"];
 const categoryMap = ["skiing", "snowboarding", "camping"];
@@ -45,9 +48,9 @@ const ProductRow = ({ product }: { product: ProductType }) => {
   const [productCategory, setProductCategory] = useState<string>(
     product.category || "",
   );
-  const [productMetadata, setProductMetadata] = useState<
-    Record<string, string[]>
-  >(product.product_metadata || {});
+  const [productMetadata, setProductMetadata] = useState<ProductMetadataType>(
+    product.product_metadata || {},
+  );
   const [newMetadataType, setNewMetadataType] = useState<string>("");
 
   const { updateProductMetadata } = useAuth();
@@ -96,7 +99,8 @@ const ProductRow = ({ product }: { product: ProductType }) => {
 
   useEffect(() => {
     if (product.product_metadata) {
-      const { gender, ...otherMetadata } = product.product_metadata;
+      const { gender, ...otherMetadata } =
+        product.product_metadata as ProductMetadataType;
       setSelectedGender(gender || []);
       setProductCategory(product.category || "");
       setProductDescription(product.description || "");
@@ -106,7 +110,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
         Object.entries(otherMetadata).reduce((acc, [key, value]) => {
           acc[key] = Array.isArray(value) ? value : [(value as any).toString()];
           return acc;
-        }, {} as Record<string, string[]>),
+        }, {} as ProductMetadataType),
       );
     }
   }, [product]);
@@ -261,7 +265,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
 };
 
 const AllProducstPage = (props: Props) => {
-  const { products, fetchAndCacheData, user } = useAuth();
+  const { products, fetchAndCacheData } = useAuth();
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [genderFilter, setGenderFilter] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -293,9 +297,8 @@ const AllProducstPage = (props: Props) => {
     });
   }, [products, categoryFilter, genderFilter, searchQuery]);
 
-  if (!user) {
+  if (!localStorage.getItem("user")) {
     router.replace("/login");
-    return;
   }
   return (
     <div className="flex flex-col gap-4">
