@@ -32,10 +32,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (data.user) {
           resolve(true);
+          toast({ title: "Logging in with Google" });
+          localStorage.setItem("user", JSON.stringify(data.user));
+          router.push("/");
         }
       });
-
-      toast({ title: "Logging in with Google" });
     },
     [router, supabase],
   );
@@ -46,15 +47,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error("Please enter a valid email address");
       }
 
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
       });
 
-      if (error) {
+      if (error || !data) {
         throw error;
       }
-
+      localStorage.setItem("user", JSON.stringify(data.user));
       router.push("/");
     },
     [supabase, router],
@@ -66,15 +67,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error("Please enter a valid email address");
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
       });
 
-      if (error) {
+      if (error || !data) {
         throw error;
       }
-
+      localStorage.setItem("user", JSON.stringify(data.user));
       router.push("/");
     },
     [supabase, router],

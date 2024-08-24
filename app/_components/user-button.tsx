@@ -6,12 +6,32 @@ import {
 } from "@/components/ui/hover-card";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { BiUser } from "react-icons/bi";
 
 type Props = {};
 
 const UserButton = (props: Props) => {
   const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedUser = localStorage.getItem("user");
+      setUser(storedUser ? JSON.parse(storedUser) : null);
+    };
+
+    // Initial load
+    handleStorageChange();
+
+    // Listen for changes in localStorage
+    window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
@@ -30,9 +50,7 @@ const UserButton = (props: Props) => {
               <BiUser /> Your account
             </h4>
             <p className="text-sm">Logged in as:</p>
-            <p className="text-sm">
-              {(JSON.parse(localStorage.getItem("user") ?? "{}") as User).email}
-            </p>
+            <p className="text-sm">{user?.email}</p>
           </div>
         </div>
       </HoverCardContent>
