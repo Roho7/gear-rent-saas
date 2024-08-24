@@ -20,11 +20,11 @@ import { createClientComponentClient } from "../_utils/supabase";
 interface ProductDB extends DBSchema {
   products: {
     key: string;
-    value: ProductType[];
+    value: ProductType;
   };
   stores: {
     key: string;
-    value: StoreType[];
+    value: StoreType;
   };
 }
 
@@ -82,8 +82,8 @@ export const ProductProvider = ({
   const dbPromise = useMemo(() => {
     return openDB<ProductDB>("ProductDatabase", 1, {
       upgrade(db) {
-        db.createObjectStore("products");
-        db.createObjectStore("stores");
+        db.createObjectStore("products", { keyPath: "product_id" });
+        db.createObjectStore("stores", { keyPath: "store_id" });
       },
     });
   }, []);
@@ -114,18 +114,21 @@ export const ProductProvider = ({
 
   const fetchAndCacheData = async <T,>(
     storeName: "products" | "stores",
-
     refresh: boolean = false,
   ) => {
     const db = await dbPromise;
-    const cachedData = await db?.get(storeName, "all" + storeName);
+    const cachedData = await db?.getAll(storeName);
     setLoading(true);
     const last_updated_at = localStorage.getItem("last_updated_at");
+    // assigned setter
     const setter: React.Dispatch<React.SetStateAction<any[]>> =
       storeName === "products" ? setProducts : setStores;
+
+    // assigned tableName
     const tableName = storeName === "products" ? "tbl_products" : "tbl_stores";
+
     if (
-      cachedData &&
+      cachedData.length &&
       !refresh &&
       !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
     ) {
@@ -138,9 +141,9 @@ export const ProductProvider = ({
       if (error) {
         console.error(`Error fetching ${storeName}:`, error);
       } else {
-        console.log(`${storeName} data:`, data);
         setter(data as T[]);
-        await db?.put(storeName, data, "all" + storeName);
+        const txn = db.transaction(storeName, "readwrite");
+        await Promise.all(data.map((d) => txn.store.put(d)));
       }
     }
     setLoading(false);
@@ -149,12 +152,6 @@ export const ProductProvider = ({
   const fetchData = useCallback(async () => {
     await fetchAndCacheData<ProductType>("products");
     await fetchAndCacheData<StoreType>("stores");
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-      console.error("Error fetching user:", error);
-    } else {
-      localStorage.setItem("user", JSON.stringify(data.user));
-    }
   }, []);
 
   const updateProductMetadata = useCallback(async (product: ProductType) => {

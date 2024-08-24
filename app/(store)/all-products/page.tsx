@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ProductMetadataType, ProductType } from "@/supabase/types";
 
+import { useAuth } from "@/app/_providers/useAuth";
 import { useProducts } from "@/app/_providers/useProducts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -15,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { categoryMap, genderMap, metadataOptions } from "@/data/contants";
 import { useRouter } from "next/navigation";
@@ -252,20 +254,47 @@ const ProductRow = ({ product }: { product: ProductType }) => {
 };
 
 const AllProducstPage = (props: Props) => {
+  const { user, isLoading: isAuthLoading } = useAuth();
   const {
-    products,
     fetchAndCacheData,
-    searchQuery,
     setSearchQuery,
     productFilters,
     setProductFilters,
     filteredProducts,
   } = useProducts();
-
   const router = useRouter();
 
-  if (!localStorage.getItem("user")) {
-    router.replace("/login");
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, isAuthLoading, router]);
+
+  if (isAuthLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex gap-2">
+          <Skeleton className="w-full h-80" />
+          <div className="flex flex-col gap-4">
+            <Skeleton className="w-40 h-20" />
+            <Skeleton className="w-40 h-20" />
+            <Skeleton className="w-40 h-20" />
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="w-full h-80" />
+          <div className="flex flex-col gap-4">
+            <Skeleton className="w-40 h-20" />
+            <Skeleton className="w-40 h-20" />
+            <Skeleton className="w-40 h-20" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // This will prevent any flash of content before redirect
   }
   return (
     <div className="flex flex-col gap-4">

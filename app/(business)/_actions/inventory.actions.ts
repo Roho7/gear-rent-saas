@@ -1,5 +1,6 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
+import { InventoryType } from "@/supabase/types";
 import { cookies } from "next/headers";
 
 export const getInventory = async () => {
@@ -8,23 +9,18 @@ export const getInventory = async () => {
 
   const userData = await supabase.auth.getUser();
 
-  const { data: storeData, error: storeError } = await supabase.from(
-    "tbl_stores",
+  const { data: inventoryData, error: inventoryError } = await supabase.from(
+    "view_stores_inventory",
   ).select("*").eq(
     "user_id",
     userData.data.user?.id,
-  ).single();
+  ).returns<InventoryType[]>();
 
-  const { data, error } = await supabase.from("tbl_inventory").select("*").eq(
-    "store_id",
-    storeData.store_id,
-  );
-
-  if (error || !data) {
-    console.error("Error fetching inventory data:", error);
-    return;
+  if (inventoryError || !inventoryData) {
+    console.error("Error fetching inventory data:", inventoryError);
   }
-  return data;
+
+  return inventoryData;
 };
 
 export const addInventoryItem = async (

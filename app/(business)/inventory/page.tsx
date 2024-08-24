@@ -1,6 +1,7 @@
 "use client";
 import { useInventory } from "../_providers/useInventory";
 import AddInventoryItemModal from "./_components/add-inventory.modal";
+import InventoryItemCard from "./_components/inventory.card";
 
 type Props = {};
 
@@ -9,9 +10,11 @@ const InventoryPage = (props: Props) => {
   return (
     <div>
       <AddInventoryItemModal />
-      {inventory?.map((item) => (
-        <div key={item.inventory_id}>{item.store_id}</div>
-      ))}
+      <div className="flex flex-col gap-2">
+        {inventory?.map((item) => (
+          <InventoryItemCard inventoryItem={item} key={item.inventory_id} />
+        ))}
+      </div>
     </div>
   );
 };

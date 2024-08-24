@@ -12,21 +12,21 @@ export type Database = {
       tbl_inventory: {
         Row: {
           available_units: number | null
-          inventory_id: number
+          inventory_id: string
           product_id: string | null
           store_id: string | null
           total_units: number | null
         }
         Insert: {
           available_units?: number | null
-          inventory_id: number
+          inventory_id?: string
           product_id?: string | null
           store_id?: string | null
           total_units?: number | null
         }
         Update: {
           available_units?: number | null
-          inventory_id?: number
+          inventory_id?: string
           product_id?: string | null
           store_id?: string | null
           total_units?: number | null
@@ -44,6 +44,13 @@ export type Database = {
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "tbl_stores"
+            referencedColumns: ["store_id"]
+          },
+          {
+            foreignKeyName: "tbl_inventory_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "view_stores_inventory"
             referencedColumns: ["store_id"]
           },
         ]
@@ -121,11 +128,112 @@ export type Database = {
           store_name?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tbl_stores_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: true
+            referencedRelation: "tbl_stores"
+            referencedColumns: ["store_id"]
+          },
+          {
+            foreignKeyName: "tbl_stores_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: true
+            referencedRelation: "view_stores_inventory"
+            referencedColumns: ["store_id"]
+          },
+        ]
+      }
+      tbl_users: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          name: string | null
+          phone: string | null
+          picture: string | null
+          store_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          name?: string | null
+          phone?: string | null
+          picture?: string | null
+          store_id?: string | null
+          user_id?: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          name?: string | null
+          phone?: string | null
+          picture?: string | null
+          store_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tbl_users_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "tbl_stores"
+            referencedColumns: ["store_id"]
+          },
+          {
+            foreignKeyName: "tbl_users_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "view_stores_inventory"
+            referencedColumns: ["store_id"]
+          },
+        ]
       }
     }
     Views: {
-      [_ in never]: never
+      view_stores_inventory: {
+        Row: {
+          address: string | null
+          available_units: number | null
+          business_email: string | null
+          business_number: string | null
+          category: string | null
+          google_rating: number | null
+          inventory_id: string | null
+          product_description: string | null
+          product_id: string | null
+          product_title: string | null
+          store_description: string | null
+          store_id: string | null
+          store_name: string | null
+          total_units: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tbl_inventory_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "tbl_products"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "tbl_stores_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: true
+            referencedRelation: "tbl_stores"
+            referencedColumns: ["store_id"]
+          },
+          {
+            foreignKeyName: "tbl_stores_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: true
+            referencedRelation: "view_stores_inventory"
+            referencedColumns: ["store_id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_user_store_ids: {

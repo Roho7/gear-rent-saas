@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import { useAuth } from "@/app/_providers/useAuth";
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User } from "@supabase/supabase-js";
+import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createClientComponentClient } from "../../_utils/supabase";
@@ -45,6 +47,7 @@ const FormSchema = z.object({
 });
 
 const RegisterBusinessPage = () => {
+  const { user } = useAuth();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -84,6 +87,10 @@ const RegisterBusinessPage = () => {
         </pre>
       ),
     });
+  }
+
+  if (user?.store_id) {
+    redirect("/inventory");
   }
 
   return (

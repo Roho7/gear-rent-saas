@@ -4,34 +4,16 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { BiUser } from "react-icons/bi";
+import { useAuth } from "../_providers/useAuth";
 
 type Props = {};
 
 const UserButton = (props: Props) => {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const storedUser = localStorage.getItem("user");
-      setUser(storedUser ? JSON.parse(storedUser) : null);
-    };
-
-    // Initial load
-    handleStorageChange();
-
-    // Listen for changes in localStorage
-    window.addEventListener("storage", handleStorageChange);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
   return (
     <HoverCard>
       <HoverCardTrigger asChild>

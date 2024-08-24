@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ProductType } from "@/supabase/types";
+import { DialogClose } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { addInventoryItem } from "../../_actions/inventory.actions";
 import ProductCombobox from "./product.combobox";
@@ -42,7 +43,11 @@ const AddInventoryItemModal = (props: Props) => {
           />
         </div>
         <DialogFooter>
-          <Button onClick={handleAddItem}>Add Product</Button>
+          <DialogClose asChild>
+            <Button type="submit" onClick={handleAddItem}>
+              Add Product
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

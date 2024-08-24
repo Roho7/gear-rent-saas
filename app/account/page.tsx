@@ -3,30 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { User } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../_providers/useAuth";
 import { createClientComponentClient } from "../_utils/supabase";
 
 type Props = {};
 
 const UserPage = (props: Props) => {
-  const { handleLogout } = useAuth();
-  const [user, setUser] = useState<User | null>(null);
+  const { handleLogout, user } = useAuth();
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      //   const supabase = createClientComponentClient();
-      //   const response = await supabase.auth.getUser();
-      //   if (response) {
-      //     setUser(response.data.user);
-      //   }
-      localStorage.getItem("user");
-      setUser(JSON.parse(localStorage.getItem("user") ?? "{}") as User);
-    };
-    fetchUser();
-  }, []);
 
   const handleResetPassword = async () => {
     const supabase = createClientComponentClient();
@@ -49,9 +34,9 @@ const UserPage = (props: Props) => {
         <CardContent className="flex flex-col gap-2">
           <div>
             <h2 className="font-semibold">Account information</h2>
+
             <p>Email: {user?.email}</p>
-            <p>Role: {user?.role}</p>
-            <p>Name: {user?.phone}</p>
+            <p>Name: {user?.name}</p>
           </div>
           <div>
             <h2 className="font-semibold">Reset Password</h2>
