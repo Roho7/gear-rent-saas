@@ -9,3 +9,4 @@ export const metadataOptions: ProductMetadataKeys[] = [
 
 export const genderMap = ["male", "female", "unisex"];
 export const categoryMap = ["skiing", "snowboarding", "camping"];
+export const expertiseMap = ["beginner", "intermediate", "advanced"];

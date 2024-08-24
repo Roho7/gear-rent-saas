@@ -1,48 +1,28 @@
 import { useRouter } from "next/navigation";
-
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { FaArrowRight } from "react-icons/fa";
-import CTA from "./CTA";
-
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import VenueCard from "./venue-card";
+import MainSearchbar from "./hero-searchbar";
 
 type Props = {};
 
 const Hero = (props: Props) => {
   const router = useRouter();
   return (
-    <section className="rounded-lg max-h-[80vh]">
-      <div className="grid grid-cols-3 gap-2 grid-rows-2 items-center h-full relative">
-        <div className="text-white col-span-2 bg-ski rounded-lg bg-cover p-4 h-full relative row-span-2">
+    <section className="rounded-lg h-[80vh]">
+      <div className="gap-2 items-center h-full relative">
+        <div className="text-white bg-ski rounded-lg bg-cover p-4 h-full relative flex flex-col justify-between">
           {/* <h1 className="text-[100px]  text-white">Gear Town</h1> */}
           <img src="/logo-white-large.svg" alt="" width={2000} />
           <p className="text-right mt-4">
             An open marketplace to rent adventure gear
           </p>
-          <CTA
+          <MainSearchbar />
+          {/* <CTA
             callback={() => router.replace("/store")}
-            classNames="absolute right-8 bottom-8">
+            classNames="absolute right-8 bottom-8"
+          >
             Explore <FaArrowRight />
-          </CTA>
+          </CTA> */}
         </div>
-        <Card className="h-full">
+        {/* <Card className="h-full">
           <CardHeader>
             <CardTitle>Where are you going?</CardTitle>
             <CardDescription>
@@ -98,7 +78,7 @@ const Hero = (props: Props) => {
           <CardFooter className="flex justify-between">
             <Button onClick={() => router.replace("/store")}>Search</Button>
           </CardFooter>
-        </Card>
+        </Card> */}
       </div>
       {/* <div className="bg-ski w-full h-screen absolute top-0 -z-10"></div> */}
     </section>
