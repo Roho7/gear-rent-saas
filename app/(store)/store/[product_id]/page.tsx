@@ -101,10 +101,12 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
                   const metadata = activeProduct.product_metadata[key];
                   if (metadata?.length) {
                     return (
-                      <div className="flex gap-1">
+                      <div className="flex gap-1" key={key}>
                         {MetadataMap[key as ProductMetadataKeys].label}{" "}
-                        {metadata.map((g: string) => (
-                          <span className="flex gap-0.5 capitalize">{g}</span>
+                        {metadata.map((g: string, index) => (
+                          <span className="flex gap-0.5 capitalize" key={index}>
+                            {g}
+                          </span>
                         ))}
                       </div>
                     );
