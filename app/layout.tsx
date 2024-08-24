@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import Footer from "./_components/footer";
 import Navbar from "./_components/navbar";
 import { AuthProvider } from "./_providers/useAuth";
@@ -21,6 +22,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          async
+          defer
+        ></Script>
+      </head>
       <body
         className={
           inter.className + "overflow-x-hidden flex flex-col min-h-screen "

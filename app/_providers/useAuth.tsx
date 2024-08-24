@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       });
 
-      await toast({ title: "Logging in with Google" });
+      toast({ title: "Logging in with Google" });
     },
     [router, supabase],
   );
