@@ -1,10 +1,10 @@
-import { useAuth } from "../_providers/useAuth";
+import { useProducts } from "../_providers/useProducts";
 import ProductCard from "./product-card";
 
 type Props = {};
 
 const ProductRibbon = (props: Props) => {
-  const { products, loading } = useAuth();
+  const { products, loading } = useProducts();
   return (
     <div className="py-8">
       <h1 className="text-2xl">Featured</h1>

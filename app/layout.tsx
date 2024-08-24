@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import Footer from "./_components/footer";
 import Navbar from "./_components/navbar";
 import { AuthProvider } from "./_providers/useAuth";
-import { CartProvider } from "./_providers/useCart";
+import { ProductProvider } from "./_providers/useProducts";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -24,14 +24,15 @@ export default function RootLayout({
       <body
         className={
           inter.className + "overflow-x-hidden flex flex-col min-h-screen "
-        }>
+        }
+      >
         <AuthProvider>
-          <CartProvider>
+          <ProductProvider>
             <Navbar />
             <main className="flex-grow px-8 py-4">{children}</main>
             <Toaster />
             <Footer />
-          </CartProvider>
+          </ProductProvider>
         </AuthProvider>
       </body>
     </html>

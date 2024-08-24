@@ -18,7 +18,7 @@ const UserButton = (props: Props) => {
         <Button
           variant="ghost"
           className="rounded-full relative"
-          onClick={() => router.replace("/login")}
+          onClick={() => router.replace("/account")}
         >
           <BiUser />
         </Button>

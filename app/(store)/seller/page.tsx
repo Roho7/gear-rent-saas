@@ -1,11 +1,11 @@
 "use client";
-import { useAuth } from "@/app/_providers/useAuth";
+import { useProducts } from "@/app/_providers/useProducts";
 import StoreCard from "./_components/store-card";
 
 type Props = {};
 
 const SellerPage = (props: Props) => {
-  const { stores } = useAuth();
+  const { stores } = useProducts();
   return (
     <div>
       <h1>Your stores</h1>

@@ -9,15 +9,14 @@ import {
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { BiShoppingBag } from "react-icons/bi";
-import { useAuth } from "../_providers/useAuth";
-import { useCart } from "../_providers/useCart";
+import { useProducts } from "../_providers/useProducts";
 import CartItemCard from "./cart-item-cart";
 
 type Props = {};
 
 const CartPopup = (props: Props) => {
-  const { products } = useAuth();
-  const { cartItems } = useCart();
+  const { products } = useProducts();
+  const { cartItems } = useProducts();
   const router = useRouter();
 
   const cartQuantity = useMemo(() => {

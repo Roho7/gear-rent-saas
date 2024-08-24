@@ -1,4 +1,4 @@
-import { useCart } from "@/app/_providers/useCart";
+import { useProducts } from "@/app/_providers/useProducts";
 import { ProductType } from "@/supabase/types";
 
 type Props = {
@@ -6,7 +6,7 @@ type Props = {
 };
 
 const CartRowItem = ({ product }: Props) => {
-  const { cartItems } = useCart();
+  const { cartItems } = useProducts();
   return (
     <div className="p-2 border-b border-stone-200 flex gap-2">
       <div className="object-cover h-20 w-20">

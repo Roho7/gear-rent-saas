@@ -1,12 +1,9 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  ProductMetadataKeys,
-  ProductMetadataType,
-  ProductType,
-} from "@/supabase/types";
+import { ProductMetadataType, ProductType } from "@/supabase/types";
 
+import { useProducts } from "@/app/_providers/useProducts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,21 +16,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { categoryMap, genderMap, metadataOptions } from "@/data/contants";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { useAuth } from "../../_providers/useAuth";
+import { useEffect, useState } from "react";
 
 type Props = {};
-
-const metadataOptions: ProductMetadataKeys[] = [
-  "heights",
-  "lengths",
-  "widths",
-  "colors",
-];
-
-const genderMap = ["male", "female", "unisex"];
-const categoryMap = ["skiing", "snowboarding", "camping"];
 
 const ProductRow = ({ product }: { product: ProductType }) => {
   const [selectedGender, setSelectedGender] = useState<string[]>(
@@ -53,7 +40,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
   );
   const [newMetadataType, setNewMetadataType] = useState<string>("");
 
-  const { updateProductMetadata } = useAuth();
+  const { updateProductMetadata } = useProducts();
 
   const addMetadataProperty = () => {
     if (newMetadataType && !productMetadata[newMetadataType]) {
@@ -265,37 +252,17 @@ const ProductRow = ({ product }: { product: ProductType }) => {
 };
 
 const AllProducstPage = (props: Props) => {
-  const { products, fetchAndCacheData } = useAuth();
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
-  const [genderFilter, setGenderFilter] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const router = useRouter();
+  const {
+    products,
+    fetchAndCacheData,
+    searchQuery,
+    setSearchQuery,
+    productFilters,
+    setProductFilters,
+    filteredProducts,
+  } = useProducts();
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      let foundProduct = true;
-      if (searchQuery) {
-        foundProduct = product.product_title
-          ? product.product_title
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
-          : false;
-      }
-      if (categoryFilter.length) {
-        foundProduct = categoryFilter.length
-          ? categoryFilter.includes(product.category || "")
-          : true;
-      }
-      if (genderFilter.length) {
-        foundProduct = product.product_metadata?.gender
-          ? product?.product_metadata?.gender?.some((gender: string) =>
-              genderFilter.includes(gender),
-            )
-          : false;
-      }
-      return foundProduct;
-    });
-  }, [products, categoryFilter, genderFilter, searchQuery]);
+  const router = useRouter();
 
   if (!localStorage.getItem("user")) {
     router.replace("/login");
@@ -315,14 +282,15 @@ const AllProducstPage = (props: Props) => {
             {categoryMap.map((d: string, index) => (
               <div className="flex gap-1 text-sm items-center my-2" key={d}>
                 <Checkbox
-                  checked={categoryFilter.includes(d)}
+                  checked={productFilters?.category.includes(d)}
                   key={d}
                   onCheckedChange={(checked) => {
-                    return checked
-                      ? setCategoryFilter((prev) => [...prev, d])
-                      : setCategoryFilter(
-                          categoryFilter.filter((value) => value !== d),
-                        );
+                    setProductFilters((prev) => ({
+                      ...prev,
+                      category: checked
+                        ? [...prev.category, d]
+                        : prev.category.filter((value) => value !== d),
+                    }));
                   }}
                 />
                 <Label htmlFor={d}>{d}</Label>
@@ -338,14 +306,15 @@ const AllProducstPage = (props: Props) => {
             {genderMap.map((d: string) => (
               <div className="flex items-center gap-2 my-1" key={d}>
                 <Checkbox
-                  checked={genderFilter.includes(d)}
+                  checked={productFilters?.gender.includes(d)}
                   key={d}
                   onCheckedChange={(checked) => {
-                    return checked
-                      ? setGenderFilter((prev) => [...prev, d])
-                      : setGenderFilter(
-                          genderFilter.filter((value) => value !== d),
-                        );
+                    setProductFilters((prev) => ({
+                      ...prev,
+                      gender: checked
+                        ? [...prev.gender, d]
+                        : prev.gender.filter((value) => value !== d),
+                    }));
                   }}
                 />
                 <Label htmlFor={d}>{d}</Label>

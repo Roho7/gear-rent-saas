@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "../_providers/useAuth";
 
@@ -17,6 +18,11 @@ const LoginPage = (props: Props) => {
   const { handleSignUpWithEmail, handleLogout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  if (localStorage.getItem("user")) {
+    router.push("/");
+  }
   return (
     <main className="w-full h-[70vh] flex flex-col gap-8 justify-center items-center">
       <img src="/logo-black.svg" alt="" />
@@ -30,12 +36,12 @@ const LoginPage = (props: Props) => {
             onChange={(e) => setEmail(e.target.value)}
           />
           <Input
+            type="password"
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
         </CardContent>
         <CardFooter className="flex justify-between">
-          {/* <Button variant="outline">Cancel</Button> */}
           <Button
             className="w-full"
             onClick={() => handleSignUpWithEmail(email, password)}

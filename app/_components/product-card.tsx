@@ -11,7 +11,7 @@ import { ProductType } from "@/supabase/types";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import AddToCartButton from "../(store)/store/_components/add-to-cart.button";
-import { useCart } from "../_providers/useCart";
+import { useProducts } from "../_providers/useProducts";
 
 const ProductCard = ({
   product,
@@ -20,7 +20,7 @@ const ProductCard = ({
   product: ProductType;
   loading: boolean;
 }) => {
-  const { cartItems } = useCart();
+  const { cartItems } = useProducts();
   const router = useRouter();
 
   const addedToCart = useMemo(() => {

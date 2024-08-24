@@ -1,7 +1,6 @@
 "use client";
 import ProductRibbon from "@/app/_components/product-ribbon";
-import { useAuth } from "@/app/_providers/useAuth";
-import { useCart } from "@/app/_providers/useCart";
+import { useProducts } from "@/app/_providers/useProducts";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -41,8 +40,8 @@ const MetadataMap: Record<ProductMetadataKeys, any> = {
 };
 
 const ProductPage = ({ params }: { params: { product_id: string } }) => {
-  const { products } = useAuth();
-  const { cartItems } = useCart();
+  const { products } = useProducts();
+  const { cartItems } = useProducts();
 
   const activeProduct = useMemo(() => {
     return products.find((p) => p.product_id === params.product_id);
@@ -98,7 +97,7 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
               <div className="flex flex-col text-gray-500 text-sm">
                 Product details:
                 {Object.keys(MetadataMap).map((key) => {
-                  const metadata = activeProduct.product_metadata[key];
+                  const metadata = activeProduct.product_metadata?.[key];
                   if (metadata?.length) {
                     return (
                       <div className="flex gap-1" key={key}>
