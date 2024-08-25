@@ -37,6 +37,12 @@ const MetadataMap: Record<ProductMetadataKeys, any> = {
   lengths: {
     label: "Lengths:",
   },
+  experience: {
+    label: "Experience:",
+  },
+  style: {
+    label: "Style:",
+  },
 };
 
 const ProductPage = ({ params }: { params: { product_id: string } }) => {

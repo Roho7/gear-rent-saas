@@ -8,6 +8,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import CartPopup from "./cart-popup";
+import ModeSwitcher from "./mode-switcher";
 import UserButton from "./user-button";
 
 const Navbar: React.FC = () => {
@@ -138,6 +139,7 @@ const Navbar: React.FC = () => {
         </NavigationMenuList>
       </NavigationMenu>
       <div className="flex gap-2 items-center">
+        <ModeSwitcher />
         <CartPopup />
         <UserButton />
       </div>

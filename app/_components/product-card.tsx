@@ -37,13 +37,15 @@ const ProductCard = ({
     >
       <CardHeader>
         <CardTitle>{product.product_title}</CardTitle>
-        <CardDescription>{product.product_title}</CardDescription>
+        <CardDescription className="text-primary">
+          {product.description}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center">
         <img src={product.image_url || ""} alt="img" className="max-h-40" />
       </CardContent>
       <CardFooter className="flex flex-col items-start gap-1 mt-auto">
-        <p className="text-gray-400 flex items-center gap-2">
+        <p className="text-primary flex items-center gap-2">
           <span className=" text-xl">$</span>
           <span className="text-xs">/day</span>
         </p>

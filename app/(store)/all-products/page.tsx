@@ -176,7 +176,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
           <Label
             role="button"
             htmlFor="gender"
-            className="capitalize p-2 flex items-center justify-between bg-gray-100 rounded-md"
+            className="capitalize p-2 flex items-center justify-between bg-muted rounded-md"
             onClick={() =>
               setCollapsed((prev) => ({ ...prev, gender: !collapsed.gender }))
             }
@@ -211,7 +211,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
               <Label
                 role="button"
                 htmlFor={property}
-                className="capitalize p-2 flex items-center justify-between bg-gray-100 rounded-md"
+                className="capitalize p-2 flex items-center justify-between bg-muted rounded-md"
                 onClick={() => {
                   console.log(collapsed);
                   setCollapsed((prev) => ({

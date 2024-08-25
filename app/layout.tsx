@@ -5,6 +5,7 @@ import Footer from "./_components/footer";
 import Navbar from "./_components/navbar";
 import { AuthProvider } from "./_providers/useAuth";
 import { ProductProvider } from "./_providers/useProducts";
+import { ThemeProvider } from "./_providers/useTheme";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -34,14 +35,22 @@ export default function RootLayout({
           inter.className + "overflow-x-hidden flex flex-col min-h-screen "
         }
       >
-        <AuthProvider>
-          <ProductProvider>
-            <Navbar />
-            <main className="flex-grow px-8 py-4">{children}</main>
-            <Toaster />
-            <Footer />
-          </ProductProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <ProductProvider>
+              <Navbar />
+              <main className="flex-grow px-8 py-4">{children}</main>
+
+              <Toaster />
+              <Footer />
+            </ProductProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

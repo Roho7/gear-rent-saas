@@ -9,7 +9,6 @@ const Hero = (props: Props) => {
     <section className="rounded-lg h-[80vh]">
       <div className="gap-2 items-center h-full relative">
         <div className="text-white bg-ski rounded-lg bg-cover p-4 h-full relative flex flex-col justify-between">
-          {/* <h1 className="text-[100px]  text-white">Gear Town</h1> */}
           <img src="/logo-white-large.svg" alt="" width={2000} />
           <p className="text-right mt-4">
             An open marketplace to rent adventure gear
