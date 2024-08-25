@@ -75,6 +75,7 @@ export const ProductProvider = ({
     lengths: [],
     sizes: [],
     widths: [],
+    experience: [],
   });
 
   const supabase = createClientComponentClient();

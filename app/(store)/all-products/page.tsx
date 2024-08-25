@@ -21,6 +21,7 @@ import { toast } from "@/components/ui/use-toast";
 import { categoryMap, genderMap, metadataOptions } from "@/data/contants";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { MdOutlineUnfoldMore } from "react-icons/md";
 
 type Props = {};
 
@@ -41,6 +42,14 @@ const ProductRow = ({ product }: { product: ProductType }) => {
     product.product_metadata || {},
   );
   const [newMetadataType, setNewMetadataType] = useState<string>("");
+  const [collapsed, setCollapsed] = useState<
+    Record<keyof ProductMetadataType, boolean>
+  >(
+    Object.keys(productMetadata).reduce((acc, key) => {
+      acc[key as keyof ProductMetadataType] = true;
+      return acc;
+    }, {} as Record<keyof ProductMetadataType, boolean>),
+  );
 
   const { updateProductMetadata } = useProducts();
 
@@ -107,7 +116,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
   return (
     <Card className="flex gap-2">
       <CardHeader>
-        <div className="w-80 h-80 object-cover">
+        <div className="w-80 h-80 object-cover overflow-hidden">
           <img src={product.image_url || ""} />
         </div>
       </CardHeader>
@@ -163,25 +172,101 @@ const ProductRow = ({ product }: { product: ProductType }) => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-2 flex-1">
-          <Label htmlFor="gender">Gender</Label>
-          {genderMap.map((d: string) => (
-            <div className="flex gap-1 text-sm items-center" key={d}>
-              <Checkbox
-                checked={selectedGender.includes(d)}
-                key={d}
-                onCheckedChange={(checked) => {
-                  return checked
-                    ? setSelectedGender((prev) => [...prev, d])
-                    : setSelectedGender(
-                        selectedGender.filter((value) => value !== d),
-                      );
+        <div className="flex flex-col gap-4 flex-1">
+          <Label
+            role="button"
+            htmlFor="gender"
+            className="capitalize p-2 flex items-center justify-between bg-gray-100 rounded-md"
+            onClick={() =>
+              setCollapsed((prev) => ({ ...prev, gender: !collapsed.gender }))
+            }
+          >
+            Gender
+            <MdOutlineUnfoldMore />
+          </Label>
+          {!collapsed.gender && (
+            <div className="flex gap-2">
+              {genderMap.map((d: string) => (
+                <div className="flex gap-1 text-sm items-center" key={d}>
+                  <Checkbox
+                    checked={selectedGender.includes(d)}
+                    key={d}
+                    onCheckedChange={(checked) => {
+                      return checked
+                        ? setSelectedGender((prev) => [...prev, d])
+                        : setSelectedGender(
+                            selectedGender.filter((value) => value !== d),
+                          );
+                    }}
+                  />
+                  <Label htmlFor={d}>{d}</Label>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Dynamic metadata fields */}
+          {Object.entries(productMetadata).map(([property, values]) => (
+            <div key={property} className="flex flex-col gap-2">
+              <Label
+                role="button"
+                htmlFor={property}
+                className="capitalize p-2 flex items-center justify-between bg-gray-100 rounded-md"
+                onClick={() => {
+                  console.log(collapsed);
+                  setCollapsed((prev) => ({
+                    ...prev,
+                    [property]: !prev[property],
+                  }));
                 }}
-              />
-              <Label htmlFor={d}>{d}</Label>
+              >
+                {property}
+                <MdOutlineUnfoldMore />
+              </Label>
+              {values.map(
+                (value, index) =>
+                  !collapsed[property] && (
+                    <div key={`${property}-${index}`} className="flex gap-2">
+                      <Input
+                        type="text"
+                        value={value}
+                        onChange={(e) =>
+                          updateMetadataValue(property, index, e.target.value)
+                        }
+                        placeholder={`Enter ${property}`}
+                      />
+                      {index === values.length - 1 && (
+                        <Button onClick={() => addMetadataValue(property)}>
+                          +
+                        </Button>
+                      )}
+                      {
+                        <Button
+                          onClick={() => {
+                            if (index === 0) {
+                              const { [property]: _, ...rest } =
+                                productMetadata;
+                              setProductMetadata(rest as ProductMetadataType);
+                              return;
+                            }
+                            setProductMetadata((prev) => ({
+                              ...prev,
+                              [property]: prev[property].filter(
+                                (_, i) => i !== index,
+                              ),
+                            }));
+                          }}
+                        >
+                          -
+                        </Button>
+                      }
+                    </div>
+                  ),
+              )}
             </div>
           ))}
 
+          {/* Add metadata */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="newMetadata">Add Property</Label>
             <div className="flex gap-2">
@@ -207,44 +292,6 @@ const ProductRow = ({ product }: { product: ProductType }) => {
               <Button onClick={addMetadataProperty}>Add</Button>
             </div>
           </div>
-
-          {/* Dynamic metadata fields */}
-          {Object.entries(productMetadata).map(([property, values]) => (
-            <div key={property} className="flex flex-col gap-2">
-              <Label htmlFor={property}>{property}</Label>
-              {values.map((value, index) => (
-                <div key={`${property}-${index}`} className="flex gap-2">
-                  <Input
-                    type="text"
-                    value={value}
-                    onChange={(e) =>
-                      updateMetadataValue(property, index, e.target.value)
-                    }
-                    placeholder={`Enter ${property}`}
-                  />
-                  {index === values.length - 1 && (
-                    <Button onClick={() => addMetadataValue(property)}>
-                      +
-                    </Button>
-                  )}
-                  {index !== 0 && (
-                    <Button
-                      onClick={() =>
-                        setProductMetadata((prev) => ({
-                          ...prev,
-                          [property]: prev[property].filter(
-                            (_, i) => i !== index,
-                          ),
-                        }))
-                      }
-                    >
-                      -
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-          ))}
 
           <Button onClick={saveProduct}>Save</Button>
         </div>

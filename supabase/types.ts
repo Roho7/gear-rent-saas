@@ -18,7 +18,8 @@ export type ProductMetadataKeys =
   | "colors"
   | "heights"
   | "widths"
-  | "lengths";
+  | "lengths"
+  | "experience";
 
 export type ProductMetadataType =
   & {
