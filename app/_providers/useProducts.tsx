@@ -76,6 +76,7 @@ export const ProductProvider = ({
     sizes: [],
     widths: [],
     experience: [],
+    style: [],
   });
 
   const supabase = createClientComponentClient();
@@ -164,6 +165,10 @@ export const ProductProvider = ({
     }
   }, []);
 
+  // -------------------------------------------------------------------------- //
+  //                               FILTERED PRODUCTS                            //
+  // -------------------------------------------------------------------------- //
+
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       let foundProduct = true;
@@ -174,15 +179,38 @@ export const ProductProvider = ({
               .includes(searchQuery.toLowerCase())
           : false;
       }
+      // CATEGORY FILTER
       if (productFilters?.category.length) {
         foundProduct = productFilters.category.length
           ? productFilters.category.includes(product.category || "")
           : true;
       }
+
+      // ----- METADATA FILTERS ----- //
+
+      // GENDER FILTER
       if (productFilters?.gender.length) {
         foundProduct = product.product_metadata?.gender
           ? product?.product_metadata?.gender?.some((gender: string) =>
               productFilters?.gender.includes(gender),
+            )
+          : false;
+      }
+
+      // EXPERIENCE FILTER
+      if (productFilters?.experience.length) {
+        foundProduct = product.product_metadata?.experience
+          ? product?.product_metadata?.experience?.some((exp: string) =>
+              productFilters?.experience.includes(exp),
+            )
+          : false;
+      }
+
+      // STYLE FILTER
+      if (productFilters?.style.length) {
+        foundProduct = product.product_metadata?.style
+          ? product?.product_metadata?.style?.some((style: string) =>
+              productFilters?.style.includes(style),
             )
           : false;
       }

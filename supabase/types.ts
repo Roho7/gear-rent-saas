@@ -19,7 +19,8 @@ export type ProductMetadataKeys =
   | "heights"
   | "widths"
   | "lengths"
-  | "experience";
+  | "experience"
+  | "style";
 
 export type ProductMetadataType =
   & {
