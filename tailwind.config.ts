@@ -23,6 +23,7 @@ const config = {
       backgroundImage: {
         ski: "url('/ski.jpg')",
         snowski: "url('/snow.jpg')",
+        summer: "url('/summer.jpg')",
       },
       colors: {
         border: "hsl(var(--border))",

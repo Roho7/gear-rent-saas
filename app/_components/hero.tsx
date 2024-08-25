@@ -1,14 +1,20 @@
-import { useRouter } from "next/navigation";
+import clsx from "clsx";
+import { useTheme } from "next-themes";
 import MainSearchbar from "./hero-searchbar";
 
 type Props = {};
 
 const Hero = (props: Props) => {
-  const router = useRouter();
+  const { theme } = useTheme();
   return (
     <section className="rounded-lg h-[80vh]">
       <div className="gap-2 items-center h-full relative">
-        <div className="text-white bg-ski rounded-lg bg-cover p-4 h-full relative flex flex-col justify-between">
+        <div
+          className={clsx(
+            "text-white rounded-lg bg-cover p-4 h-full relative flex flex-col justify-between",
+            theme === "dark" ? "bg-summer" : "bg-ski",
+          )}
+        >
           <img src="/logo-white-large.svg" alt="" width={2000} />
           <p className="text-right mt-4">
             An open marketplace to rent adventure gear
