@@ -156,7 +156,6 @@ const ProductRow = ({ product }: { product: ProductType }) => {
             <Label htmlFor="description">Description</Label>
             <Input
               type="text"
-              value={product.description || ""}
               name="description"
               placeholder={product.description || ""}
               onChange={(e) => setProductDescription(e.target.value)}

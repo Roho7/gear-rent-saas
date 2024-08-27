@@ -37,6 +37,7 @@ const UserPage = (props: Props) => {
 
             <p>Email: {user?.email}</p>
             <p>Name: {user?.name}</p>
+            <p>Store: {user?.store_id}</p>
           </div>
           <div>
             <h2 className="font-semibold">Reset Password</h2>

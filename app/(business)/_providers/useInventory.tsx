@@ -1,6 +1,6 @@
 "use client";
-import { InventoryType } from "@/supabase/types";
-import { DBSchema, openDB } from "idb";
+import { Tables } from "@/supabase/supabase.types";
+import { InventoryType, StoreType } from "@/supabase/types";
 import React, {
   createContext,
   useContext,
@@ -9,14 +9,12 @@ import React, {
   useState,
 } from "react";
 import { getInventory } from "../_actions/inventory.actions";
-interface InventoryDb extends DBSchema {
-  inventory: {
-    key: string;
-    value: InventoryType;
-  };
-}
+
 interface InventoryContextValue {
   inventory: InventoryType[] | null;
+  storeDetails: StoreType | null;
+  fetchInventory: () => Promise<void>;
+  isLoading: boolean;
 }
 
 const InventoryContext = createContext<InventoryContextValue | undefined>(
@@ -24,53 +22,58 @@ const InventoryContext = createContext<InventoryContextValue | undefined>(
 );
 
 export const InventoryProvider = ({
+  user,
   children,
 }: {
+  user: Tables<"tbl_users"> | null;
   children: React.ReactNode;
 }) => {
+  const [storeDetails, setStoreDetails] = useState<StoreType | null>(null);
   const [inventory, setInventory] = useState<InventoryType[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const dbPromise = useMemo(() => {
-    return openDB<InventoryDb>("InventoryDatabase", 1, {
-      upgrade(db) {
-        db.createObjectStore("inventory", {
-          keyPath: "inventory_id",
-        });
-      },
-    });
-  }, []);
-
-  const fetchInventory = async ({
-    hardRefresh = false,
-  }: {
-    hardRefresh?: boolean;
-  }) => {
-    const db = await dbPromise;
-    const cachedData = await db?.getAll("inventory");
-
-    if (cachedData && !hardRefresh) {
-      setInventory(cachedData);
-      console.log("Fetched inventory from cache");
-    }
-    const inventory: InventoryType[] | null = await getInventory();
-    if (!inventory) {
+  const fetchInventory = async () => {
+    if (!user?.store_id) {
+      console.log("User does not have a store ID");
+      setIsLoading(false);
       return;
     }
-    setInventory(inventory);
-    const inventoryTransaction = db.transaction("inventory", "readwrite");
-    await Promise.all(inventory.map((i) => inventoryTransaction.store.add(i)));
-    console.log("Fetched inventory from server");
+    setIsLoading(true);
+    try {
+      const data: {
+        store_details: StoreType;
+        inventory: InventoryType[];
+      } | null = await getInventory(user?.store_id || null);
+      if (!data) {
+        return;
+      }
+      setStoreDetails(data.store_details);
+      setInventory(data.inventory);
+
+      console.log("Fetched inventory from server");
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchInventory({ hardRefresh: false });
-  }, []);
+    if (user?.store_id) {
+      fetchInventory();
+    } else {
+      setIsLoading(false);
+    }
+  }, [user?.store_id]);
 
   const value: InventoryContextValue = useMemo(
     () => ({
       inventory,
+      storeDetails,
+      fetchInventory,
+      isLoading,
     }),
-    [inventory],
+    [inventory, storeDetails, isLoading],
   );
   return (
     <InventoryContext.Provider value={value}>

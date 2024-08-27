@@ -128,22 +128,7 @@ export type Database = {
           store_name?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "tbl_stores_store_id_fkey"
-            columns: ["store_id"]
-            isOneToOne: true
-            referencedRelation: "tbl_stores"
-            referencedColumns: ["store_id"]
-          },
-          {
-            foreignKeyName: "tbl_stores_store_id_fkey"
-            columns: ["store_id"]
-            isOneToOne: true
-            referencedRelation: "view_stores_inventory"
-            referencedColumns: ["store_id"]
-          },
-        ]
+        Relationships: []
       }
       tbl_users: {
         Row: {
@@ -218,24 +203,16 @@ export type Database = {
             referencedRelation: "tbl_products"
             referencedColumns: ["product_id"]
           },
-          {
-            foreignKeyName: "tbl_stores_store_id_fkey"
-            columns: ["store_id"]
-            isOneToOne: true
-            referencedRelation: "tbl_stores"
-            referencedColumns: ["store_id"]
-          },
-          {
-            foreignKeyName: "tbl_stores_store_id_fkey"
-            columns: ["store_id"]
-            isOneToOne: true
-            referencedRelation: "view_stores_inventory"
-            referencedColumns: ["store_id"]
-          },
         ]
       }
     }
     Functions: {
+      get_inventory: {
+        Args: {
+          store_id_input: string
+        }
+        Returns: Json
+      }
       get_user_store_ids: {
         Args: Record<PropertyKey, never>
         Returns: string[]
