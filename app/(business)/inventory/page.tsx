@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { redirect, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { IoRefreshOutline } from "react-icons/io5";
 import { useInventory } from "../_providers/useInventory";
 import InventoryItemCard from "./_components/inventory.card";
@@ -21,6 +22,14 @@ const InventoryPage = (props: Props) => {
   const router = useRouter();
   const { inventory, storeDetails, fetchInventory, isLoading } = useInventory();
 
+  useEffect(() => {
+    fetchInventory();
+  }, []);
+
+  if (!user?.store_id) {
+    redirect("/register");
+  }
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-2">
@@ -29,10 +38,6 @@ const InventoryPage = (props: Props) => {
         <Skeleton className="h-40 w-full" />
       </div>
     );
-  }
-
-  if (!user?.store_id) {
-    redirect("/register");
   }
   return (
     <div className="flex flex-col gap-2">

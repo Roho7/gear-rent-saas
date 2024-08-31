@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -47,7 +46,7 @@ const FormSchema = z.object({
 });
 
 const RegisterBusinessPage = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -61,32 +60,35 @@ const RegisterBusinessPage = () => {
   const supabase = createClientComponentClient();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const formattedData = {
-      ...data,
-      user_id: (JSON.parse(localStorage.getItem("user") || "{}") as User).id,
-      business_number: `${data.country_code}${data.business_number}`,
-    };
-    const { country_code, ...insertedData } = formattedData;
+    try {
+      const formattedData = {
+        ...data,
+        user_id: user?.user_id,
+        business_number: `${data.country_code}${data.business_number}`,
+      };
+      const { country_code, ...insertedData } = formattedData;
 
-    const { data: insertData, error } = await supabase
-      .from("tbl_stores")
-      .insert(insertedData);
+      const { data: insertData, error } = await supabase
+        .from("tbl_stores")
+        .insert(insertedData);
 
-    if (error) {
+      toast({
+        title: "You submitted the following values:",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          </pre>
+        ),
+      });
+    } catch (error) {
       console.error("Error inserting data:", error);
       toast({
         title: "Error submitting form",
       });
       return;
+    } finally {
+      refreshUser();
     }
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
   }
 
   if (user?.store_id) {

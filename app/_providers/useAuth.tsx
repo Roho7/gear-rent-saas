@@ -19,6 +19,7 @@ interface AuthContextValue {
   handleLoginWithEmail: (email: string, password: string) => Promise<void>;
   handleSignInWithGoogle: (response: { credential: string }) => Promise<void>;
   handleLogout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   user: Tables<"tbl_users"> | null;
   isLoading: boolean;
 }
@@ -49,6 +50,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     setIsLoading(false);
   }, []);
+
+  const refreshUser = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const {
+        data: { user: authUser },
+        error,
+      } = await supabase.auth.getUser();
+      if (error) throw error;
+
+      if (authUser) {
+        const userData = await fetchUser(authUser.id);
+        setUser(userData);
+        localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(userData));
+        toast({ title: "User data refreshed" });
+      } else {
+        setUser(null);
+        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+      }
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Error refreshing user data", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [supabase.auth]);
 
   const handleSignInWithGoogle = useCallback(
     async (response: { credential: string }) => {
@@ -183,6 +210,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       handleLogout,
       handleSignInWithGoogle,
       user,
+      refreshUser,
       isLoading,
     }),
     [
