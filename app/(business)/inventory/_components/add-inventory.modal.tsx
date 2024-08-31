@@ -11,7 +11,6 @@ import {
 import { ProductType } from "@/supabase/types";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useState } from "react";
-import { addInventoryItem } from "../../_actions/inventory.actions";
 
 type Props = {};
 
@@ -20,11 +19,11 @@ const AddInventoryItemModal = (props: Props) => {
     null,
   );
 
-  const handleAddItem = async () => {
-    await addInventoryItem({
-      product_id: selectedProduct?.product_id,
-    });
-  };
+  // const handleAddItem = async () => {
+  //   await addInventoryItem({
+  //     product_id: selectedProduct?.product_id,
+  //   });
+  // };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -43,9 +42,9 @@ const AddInventoryItemModal = (props: Props) => {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="submit" onClick={handleAddItem}>
+            {/* <Button type="submit" onClick={handleAddItem}>
               Add Product
-            </Button>
+            </Button> */}
           </DialogClose>
         </DialogFooter>
       </DialogContent>
