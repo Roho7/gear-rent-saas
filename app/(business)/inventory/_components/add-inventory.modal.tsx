@@ -12,7 +12,6 @@ import { ProductType } from "@/supabase/types";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { addInventoryItem } from "../../_actions/inventory.actions";
-import ProductCombobox from "./product.combobox";
 
 type Props = {};
 
@@ -37,10 +36,10 @@ const AddInventoryItemModal = (props: Props) => {
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <ProductCombobox
-            value={selectedProduct}
+          {/* <ProductCombobox
+            value={selectedProduct?.product_id}
             setValue={setSelectedProduct}
-          />
+          /> */}
         </div>
         <DialogFooter>
           <DialogClose asChild>

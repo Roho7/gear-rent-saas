@@ -12,21 +12,45 @@ export type Database = {
       tbl_inventory: {
         Row: {
           available_units: number | null
+          base_price: string | null
+          currency_code: string | null
+          discount_1: number | null
+          discount_2: number | null
+          discount_3: number | null
           inventory_id: string
+          price_granularity:
+            | Database["public"]["Enums"]["enum_price_granularity_type"]
+            | null
           product_id: string | null
           store_id: string | null
           total_units: number | null
         }
         Insert: {
           available_units?: number | null
+          base_price?: string | null
+          currency_code?: string | null
+          discount_1?: number | null
+          discount_2?: number | null
+          discount_3?: number | null
           inventory_id?: string
+          price_granularity?:
+            | Database["public"]["Enums"]["enum_price_granularity_type"]
+            | null
           product_id?: string | null
           store_id?: string | null
           total_units?: number | null
         }
         Update: {
           available_units?: number | null
+          base_price?: string | null
+          currency_code?: string | null
+          discount_1?: number | null
+          discount_2?: number | null
+          discount_3?: number | null
           inventory_id?: string
+          price_granularity?:
+            | Database["public"]["Enums"]["enum_price_granularity_type"]
+            | null
           product_id?: string | null
           store_id?: string | null
           total_units?: number | null
@@ -46,13 +70,6 @@ export type Database = {
             referencedRelation: "tbl_stores"
             referencedColumns: ["store_id"]
           },
-          {
-            foreignKeyName: "tbl_inventory_store_id_fkey"
-            columns: ["store_id"]
-            isOneToOne: false
-            referencedRelation: "view_stores_inventory"
-            referencedColumns: ["store_id"]
-          },
         ]
       }
       tbl_products: {
@@ -60,7 +77,10 @@ export type Database = {
           category: string | null
           created_at: string
           description: string | null
+          experience: string[] | null
+          gender: Database["public"]["Enums"]["enum_genders"] | null
           image_url: string | null
+          market_price: string | null
           product_id: string
           product_link: string | null
           product_metadata: Json | null
@@ -70,7 +90,10 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          experience?: string[] | null
+          gender?: Database["public"]["Enums"]["enum_genders"] | null
           image_url?: string | null
+          market_price?: string | null
           product_id?: string
           product_link?: string | null
           product_metadata?: Json | null
@@ -80,7 +103,10 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          experience?: string[] | null
+          gender?: Database["public"]["Enums"]["enum_genders"] | null
           image_url?: string | null
+          market_price?: string | null
           product_id?: string
           product_link?: string | null
           product_metadata?: Json | null
@@ -166,45 +192,11 @@ export type Database = {
             referencedRelation: "tbl_stores"
             referencedColumns: ["store_id"]
           },
-          {
-            foreignKeyName: "tbl_users_store_id_fkey"
-            columns: ["store_id"]
-            isOneToOne: false
-            referencedRelation: "view_stores_inventory"
-            referencedColumns: ["store_id"]
-          },
         ]
       }
     }
     Views: {
-      view_stores_inventory: {
-        Row: {
-          address: string | null
-          available_units: number | null
-          business_email: string | null
-          business_number: string | null
-          category: string | null
-          google_rating: number | null
-          inventory_id: string | null
-          product_description: string | null
-          product_id: string | null
-          product_title: string | null
-          store_description: string | null
-          store_id: string | null
-          store_name: string | null
-          total_units: number | null
-          user_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tbl_inventory_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "tbl_products"
-            referencedColumns: ["product_id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       get_inventory: {
@@ -219,7 +211,8 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      enum_genders: "male" | "female" | "unisex"
+      enum_price_granularity_type: "daily" | "hourly"
     }
     CompositeTypes: {
       [_ in never]: never

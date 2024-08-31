@@ -30,15 +30,15 @@ export const InventoryProvider = ({
 }) => {
   const [storeDetails, setStoreDetails] = useState<StoreType | null>(null);
   const [inventory, setInventory] = useState<InventoryType[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchInventory = async () => {
+    setIsLoading(true);
     if (!user?.store_id) {
       console.log("User does not have a store ID");
       setIsLoading(false);
       return;
     }
-    setIsLoading(true);
     try {
       const data: {
         store_details: StoreType;
@@ -61,10 +61,9 @@ export const InventoryProvider = ({
   useEffect(() => {
     if (user?.store_id) {
       fetchInventory();
-    } else {
-      setIsLoading(false);
     }
-  }, [user?.store_id]);
+    setIsLoading(false);
+  }, [user]);
 
   const value: InventoryContextValue = useMemo(
     () => ({

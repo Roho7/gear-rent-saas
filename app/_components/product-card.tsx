@@ -16,9 +16,11 @@ import { useProducts } from "../_providers/useProducts";
 const ProductCard = ({
   product,
   loading,
+  showFooter = true,
 }: {
   product: ProductType;
   loading: boolean;
+  showFooter?: boolean;
 }) => {
   const { cartItems } = useProducts();
   const router = useRouter();
@@ -44,17 +46,19 @@ const ProductCard = ({
       <CardContent className="flex justify-center">
         <img src={product.image_url || ""} alt="img" className="max-h-40" />
       </CardContent>
-      <CardFooter className="flex flex-col items-start gap-1 mt-auto">
-        <p className="text-primary flex items-center gap-2">
-          <span className=" text-xl">$</span>
-          <span className="text-xs">/day</span>
-        </p>
-        <AddToCartButton
-          addedToCart={addedToCart}
-          product={product}
-          className=""
-        />
-      </CardFooter>
+      {showFooter && (
+        <CardFooter className="flex flex-col items-start gap-1 mt-auto">
+          <p className="text-primary flex items-center gap-2">
+            <span className=" text-xl">$</span>
+            <span className="text-xs">/day</span>
+          </p>
+          <AddToCartButton
+            addedToCart={addedToCart}
+            product={product}
+            className=""
+          />
+        </CardFooter>
+      )}
     </Card>
   );
 };

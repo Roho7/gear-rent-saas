@@ -1,5 +1,11 @@
 import { useProducts } from "@/app/_providers/useProducts";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { InventoryType } from "@/supabase/types";
 
 type Props = {
@@ -9,31 +15,42 @@ type Props = {
 const InventoryItemCard = ({ inventoryItem }: Props) => {
   const { products } = useProducts();
   return (
-    <Card>
-      <CardHeader></CardHeader>
-      <CardContent className="flex gap-2">
-        <div className="h-40 ">
+    <Card className="flex flex-col gap-2">
+      <CardHeader>
+        <div className="">
+          {inventoryItem.product_title}{" "}
+          <p className="text-gray-400 text-xs">{inventoryItem.inventory_id}</p>
+        </div>
+        {inventoryItem.category && (
+          <Badge variant="outline" className="capitalize mr-auto">
+            {inventoryItem.category}
+          </Badge>
+        )}
+      </CardHeader>
+      <CardContent className="flex flex-col gap-2">
+        <div className="h-40 w-40 mx-auto">
           <img
             src={
               products.find((d) => d.product_id === inventoryItem.product_id)
                 ?.image_url || ""
             }
             alt=""
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
         </div>
         <ul className="flex flex-col w-full">
-          <li className="flex justify-between w-full items-center">
-            {inventoryItem.product_title}{" "}
-            <span className="text-gray-400 text-xs">
-              {inventoryItem.product_id}
-            </span>
-          </li>
-          <li></li>
-          <li>{inventoryItem.category}</li>
           <li>{inventoryItem.total_units}</li>
         </ul>
       </CardContent>
+      <CardFooter className="flex flex-col items-start gap-1 mt-auto">
+        <h2
+          className="font-bold text-primary
+        "
+        >
+          {inventoryItem.base_price} /{" "}
+          {inventoryItem.price_granularity === "daily" ? "day" : "hour"}
+        </h2>
+      </CardFooter>
     </Card>
   );
 };

@@ -5,8 +5,6 @@ export const metadataOptions: ProductMetadataKeys[] = [
   "lengths",
   "widths",
   "colors",
-  "experience",
-  "style",
 ];
 
 export const genderMap = ["male", "female", "unisex"];

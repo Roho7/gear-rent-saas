@@ -5,14 +5,19 @@ export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
 };
 export type StoreType = Tables<"tbl_stores">;
 export type InventoryType = {
-  price: string;
+  inventory_id: string;
   product_id: string;
+  base_price: string;
   product_title: string;
   category: string;
   product_metadata: ProductMetadataType;
   total_units: number;
-  inventory_id: string;
   available_units: number;
+  price_granularity: PriceGranularityType;
+  currency_code: string;
+  discount_1: number;
+  discount_2: number;
+  discount_3: number;
 };
 
 export type CartItemType = {
@@ -21,19 +26,19 @@ export type CartItemType = {
   };
 };
 
+export type PriceGranularityType = "daily" | "hourly";
+export type GenderType = "male" | "female" | "unisex";
+
 export type ProductMetadataKeys =
-  | "gender"
   | "sizes"
   | "colors"
   | "heights"
   | "widths"
-  | "lengths"
-  | "experience"
-  | "style";
+  | "lengths";
 
 export type ProductMetadataType =
   & {
-    [K in ProductMetadataKeys]: string[];
+    [K in ProductMetadataKeys]?: string[];
   }
   & {
     [key: string]: string[];

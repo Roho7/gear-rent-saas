@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ProductMetadataType, ProductType } from "@/supabase/types";
+import { GenderType, ProductMetadataType, ProductType } from "@/supabase/types";
 
 import { useAuth } from "@/app/_providers/useAuth";
 import { useProducts } from "@/app/_providers/useProducts";
@@ -17,8 +17,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-import { categoryMap, genderMap, metadataOptions } from "@/data/contants";
+import {
+  categoryMap,
+  expertiseMap,
+  genderMap,
+  metadataOptions,
+} from "@/data/contants";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MdOutlineUnfoldMore } from "react-icons/md";
@@ -26,8 +32,8 @@ import { MdOutlineUnfoldMore } from "react-icons/md";
 type Props = {};
 
 const ProductRow = ({ product }: { product: ProductType }) => {
-  const [selectedGender, setSelectedGender] = useState<string[]>(
-    product.product_metadata?.gender || [],
+  const [selectedGender, setSelectedGender] = useState<string | null>(
+    product.gender || null,
   );
   const [productTitle, setProductTitle] = useState<string>(
     product.product_title || "",
@@ -38,6 +44,13 @@ const ProductRow = ({ product }: { product: ProductType }) => {
   const [productCategory, setProductCategory] = useState<string>(
     product.category || "",
   );
+  const [productExperience, setProductExperience] = useState<string[]>([]);
+  const [productImage, setProductImage] = useState<string>(
+    product.image_url || "",
+  );
+  const [productPrice, setProductPrice] = useState<string>(
+    product.market_price || "",
+  );
   const [productMetadata, setProductMetadata] = useState<ProductMetadataType>(
     product.product_metadata || {},
   );
@@ -45,7 +58,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
   const [collapsed, setCollapsed] = useState<
     Record<keyof ProductMetadataType, boolean>
   >(
-    Object.keys(productMetadata).reduce((acc, key) => {
+    [...Object.keys(productMetadata), "experience"].reduce((acc, key) => {
       acc[key as keyof ProductMetadataType] = true;
       return acc;
     }, {} as Record<keyof ProductMetadataType, boolean>),
@@ -79,14 +92,17 @@ const ProductRow = ({ product }: { product: ProductType }) => {
   };
 
   const saveProduct = async () => {
-    const updatedProduct = {
+    const updatedProduct: ProductType = {
       ...product,
       product_title: productTitle,
       description: productDescription,
       category: productCategory,
+      gender: selectedGender as GenderType | null,
+      experience: productExperience,
+      image_url: productImage,
+      market_price: productPrice,
       product_metadata: {
         ...productMetadata,
-        gender: selectedGender,
       },
     };
     await updateProductMetadata(updatedProduct);
@@ -95,24 +111,6 @@ const ProductRow = ({ product }: { product: ProductType }) => {
     });
   };
 
-  useEffect(() => {
-    if (product.product_metadata) {
-      const { gender, ...otherMetadata } =
-        product.product_metadata as ProductMetadataType;
-      setSelectedGender(gender || []);
-      setProductCategory(product.category || "");
-      setProductDescription(product.description || "");
-      setProductTitle(product.product_title || "");
-      setProductCategory(product.category || "");
-      setProductMetadata(
-        Object.entries(otherMetadata).reduce((acc, [key, value]) => {
-          acc[key] = Array.isArray(value) ? value : [(value as any).toString()];
-          return acc;
-        }, {} as ProductMetadataType),
-      );
-    }
-  }, [product]);
-
   return (
     <Card className="flex gap-2">
       <CardHeader>
@@ -120,7 +118,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
           <img src={product.image_url || ""} />
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4 flex-1">
+      <CardContent className="flex flex-col gap-4 flex-1 py-4">
         <div className="grid grid-cols-2 gap-2 flex-1">
           <div>
             <Label htmlFor="title">Title</Label>
@@ -154,10 +152,10 @@ const ProductRow = ({ product }: { product: ProductType }) => {
           </div>
           <div>
             <Label htmlFor="description">Description</Label>
-            <Input
-              type="text"
+            <Textarea
               name="description"
-              placeholder={product.description || ""}
+              value={productDescription || ""}
+              placeholder={"Enter a description"}
               onChange={(e) => setProductDescription(e.target.value)}
             />
           </div>
@@ -165,13 +163,25 @@ const ProductRow = ({ product }: { product: ProductType }) => {
             <Label htmlFor="image_url">Image</Label>
             <Input
               type="text"
-              value={product.image_url || ""}
+              value={productImage || ""}
               name="image_url"
-              placeholder={product.image_url || ""}
+              placeholder={"No image provided"}
+              onChange={(e) => setProductImage(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="market_price">Market Price</Label>
+            <Input
+              type="text"
+              value={productPrice || ""}
+              name="image_url"
+              placeholder={"Enter market price in £"}
+              onChange={(e) => setProductPrice(e.target.value)}
             />
           </div>
         </div>
         <div className="flex flex-col gap-4 flex-1">
+          {/* GENDER DROPDOWN */}
           <Label
             role="button"
             htmlFor="gender"
@@ -188,13 +198,45 @@ const ProductRow = ({ product }: { product: ProductType }) => {
               {genderMap.map((d: string) => (
                 <div className="flex gap-1 text-sm items-center" key={d}>
                   <Checkbox
-                    checked={selectedGender.includes(d)}
+                    checked={selectedGender?.includes(d)}
+                    key={d}
+                    onCheckedChange={(checked) => {
+                      return checked && setSelectedGender(d);
+                    }}
+                  />
+                  <Label htmlFor={d}>{d}</Label>
+                </div>
+              ))}
+            </div>
+          )}
+          {/* EXPERIENCE DROPDOWN */}
+
+          <Label
+            role="button"
+            htmlFor="experience"
+            className="capitalize p-2 flex items-center justify-between bg-muted rounded-md"
+            onClick={() =>
+              setCollapsed((prev) => ({
+                ...prev,
+                experience: !collapsed.experience,
+              }))
+            }
+          >
+            Experience
+            <MdOutlineUnfoldMore />
+          </Label>
+          {!collapsed.experience && (
+            <div className="flex gap-2">
+              {expertiseMap.map((d: string) => (
+                <div className="flex gap-1 text-sm items-center" key={d}>
+                  <Checkbox
+                    checked={productExperience.includes(d)}
                     key={d}
                     onCheckedChange={(checked) => {
                       return checked
-                        ? setSelectedGender((prev) => [...prev, d])
-                        : setSelectedGender(
-                            selectedGender.filter((value) => value !== d),
+                        ? setProductExperience([...productExperience, d])
+                        : setProductExperience(
+                            productExperience.filter((value) => value !== d),
                           );
                     }}
                   />
@@ -212,7 +254,6 @@ const ProductRow = ({ product }: { product: ProductType }) => {
                 htmlFor={property}
                 className="capitalize p-2 flex items-center justify-between bg-muted rounded-md"
                 onClick={() => {
-                  console.log(collapsed);
                   setCollapsed((prev) => ({
                     ...prev,
                     [property]: !prev[property],

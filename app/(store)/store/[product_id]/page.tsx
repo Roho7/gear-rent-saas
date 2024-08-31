@@ -19,9 +19,6 @@ import { FaClock } from "react-icons/fa";
 import AddToCartButton from "../_components/add-to-cart.button";
 
 const MetadataMap: Record<ProductMetadataKeys, any> = {
-  gender: {
-    label: "For:",
-  },
   heights: {
     label: "Heights:",
   },
@@ -36,12 +33,6 @@ const MetadataMap: Record<ProductMetadataKeys, any> = {
   },
   lengths: {
     label: "Lengths:",
-  },
-  experience: {
-    label: "Experience:",
-  },
-  style: {
-    label: "Style:",
   },
 };
 
