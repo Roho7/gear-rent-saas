@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+
+import { redirect } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "../_providers/useAuth";
 import { createClientComponentClient } from "../_utils/supabase";
@@ -24,6 +26,10 @@ const UserPage = (props: Props) => {
 
     toast({ title: "Password updated" });
   };
+
+  if (!user) {
+    redirect("/login");
+  }
 
   return (
     <div>

@@ -20,6 +20,7 @@ import { Dispatch, SetStateAction, useMemo, useState } from "react";
 type Props = {
   productId: string;
   setProductId: (value: string) => void;
+  disabled: boolean;
 };
 
 const InnerProductList = ({
@@ -74,7 +75,7 @@ const InnerProductList = ({
   );
 };
 
-const ProductCombobox = ({ productId, setProductId }: Props) => {
+const ProductCombobox = ({ productId, setProductId, disabled }: Props) => {
   const { products } = useProducts();
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState<string | null>(null);
@@ -93,6 +94,7 @@ const ProductCombobox = ({ productId, setProductId }: Props) => {
           role="combobox"
           aria-expanded={open}
           className="justify-between"
+          disabled={disabled}
         >
           {productId
             ? products.find(

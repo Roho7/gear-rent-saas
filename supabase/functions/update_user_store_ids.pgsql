@@ -2,30 +2,35 @@
 CREATE OR REPLACE FUNCTION update_user_store_ids()
 RETURNS TRIGGER AS $$
 DECLARE
-  user_id UUID;
-  current_store_ids UUID[];
-  updated_store_ids UUID[];
+  user_id_input UUID;
+  current_store_ids JSONB;
+  updated_store_ids JSONB;
 BEGIN
-  -- Assume that NEW.owner_id contains the user ID of the store owner
-  user_id := NEW.owner_id;
-  
-  -- Retrieve current store_ids array
-  SELECT COALESCE((raw_app_metadata->>'store_ids')::jsonb, '[]')::UUID[]
+  -- Assume that NEW.user_id contains the user ID of the store owner
+  user_id_input := NEW.user_id;
+
+  -- Get current store_ids as JSONB
+  SELECT COALESCE(raw_app_meta_data->'store_ids', '[]'::jsonb)
   INTO current_store_ids
   FROM auth.users
-  WHERE id = user_id;
+  WHERE id = user_id_input;
 
-  -- Add new store ID to the array
-  updated_store_ids := array_append(current_store_ids, NEW.store_id);
+  -- Add new store ID to the JSONB array
+  updated_store_ids := current_store_ids || to_jsonb(NEW.store_id);
 
   -- Update raw_app_metadata with new store_ids array
   UPDATE auth.users
-  SET raw_app_metadata = jsonb_set(
-    COALESCE(raw_app_metadata, '{}'::jsonb),
+  SET raw_app_meta_data = jsonb_set(
+    COALESCE(raw_app_meta_data, '{}'::jsonb),
     '{store_ids}',
-    to_jsonb(updated_store_ids)
+    updated_store_ids
   )
-  WHERE id = user_id;
+  WHERE id = user_id_input;
+
+  -- Update tbl_users
+  UPDATE tbl_users u
+  SET store_id = NEW.store_id
+  WHERE u.user_id = user_id_input;
 
   RETURN NEW;
 END;

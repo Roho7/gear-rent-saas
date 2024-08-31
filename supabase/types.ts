@@ -18,6 +18,7 @@ export type InventoryType = {
   discount_1: number;
   discount_2: number;
   discount_3: number;
+  description: string;
 };
 
 export type CartItemType = {
@@ -27,7 +28,7 @@ export type CartItemType = {
 };
 
 export type PriceGranularityType = "daily" | "hourly";
-export type GenderType = "male" | "female" | "unisex";
+export type GenderType = "male" | "female";
 
 export type ProductMetadataKeys =
   | "sizes"

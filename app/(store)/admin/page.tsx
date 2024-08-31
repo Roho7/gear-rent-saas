@@ -25,13 +25,14 @@ import {
   genderMap,
   metadataOptions,
 } from "@/data/contants";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MdOutlineUnfoldMore } from "react-icons/md";
 
 type Props = {};
 
 const ProductRow = ({ product }: { product: ProductType }) => {
+  const { user } = useAuth();
   const [selectedGender, setSelectedGender] = useState<string | null>(
     product.gender || null,
   );
@@ -110,6 +111,10 @@ const ProductRow = ({ product }: { product: ProductType }) => {
       title: "Product Updated",
     });
   };
+
+  if (!user?.is_admin) {
+    redirect("/");
+  }
 
   return (
     <Card className="flex gap-2">
@@ -195,16 +200,18 @@ const ProductRow = ({ product }: { product: ProductType }) => {
           </Label>
           {!collapsed.gender && (
             <div className="flex gap-2">
-              {genderMap.map((d: string) => (
-                <div className="flex gap-1 text-sm items-center" key={d}>
+              {genderMap.map((gender: string) => (
+                <div className="flex gap-1 text-sm items-center" key={gender}>
                   <Checkbox
-                    checked={selectedGender?.includes(d)}
-                    key={d}
+                    checked={selectedGender === gender}
+                    key={gender}
                     onCheckedChange={(checked) => {
-                      return checked && setSelectedGender(d);
+                      return checked
+                        ? setSelectedGender(gender)
+                        : setSelectedGender(null);
                     }}
                   />
-                  <Label htmlFor={d}>{d}</Label>
+                  <Label htmlFor={gender}>{gender}</Label>
                 </div>
               ))}
             </div>

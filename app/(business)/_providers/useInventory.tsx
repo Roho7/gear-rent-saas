@@ -49,7 +49,6 @@ export const InventoryProvider = ({
       }
       setStoreDetails(data.store_details);
       setInventory(data.inventory);
-
       console.log("Fetched inventory from server");
     } catch (e) {
       console.error(e);

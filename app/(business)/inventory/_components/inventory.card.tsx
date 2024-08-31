@@ -7,6 +7,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { InventoryType } from "@/supabase/types";
+import { useRouter } from "next/navigation";
 
 type Props = {
   inventoryItem: InventoryType;
@@ -14,8 +15,15 @@ type Props = {
 
 const InventoryItemCard = ({ inventoryItem }: Props) => {
   const { products } = useProducts();
+  const router = useRouter();
   return (
-    <Card className="flex flex-col gap-2">
+    <Card
+      className="flex flex-col gap-2 hover:bg-card/10"
+      role="button"
+      onClick={() => {
+        router.push(`/inventory/${inventoryItem.inventory_id}`);
+      }}
+    >
       <CardHeader>
         <div className="">
           {inventoryItem.product_title}{" "}

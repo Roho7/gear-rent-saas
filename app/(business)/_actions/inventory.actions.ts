@@ -38,21 +38,8 @@ export const addInventoryItem = async (
     console.error("Product ID or Store ID not provided");
     return;
   }
-  const userData = await supabase.auth.getUser();
 
-  // const { data: storeData, error: storeError } = await supabase.from(
-  //   "tbl_stores",
-  // ).select("*").eq(
-  //   "user_id",
-  //   userData.data.user?.id,
-  // ).single();
-
-  // if (storeError || !storeData) {
-  //   console.error("Error fetching store data:", storeError);
-  //   return;
-  // }
-
-  const { data, error } = await supabase.from("tbl_inventory").insert(
+  const { data, error } = await supabase.from("tbl_inventory").upsert(
     inventory_data,
   );
 

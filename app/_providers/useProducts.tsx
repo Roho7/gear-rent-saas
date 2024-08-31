@@ -114,7 +114,7 @@ export const ProductProvider = ({
     }));
   };
 
-  const fetchAndCacheData = async <T,>(
+  const fetchAndCacheData = async <T extends ProductType | StoreType>(
     storeName: "products" | "stores",
     refresh: boolean = false,
   ) => {
@@ -145,7 +145,11 @@ export const ProductProvider = ({
       } else {
         setter(data as T[]);
         const txn = db.transaction(storeName, "readwrite");
-        await Promise.all(data.map((d) => txn.store.put(d)));
+        await Promise.all(
+          data.map((d: T) => {
+            return txn.store.put(d);
+          }),
+        );
       }
     }
     setLoading(false);

@@ -39,7 +39,7 @@ const ProductCard = ({
     >
       <CardHeader>
         <CardTitle>{product.product_title}</CardTitle>
-        <CardDescription className="text-primary">
+        <CardDescription className="text-secondary">
           {product.description}
         </CardDescription>
       </CardHeader>
@@ -48,7 +48,7 @@ const ProductCard = ({
       </CardContent>
       {showFooter && (
         <CardFooter className="flex flex-col items-start gap-1 mt-auto">
-          <p className="text-primary flex items-center gap-2">
+          <p className="text-secondary flex items-center gap-2">
             <span className=" text-xl">$</span>
             <span className="text-xs">/day</span>
           </p>

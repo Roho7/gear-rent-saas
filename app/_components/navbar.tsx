@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>Rent your gear</NavigationMenuTrigger>
+            <NavigationMenuTrigger>Businesses</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                 <li className="row-span-3">
@@ -71,23 +71,18 @@ const Navbar: React.FC = () => {
                       href="/register"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">
-                        Connect your store
+                        Rent through us
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
                         If you are a renter, connect your store to our platform
-                        and start renting your gear to a wider audience.
+                        and start renting your gear to more customers.
                       </p>
                     </a>
                   </NavigationMenuLink>
                 </li>
                 <li>
-                  <a href="" className="text-sm w-full">
-                    APIs
-                  </a>
-                </li>
-                <li>
-                  <a href="" className="text-sm w-full">
-                    Manual setup
+                  <a href="/inventory" className="text-sm w-full">
+                    Your listings
                   </a>
                 </li>
                 <li>
@@ -119,17 +114,7 @@ const Navbar: React.FC = () => {
                   </NavigationMenuLink>
                 </li>
                 <li>
-                  <a href="" className="text-sm w-full">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="" className="text-sm w-full">
-                    Licenses
-                  </a>
-                </li>
-                <li>
-                  <a href="/all-products" className="text-sm w-full">
+                  <a href="/admin" className="text-sm w-full">
                     Admin
                   </a>
                 </li>
