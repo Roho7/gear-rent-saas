@@ -1,6 +1,6 @@
 "use client";
-import { Tables } from "@/supabase/supabase.types";
-import { InventoryType, StoreType } from "@/supabase/types";
+import { Tables } from "@/packages/supabase.types";
+import { InventoryType, StoreType } from "@/packages/types";
 import React, {
   createContext,
   useContext,

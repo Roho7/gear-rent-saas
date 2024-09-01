@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { ProductType } from "@/supabase/types";
-import React from "react";
+import { ProductType } from "@/packages/types";
 
 const CartItemCard = ({ product }: { product: ProductType | undefined }) => {
   if (!product) {

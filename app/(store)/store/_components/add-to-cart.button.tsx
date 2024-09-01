@@ -1,6 +1,6 @@
 import { useProducts } from "@/app/_providers/useProducts";
 import { Button } from "@/components/ui/button";
-import { ProductType } from "@/supabase/types";
+import { ProductType } from "@/packages/types";
 import clsx from "clsx";
 
 type Props = {

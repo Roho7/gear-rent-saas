@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { InventoryType } from "@/supabase/types";
+import { InventoryType } from "@/packages/types";
 import { useRouter } from "next/navigation";
 
 type Props = {

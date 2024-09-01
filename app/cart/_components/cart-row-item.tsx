@@ -1,5 +1,5 @@
 import { useProducts } from "@/app/_providers/useProducts";
-import { ProductType } from "@/supabase/types";
+import { ProductType } from "@/packages/types";
 
 type Props = {
   product: ProductType | undefined;

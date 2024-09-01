@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProductType } from "@/supabase/types";
+import { ProductType } from "@/packages/types";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import AddToCartButton from "../(store)/store/_components/add-to-cart.button";

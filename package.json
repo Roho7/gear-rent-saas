@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sb:types:linux": "npx supabase gen types --lang=typescript --project-id wysxkbvponpkbvsaawmd > ./supabase/supabase.types.ts"
+    "sb:types": "npx supabase gen types --lang=typescript --project-id wysxkbvponpkbvsaawmd > ./packages/supabase.types.ts",
+    "sb:dump:remote": "cd ./packages/supabase && supabase db dump -f \"./supabase/seed.sql\" --data-only",
+    "sb:reset": "cd ./packages/supabase && supabase db reset",
+    "sb:apply": "cd ./packages/supabase && supabase migration up",
+    "sb:migrate": "cd ./packages/supabase && supabase db diff --schema public --schema internal --schema storage -f"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

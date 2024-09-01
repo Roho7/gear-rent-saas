@@ -4,7 +4,7 @@ import {
   ProductMetadataType,
   ProductType,
   StoreType,
-} from "@/supabase/types";
+} from "@/packages/types";
 import dayjs from "dayjs";
 import { DBSchema, openDB } from "idb";
 import {

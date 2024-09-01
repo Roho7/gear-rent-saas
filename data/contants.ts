@@ -1,4 +1,4 @@
-import { ProductMetadataKeys } from "@/supabase/types";
+import { ProductMetadataKeys } from "@/packages/types";
 
 export const metadataOptions: ProductMetadataKeys[] = [
   "heights",

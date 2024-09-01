@@ -1,6 +1,6 @@
 "use client";
 import { toast } from "@/components/ui/use-toast";
-import { Tables } from "@/supabase/supabase.types";
+import { Tables } from "@/packages/supabase.types";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import React, {

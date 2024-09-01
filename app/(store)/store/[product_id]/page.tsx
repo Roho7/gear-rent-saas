@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-import { ProductMetadataKeys } from "@/supabase/types";
+import { ProductMetadataKeys } from "@/packages/types";
 import { useMemo } from "react";
 import { BiDollar } from "react-icons/bi";
 import { FaClock } from "react-icons/fa";

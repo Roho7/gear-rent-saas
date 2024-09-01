@@ -1,7 +1,7 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
-import { TablesUpdate } from "@/supabase/supabase.types";
-import { InventoryType, StoreType } from "@/supabase/types";
+import { TablesUpdate } from "@/packages/supabase.types";
+import { InventoryType, StoreType } from "@/packages/types";
 import { cookies } from "next/headers";
 
 export const getInventory = async (store_id: string | null) => {

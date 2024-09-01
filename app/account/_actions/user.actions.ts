@@ -1,7 +1,7 @@
 "use server";
 
 import { createServerActionClient } from "@/app/_utils/supabase";
-import { Tables } from "@/supabase/supabase.types";
+import { Tables } from "@/packages/supabase.types";
 import { cookies } from "next/headers";
 
 export const fetchUser = async (

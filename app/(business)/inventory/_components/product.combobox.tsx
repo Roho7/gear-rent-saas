@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { categoryMap } from "@/data/contants";
-import { ProductType } from "@/supabase/types";
+import { ProductType } from "@/packages/types";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 type Props = {
