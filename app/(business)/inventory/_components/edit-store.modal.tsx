@@ -27,11 +27,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { RegisterShopFormSchema } from "@/data/forms";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useInventory } from "../../_providers/useInventory";
-import { RegisterShopFormSchema } from "../../register/page";
 
 export function EditStoreModal({ children }: { children: React.ReactNode }) {
   const { user, refreshUser } = useAuth();

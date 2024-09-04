@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { RegisterShopFormSchema } from "@/data/forms";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
@@ -29,36 +30,6 @@ import { z } from "zod";
 import { createClientComponentClient } from "../../_utils/supabase";
 import { useInventory } from "../_providers/useInventory";
 import CountryCombobox from "../inventory/_components/country.combobox";
-
-export const RegisterShopFormSchema = z.object({
-  store_name: z.string().min(2, {
-    message: "Business name must be at least 2 characters.",
-  }),
-  country_code: z.string().min(2, {
-    message: "Country code must be at least 2 characters.",
-  }),
-  business_number: z.string().min(10, {
-    message: "Phone number must be at least 10 characters.",
-  }),
-  business_email: z.string().email({
-    message: "Please enter a valid email.",
-  }),
-  country: z.string().min(2, {
-    message: "Please enter a valid country.",
-  }),
-  address_line1: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
-  }),
-  address_line2: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
-  }),
-  city: z.string().min(2, {
-    message: "Please enter a valid city.",
-  }),
-  postcode: z.string().min(5, {
-    message: "Please enter a valid postcode.",
-  }),
-});
 
 const RegisterBusinessPage = () => {
   const { user, refreshUser } = useAuth();

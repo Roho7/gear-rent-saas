@@ -30,7 +30,13 @@ const StoreCard = ({ store }: { store: StoreType }) => {
           </li>
           <li className="flex items-center gap-1">
             <FaAddressCard />
-            {store.address}
+            <span>
+              {store.address_line1}, {store.address_line2}
+            </span>
+            <span>
+              {store.city}, {store.postcode}
+            </span>
+            <p>{store.country}</p>
           </li>
           <li>{store.closing_time}</li>
           <li className="flex items-center gap-1">
