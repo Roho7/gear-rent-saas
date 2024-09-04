@@ -350,13 +350,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
 
 const AllProducstPage = (props: Props) => {
   const { user, isLoading: isAuthLoading } = useAuth();
-  const {
-    fetchAndCacheData,
-    setSearchQuery,
-    productFilters,
-    setProductFilters,
-    filteredProducts,
-  } = useProducts();
+  const { filteredProducts, fetchAndCacheData } = useProducts();
   const router = useRouter();
 
   useEffect(() => {
@@ -395,6 +389,9 @@ const AllProducstPage = (props: Props) => {
     <div className="flex gap-4 relative">
       <StoreSidebar />
       <div className="flex flex-col gap-4 w-full h-screen overflow-scroll">
+        <Button onClick={() => fetchAndCacheData("products", true)}>
+          Refresh
+        </Button>
         {filteredProducts.map((product) => (
           <ProductRow product={product} key={product.product_id} />
         ))}
