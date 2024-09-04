@@ -1,4 +1,4 @@
-export type Json = { [key: string]: any } | any;
+export type Json = { [key: string]: Json | undefined } | any;
 
 export type Database = {
   public: {
@@ -116,39 +116,51 @@ export type Database = {
       };
       tbl_stores: {
         Row: {
-          address: string | null;
+          address_line1: string | null;
+          address_line2: string | null;
           business_email: string | null;
           business_number: string | null;
+          city: string | null;
           closing_time: string | null;
+          country: string | null;
           description: string | null;
           google_link: string | null;
           google_rating: number | null;
+          postcode: string | null;
           store_id: string;
           store_img: string | null;
           store_name: string;
           user_id: string;
         };
         Insert: {
-          address?: string | null;
+          address_line1?: string | null;
+          address_line2?: string | null;
           business_email?: string | null;
           business_number?: string | null;
+          city?: string | null;
           closing_time?: string | null;
+          country?: string | null;
           description?: string | null;
           google_link?: string | null;
           google_rating?: number | null;
+          postcode?: string | null;
           store_id?: string;
           store_img?: string | null;
           store_name: string;
           user_id: string;
         };
         Update: {
-          address?: string | null;
+          address_line1?: string | null;
+          address_line2?: string | null;
           business_email?: string | null;
           business_number?: string | null;
+          city?: string | null;
           closing_time?: string | null;
+          country?: string | null;
           description?: string | null;
           google_link?: string | null;
           google_rating?: number | null;
+          postcode?: string | null;
           store_id?: string;
           store_img?: string | null;
           store_name?: string;

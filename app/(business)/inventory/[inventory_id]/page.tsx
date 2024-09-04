@@ -53,9 +53,9 @@ const addListingForm = z.object({
     }),
   price_granularity: z.enum(["daily", "hourly"]).default("daily"),
   currency_code: z.string().min(1, { message: "Please select a currency" }),
-  discount_1: z.number().min(1, { message: "Please enter a valid discount" }),
-  discount_2: z.number().min(1, { message: "Please enter a valid discount" }),
-  discount_3: z.number().min(1, { message: "Please enter a valid discount" }),
+  discount_1: z.number().min(0, { message: "Please enter a valid discount" }),
+  discount_2: z.number().min(0, { message: "Please enter a valid discount" }),
+  discount_3: z.number().min(0, { message: "Please enter a valid discount" }),
   product_metadata: z
     .object({
       sizes: z.array(z.string()).nullable(),
@@ -199,21 +199,25 @@ const AddListingPage = (props: Props) => {
   const fetchInventoryItem = async (inventoryId: string) => {
     const item = await getInventoryItem(inventoryId);
 
+    if (!item) {
+      console.error("No inventory item found while fetching data");
+      return;
+    }
     // Update form values with fetched data
     form.reset({
-      product_id: item.product_id,
-      description: item.description,
-      currency_code: item.currency_code,
-      base_price: item.base_price.toString(),
-      price_granularity: item.price_granularity,
-      discount_1: item.discount_1,
-      discount_2: item.discount_2,
-      discount_3: item.discount_3,
+      product_id: item?.product_id || "",
+      description: item?.description || "",
+      currency_code: item?.currency_code || "USD",
+      base_price: item?.base_price?.toString() || "",
+      price_granularity: item.price_granularity || "daily",
+      discount_1: item?.discount_1 || 0,
+      discount_2: item?.discount_2 || 0,
+      discount_3: item?.discount_3 || 0,
       product_metadata: {
-        sizes: item.product_metadata.sizes || [],
-        colors: item.product_metadata.colors || [],
-        lengths: item.product_metadata.lengths || [],
-        widths: item.product_metadata.widths || [],
+        sizes: item?.product_metadata.sizes || [],
+        colors: item?.product_metadata.colors || [],
+        lengths: item?.product_metadata.lengths || [],
+        widths: item?.product_metadata.widths || [],
       },
     });
   };

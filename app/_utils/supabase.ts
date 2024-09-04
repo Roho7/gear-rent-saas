@@ -1,7 +1,8 @@
+import { Database } from "@/packages/supabase.types";
 import {
+  type CookieOptions,
   createBrowserClient,
   createServerClient,
-  type CookieOptions,
 } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
@@ -109,7 +110,7 @@ export const createServerActionClient = ({
 }: {
   cookies: ReadonlyRequestCookies;
 }) =>
-  createServerClient(
+  createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {

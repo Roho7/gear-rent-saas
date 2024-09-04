@@ -1,6 +1,14 @@
-"use client";
+import { useAuth } from "@/app/_providers/useAuth";
+import { createClientComponentClient } from "@/app/_utils/supabase";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -11,8 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-import { useAuth } from "@/app/_providers/useAuth";
 import {
   Select,
   SelectContent,
@@ -22,67 +28,35 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect } from "next/navigation";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createClientComponentClient } from "../../_utils/supabase";
-import { useInventory } from "../_providers/useInventory";
-import CountryCombobox from "../inventory/_components/country.combobox";
+import { useInventory } from "../../_providers/useInventory";
+import { RegisterShopFormSchema } from "../../register/page";
 
-export const RegisterShopFormSchema = z.object({
-  store_name: z.string().min(2, {
-    message: "Business name must be at least 2 characters.",
-  }),
-  country_code: z.string().min(2, {
-    message: "Country code must be at least 2 characters.",
-  }),
-  business_number: z.string().min(10, {
-    message: "Phone number must be at least 10 characters.",
-  }),
-  business_email: z.string().email({
-    message: "Please enter a valid email.",
-  }),
-  country: z.string().min(2, {
-    message: "Please enter a valid country.",
-  }),
-  address_line1: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
-  }),
-  address_line2: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
-  }),
-  city: z.string().min(2, {
-    message: "Please enter a valid city.",
-  }),
-  postcode: z.string().min(5, {
-    message: "Please enter a valid postcode.",
-  }),
-});
-
-const RegisterBusinessPage = () => {
+export function EditStoreModal({ children }: { children: React.ReactNode }) {
   const { user, refreshUser } = useAuth();
   const { storeDetails } = useInventory();
   const form = useForm<z.infer<typeof RegisterShopFormSchema>>({
     resolver: zodResolver(RegisterShopFormSchema),
     defaultValues: {
-      store_name: "",
-      country_code: "",
-      business_number: "",
-      business_email: "",
-      address_line1: "",
-      address_line2: "",
-      city: "",
-      country: "",
-      postcode: "",
+      store_name: storeDetails?.store_name,
+      country_code: storeDetails?.business_number?.slice(0, 2),
+      business_number: storeDetails?.business_number?.slice(2),
+      business_email: storeDetails?.business_email || "",
+      address_line1: storeDetails?.address_line1 || "",
+      address_line2: storeDetails?.address_line2 || "",
+      city: storeDetails?.city || "",
+      country: storeDetails?.country || "",
+      postcode: storeDetails?.postcode || "",
     },
   });
-  const supabase = createClientComponentClient();
 
   async function onSubmit(data: z.infer<typeof RegisterShopFormSchema>) {
     try {
+      const supabase = createClientComponentClient();
       const formattedData = {
         ...data,
+        store_id: user?.store_id,
         user_id: user?.user_id,
         business_number: `${data.country_code}${data.business_number}`,
       };
@@ -90,7 +64,7 @@ const RegisterBusinessPage = () => {
 
       const { data: insertData, error } = await supabase
         .from("tbl_stores")
-        .insert(insertedData);
+        .upsert(insertedData);
 
       toast({
         title: "You submitted the following values:",
@@ -111,37 +85,16 @@ const RegisterBusinessPage = () => {
     }
   }
 
-  const getExistingStoreDetails = () => {
-    form.reset({
-      store_name: storeDetails?.store_name,
-      country_code: storeDetails?.business_number?.slice(0, 2) || "",
-      business_number: storeDetails?.business_number || "",
-      business_email: storeDetails?.business_email || "",
-      address_line1: storeDetails?.address_line1 || "",
-      address_line2: storeDetails?.address_line2 || "",
-      city: storeDetails?.city || "",
-      country: storeDetails?.country || "",
-      postcode: storeDetails?.postcode || "",
-    });
-  };
-
-  useEffect(() => {
-    getExistingStoreDetails();
-  }, [storeDetails]);
-
-  if (user?.store_id) {
-    redirect("/inventory");
-  }
-
   return (
-    <section className="flex flex-col items-center gap-4 text-gray-700">
-      <h1 className="text-xl p-4 ">Register your store</h1>
-      <Card className="p-4">
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-lg ">
+        <DialogHeader>
+          <DialogTitle>Edit Store Details</DialogTitle>
+          <DialogDescription>Update your store details.</DialogDescription>
+        </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 min-w-[60vw]"
-          >
+          <form className="space-y-6 max-h-[70vh] overflow-y-scroll px-4 w-full">
             <FormField
               control={form.control}
               name="store_name"
@@ -192,7 +145,7 @@ const RegisterBusinessPage = () => {
                 control={form.control}
                 name="business_number"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-full">
                     <FormLabel className="text-gray-700">
                       Business Phone Number
                     </FormLabel>
@@ -230,13 +183,10 @@ const RegisterBusinessPage = () => {
               control={form.control}
               name="country"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
+                <FormItem>
                   <FormLabel className="text-gray-700">Country</FormLabel>
                   <FormControl>
-                    <CountryCombobox
-                      country={field.value}
-                      setCountry={form.setValue.bind(null, "country")}
-                    />
+                    <Input placeholder="Enter your country" {...field} />
                   </FormControl>
                   <FormMessage className="text-red-700" />
                 </FormItem>
@@ -288,7 +238,7 @@ const RegisterBusinessPage = () => {
                 <FormItem>
                   <FormLabel className="text-gray-700">City/Town</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your city/town" {...field} />
+                    <Input placeholder="Enter your city" {...field} />
                   </FormControl>
                   <FormMessage className="text-red-700" />
                 </FormItem>
@@ -308,33 +258,10 @@ const RegisterBusinessPage = () => {
               )}
             />
 
-            {/* <FormField
-          control={form.control}
-          name="business_description"
-          render={({ field }) => (
-            <FormItem>
-              FormLabel className="text-gray-700"Business Description</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter a brief description of your business"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                A short description of your business and its services.
-              </FormDescription>
-                                <FormMessage className="text-red-700" />
-
-            </FormItem>
-          )}
-        /> */}
-
-            <Button type="submit">Submit</Button>
+            <Button onClick={form.handleSubmit(onSubmit)}>Save</Button>
           </form>
         </Form>
-      </Card>
-    </section>
+      </DialogContent>
+    </Dialog>
   );
-};
-
-export default RegisterBusinessPage;
+}

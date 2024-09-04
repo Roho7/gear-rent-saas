@@ -163,7 +163,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       await setUserLocally(null);
       toast({ title: "Logged out successfully" });
-      router.push("/login");
     } catch (error) {
       console.error(error);
       toast({ title: "Error logging out", variant: "destructive" });

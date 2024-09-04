@@ -57,11 +57,11 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row gap-8">
         <Card className="flex-1 overflow-hidden">
-          <CardContent className="p-0">
+          <CardContent className="pt-4">
             <img
               src={activeProduct.image_url || "/placeholder-image.jpg"}
               alt={activeProduct.product_title || ""}
-              className="w-full h-[400px] object-cover"
+              className="w-full h-[400px] object-contain"
             />
           </CardContent>
         </Card>

@@ -28,6 +28,7 @@ import {
 import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MdOutlineUnfoldMore } from "react-icons/md";
+import StoreSidebar from "../store/_components/store-sidebar";
 
 type Props = {};
 
@@ -391,72 +392,13 @@ const AllProducstPage = (props: Props) => {
     return null; // This will prevent any flash of content before redirect
   }
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-2">
-        <Input
-          placeholder="Search"
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <Select>
-          <SelectTrigger id="category">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent position="popper" className="gap-2 flex flex-col">
-            {categoryMap.map((d: string, index) => (
-              <div className="flex gap-1 text-sm items-center my-2" key={d}>
-                <Checkbox
-                  checked={productFilters?.category.includes(d)}
-                  key={d}
-                  onCheckedChange={(checked) => {
-                    setProductFilters((prev) => ({
-                      ...prev,
-                      category: checked
-                        ? [...prev.category, d]
-                        : prev.category.filter((value) => value !== d),
-                    }));
-                  }}
-                />
-                <Label htmlFor={d}>{d}</Label>
-              </div>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select>
-          <SelectTrigger id="category">
-            <SelectValue placeholder="Gender" />
-          </SelectTrigger>
-          <SelectContent position="popper" className="gap-2 flex flex-col">
-            {genderMap.map((d: string) => (
-              <div className="flex items-center gap-2 my-1" key={d}>
-                <Checkbox
-                  checked={productFilters?.gender.includes(d)}
-                  key={d}
-                  onCheckedChange={(checked) => {
-                    setProductFilters((prev) => ({
-                      ...prev,
-                      gender: checked
-                        ? [...prev.gender, d]
-                        : prev.gender.filter((value) => value !== d),
-                    }));
-                  }}
-                />
-                <Label htmlFor={d}>{d}</Label>
-              </div>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button
-          onClick={async () => {
-            await fetchAndCacheData("products", true);
-            toast({ title: "Data refreshed" });
-          }}
-        >
-          Refresh
-        </Button>
+    <div className="flex gap-4 relative">
+      <StoreSidebar />
+      <div className="flex flex-col gap-4 w-full h-screen overflow-scroll">
+        {filteredProducts.map((product) => (
+          <ProductRow product={product} key={product.product_id} />
+        ))}
       </div>
-      {filteredProducts.map((product) => (
-        <ProductRow product={product} key={product.product_id} />
-      ))}
     </div>
   );
 };
