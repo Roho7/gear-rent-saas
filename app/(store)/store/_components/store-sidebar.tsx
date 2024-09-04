@@ -1,4 +1,5 @@
 import { useProducts } from "@/app/_providers/useProducts";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,11 +13,19 @@ import {
 import { BiFilterAlt } from "react-icons/bi";
 
 const StoreSidebar = () => {
-  const { setProductFilters, productFilters, setSearchQuery } = useProducts();
+  const {
+    setProductFilters,
+    productFilters,
+    setSearchQuery,
+    fetchAndCacheData,
+  } = useProducts();
 
   return (
     <aside className="flex gap-2 justify-start max-w-fit flex-col min-w-[20vw] bg-slate-100 p-4 rounded-lg h-screen">
       <div className="flex flex-col gap-2">
+        <Button onClick={() => fetchAndCacheData("products", true)}>
+          Refresh
+        </Button>
         <Input
           placeholder="Search"
           onChange={(e) => setSearchQuery(e.target.value)}
