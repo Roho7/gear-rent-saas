@@ -23,24 +23,35 @@ import {
 import { categoryMap, expertiseMap } from "@/data/contants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "@radix-ui/react-icons";
-import clsx from "clsx";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 import { useForm } from "react-hook-form";
 
-import { z } from "zod";
+import clsx from "clsx";
+import { DateRange } from "react-day-picker";
+import { date, z } from "zod";
 import LocationPicker from "./location.dropdown";
 
 const FormSchema = z.object({
   category: z.string().optional(),
   experience: z.string().optional(),
-  rentFrom: z.date().optional(),
-  rentUntil: z.date().optional(),
+  rentPeriod: z
+    .object({
+      from: date().optional(),
+      to: date().optional(),
+    })
+    .optional() as z.ZodType<DateRange, any>,
   location: z.string().optional(),
 });
 
 const MainSearchbar = () => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      rentPeriod: {
+        from: new Date(),
+        to: addDays(new Date(), 7),
+      },
+    },
   });
 
   return (
@@ -113,7 +124,7 @@ const MainSearchbar = () => {
         />
         <FormField
           control={form.control}
-          name="rentFrom"
+          name="rentPeriod"
           render={({ field }) => (
             <FormItem className="w-full px-2 border-r border-gray-100">
               <FormLabel className="text-gray-400">Rent from</FormLabel>
@@ -121,79 +132,45 @@ const MainSearchbar = () => {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
+                      id="date"
                       variant={"outline"}
                       className={clsx(
-                        "w-[200px] justify-start text-left font-normal",
-                        !field.value && "text-muted-foreground",
+                        "w-[300px] justify-start text-left font-normal",
+                        !date && "text-muted-foreground",
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? (
-                        format(field.value, "PPP")
+                      {field.value?.from ? (
+                        field.value?.to ? (
+                          <>
+                            {format(field.value?.from, "LLL dd, y")} -{" "}
+                            {format(field.value?.to, "LLL dd, y")}
+                          </>
+                        ) : (
+                          format(field.value?.from, "LLL dd, y")
+                        )
                       ) : (
                         <span>Pick a date</span>
                       )}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={field.value?.from}
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="rentUntil"
-          render={({ field }) => (
-            <FormItem className="w-full px-2 border-r border-gray-100">
-              <FormLabel className="text-gray-400">Rent until</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={clsx(
-                        "w-[200px] justify-start text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="location"
