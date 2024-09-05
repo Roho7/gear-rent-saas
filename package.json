@@ -13,6 +13,7 @@
     "sb:dump:remote": "cd ./packages/supabase && supabase db dump -f \"./supabase/seed.sql\" --data-only",
     "sb:reset": "cd ./packages/supabase && supabase db reset",
     "sb:apply": "cd ./packages/supabase && supabase migration up",
+    "sb:push": "cd ./packages/supabase && supabase db push",
     "sb:migrate": "cd ./packages/supabase && supabase db diff --schema public --schema internal --schema storage -f"
   },
   "dependencies": {

@@ -16,6 +16,19 @@ export const categoryMap = ["skiing", "snowboarding", "camping"];
 export const expertiseMap = ["beginner", "intermediate", "advanced"];
 export const styleMap = ["freestyle", "freeride", "all-mountain"];
 
+export const popularLocations = [
+  "Chamonix, France",
+  "Whistler, Canada",
+  "Zermatt, Switzerland",
+  "Aspen, USA",
+  "St. Anton, Austria",
+  "Niseko, Japan",
+  "Verbier, Switzerland",
+  "Vail, USA",
+  "Cortina d'Ampezzo, Italy",
+  "Kitzbühel, Austria",
+];
+
 export const servicesList = [
   {
     icon: RiTentFill,

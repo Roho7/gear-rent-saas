@@ -9,14 +9,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { BiShoppingBag } from "react-icons/bi";
-import { useProducts } from "../_providers/useProducts";
+
+import { useProducts } from "@/app/_providers/useProducts";
 import CartRowItem from "./_components/cart-row-item";
 
-type Props = {};
-
-const CartPage = (props: Props) => {
-  const { cartItems } = useProducts();
-  const { products } = useProducts();
+const CartPage = () => {
+  const { cartItems, products } = useProducts();
 
   return (
     <section className="m-8 flex flex-col gap-4 h-full">

@@ -30,7 +30,7 @@ type EditModalRefType = {
 };
 
 const InventoryPage = () => {
-  const { user, refreshUser } = useAuth();
+  const { user } = useAuth();
   const { fetchAndCacheData } = useProducts();
   const router = useRouter();
   const { inventory, storeDetails, fetchInventory, isLoading } = useInventory();
@@ -106,7 +106,7 @@ const InventoryPage = () => {
   }
   return (
     <div className="flex flex-col gap-2">
-      <Card className="flex gap-2 overflow-hidden">
+      <Card className="flex gap-2 overflow-hidden relative">
         <CardHeader className="flex-1 flex gap-2 flex-row items-start justify-between">
           <div>
             <CardTitle>{storeDetails?.store_name}</CardTitle>{" "}
@@ -140,8 +140,8 @@ const InventoryPage = () => {
             </DeleteStoreModal>
           </div>
         </CardHeader>
-        <CardContent className="flex-1 p-0 relative">
-          <div className="w-full h-full">
+        <CardContent className="flex-1 p-0 h-80">
+          <div className="w-full">
             <img
               src={storeDetails?.store_img || ""}
               alt=""

@@ -25,16 +25,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import clsx from "clsx";
 import { format } from "date-fns";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { z } from "zod";
+import LocationPicker from "./location.dropdown";
 
 const FormSchema = z.object({
   category: z.string().optional(),
   experience: z.string().optional(),
   rentFrom: z.date().optional(),
   rentUntil: z.date().optional(),
+  location: z.string().optional(),
 });
 
 const MainSearchbar = () => {
@@ -42,7 +43,6 @@ const MainSearchbar = () => {
     resolver: zodResolver(FormSchema),
   });
 
-  const [date, setDate] = useState<Date>();
   return (
     <Form {...form}>
       <form
@@ -123,7 +123,7 @@ const MainSearchbar = () => {
                     <Button
                       variant={"outline"}
                       className={clsx(
-                        "w-[280px] justify-start text-left font-normal",
+                        "w-[200px] justify-start text-left font-normal",
                         !field.value && "text-muted-foreground",
                       )}
                     >
@@ -157,7 +157,7 @@ const MainSearchbar = () => {
           control={form.control}
           name="rentUntil"
           render={({ field }) => (
-            <FormItem className="w-full px-2">
+            <FormItem className="w-full px-2 border-r border-gray-100">
               <FormLabel className="text-gray-400">Rent until</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
@@ -165,7 +165,7 @@ const MainSearchbar = () => {
                     <Button
                       variant={"outline"}
                       className={clsx(
-                        "w-[280px] justify-start text-left font-normal",
+                        "w-[200px] justify-start text-left font-normal",
                         !field.value && "text-muted-foreground",
                       )}
                     >
@@ -191,6 +191,19 @@ const MainSearchbar = () => {
                 </PopoverContent>
               </Popover>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem className="w-full px-2">
+              <FormLabel className="text-gray-400">Location</FormLabel>
+              <LocationPicker
+                location={field.value ?? ""}
+                setLocation={field.onChange}
+              />
             </FormItem>
           )}
         />
