@@ -27,6 +27,7 @@ import {
 } from "@/data/contants";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BiUpArrowCircle } from "react-icons/bi";
 import { MdOutlineUnfoldMore } from "react-icons/md";
 import StoreSidebar from "../store/_components/store-sidebar";
 
@@ -120,7 +121,7 @@ const ProductRow = ({ product }: { product: ProductType }) => {
   return (
     <Card className="flex gap-2">
       <CardHeader>
-        <div className="w-80 h-80 object-cover overflow-hidden">
+        <div className="w-80 h-fit object-cover overflow-hidden">
           <img src={product.image_url || ""} />
         </div>
       </CardHeader>
@@ -386,9 +387,24 @@ const AllProducstPage = (props: Props) => {
     return null; // This will prevent any flash of content before redirect
   }
   return (
-    <div className="flex gap-4 relative">
+    <div className="flex gap-4 relative ">
       <StoreSidebar />
-      <div className="flex flex-col gap-4 w-full h-screen overflow-scroll">
+      <div
+        className="flex flex-col gap-4 w-full h-screen overflow-scroll"
+        id="product-container"
+      >
+        <Button
+          size={"icon"}
+          variant={"secondary"}
+          className="rounded-full absolute bottom-[10vh] left-[50vw] transform -translate-x-1/2 text-white"
+          onClick={() =>
+            document
+              .getElementById("product-container")
+              ?.scrollTo({ top: 0, behavior: "smooth" })
+          }
+        >
+          <BiUpArrowCircle />
+        </Button>
         {filteredProducts.map((product) => (
           <ProductRow product={product} key={product.product_id} />
         ))}

@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -21,7 +20,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { ProductMetadataType, ProductType } from "@/packages/types";
@@ -300,16 +298,19 @@ const AddListingPage = (props: Props) => {
                       </FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Describe your product condition and usage in as much detail as possible."
+                          placeholder="Describe your product condition and variant information in as much detail as possible."
                           {...field}
                         />
                       </FormControl>
+                      <FormDescription>
+                        Enter important details like sizes, colors etc.
+                      </FormDescription>
                       <FormMessage className="text-red-700" />
                     </FormItem>
                   )}
                 />
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="product_metadata"
                   render={({ field }) => (
@@ -381,7 +382,7 @@ const AddListingPage = (props: Props) => {
                       <FormMessage className="text-red-700" />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 <div className="flex gap-2">
                   <FormField

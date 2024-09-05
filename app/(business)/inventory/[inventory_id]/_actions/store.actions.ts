@@ -17,3 +17,22 @@ export const deleteStore = async (store_id: string) => {
   }
   return data;
 };
+
+export const uploadStoreImage = async (
+  { store_id, file }: { store_id: string | undefined; file: File },
+) => {
+  const cookiesStore = cookies();
+  const supabase = createServerActionClient({ cookies: cookiesStore });
+  if (!store_id) return;
+  const { data, error } = await supabase.storage
+    .from("store")
+    .upload(`store-${store_id}`, file, {
+      upsert: true,
+    });
+
+  if (error) {
+    console.error("Error uploading store image:", error);
+    return;
+  }
+  return data;
+};
