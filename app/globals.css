@@ -17,7 +17,7 @@
     --primary-foreground: 184 9.1% 97.8%;
     --secondary: 184 20.8% 60.9%;
     --secondary-foreground: 24 9.8% 10%;
-    --muted: 184 4.8% 95.9%;
+    --muted: 184 4.8% 70.9%;
     --muted-foreground: 184 5.3% 44.7%;
     --accent: 184 4.8% 95.9%;
     --accent-foreground: 24 9.8% 10%;
@@ -79,4 +79,7 @@
 
 .glass {
   @apply bg-white rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-50;
+}
+.glass-dark {
+  @apply bg-gray-800 rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-20;
 }

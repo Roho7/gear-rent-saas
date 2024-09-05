@@ -1,11 +1,12 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import AdCard from "./_components/ad-card";
 import FAQSection from "./_components/faq";
+import ForBusinessesSection from "./_components/for-businesses";
 import Hero from "./_components/hero";
 import LogoRibbon from "./_components/logo-ribbon";
 import ProductRibbon from "./_components/product-ribbon";
+import ServicesSection from "./_components/services-cart";
 
 export default function Home() {
   return (
@@ -15,7 +16,12 @@ export default function Home() {
       <LogoRibbon />
       <Separator className="my-4" />
       <ProductRibbon />
-      <AdCard />
+      <Separator className="my-4" />
+      <ServicesSection />
+      <Separator className="my-4" />
+      <ForBusinessesSection />
+      <Separator className="my-4" />
+      {/* <AdCard /> */}
       <FAQSection />
     </div>
   );
