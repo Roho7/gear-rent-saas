@@ -92,7 +92,7 @@ const InventoryPage = () => {
   }, []);
 
   if (!user?.store_id) {
-    redirect("/register");
+    redirect("/register-store");
   }
 
   if (isLoading) {

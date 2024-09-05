@@ -1,3 +1,4 @@
+import { useAuth } from "@/app/_providers/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   HoverCard,
@@ -6,7 +7,6 @@ import {
 } from "@/components/ui/hover-card";
 import { useRouter } from "next/navigation";
 import { BiUser } from "react-icons/bi";
-import { useAuth } from "../_providers/useAuth";
 
 type Props = {};
 

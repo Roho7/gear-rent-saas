@@ -9,7 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { BiShoppingBag } from "react-icons/bi";
-import { useProducts } from "../_providers/useProducts";
+import { useProducts } from "../../_providers/useProducts";
 import CartItemCard from "./cart-item-cart";
 
 type Props = {};

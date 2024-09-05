@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import Footer from "./_components/footer";
-import Navbar from "./_components/navbar";
+
+import Navbar from "./_components/_navbar/navbar";
 import { AuthProvider } from "./_providers/useAuth";
 import { ProductProvider } from "./_providers/useProducts";
 import { ThemeProvider } from "./_providers/useTheme";
