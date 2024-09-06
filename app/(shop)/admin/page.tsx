@@ -25,15 +25,25 @@ import {
   genderMap,
   metadataOptions,
 } from "@/data/contants";
+import { CheckedState } from "@radix-ui/react-checkbox";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiUpArrowCircle } from "react-icons/bi";
 import { MdOutlineUnfoldMore } from "react-icons/md";
 import StoreSidebar from "../store/_components/store-sidebar";
+import { BulkEditModal } from "./_components/bulk-edit.modal";
 
 type Props = {};
 
-const ProductRow = ({ product }: { product: ProductType }) => {
+const ProductRow = ({
+  product,
+  selected,
+  setSelected,
+}: {
+  product: ProductType;
+  selected: boolean;
+  setSelected: (selected: CheckedState) => void;
+}) => {
   const { user } = useAuth();
   const [selectedGender, setSelectedGender] = useState<string | null>(
     product.gender || null,
@@ -121,9 +131,14 @@ const ProductRow = ({ product }: { product: ProductType }) => {
   return (
     <Card className="flex gap-2">
       <CardHeader>
+        <Checkbox
+          checked={selected}
+          onCheckedChange={(checked) => setSelected(checked)}
+        />
         <div className="w-80 h-fit object-cover overflow-hidden">
           <img src={product.image_url || ""} />
         </div>
+        <span className="text-xs">{product.product_id}</span>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 flex-1 py-4">
         <div className="grid grid-cols-2 gap-2 flex-1">
@@ -353,6 +368,7 @@ const AllProducstPage = (props: Props) => {
   const { user, isLoading: isAuthLoading } = useAuth();
   const { filteredProducts, fetchAndCacheData } = useProducts();
   const router = useRouter();
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -405,8 +421,50 @@ const AllProducstPage = (props: Props) => {
         >
           <BiUpArrowCircle />
         </Button>
+        <div className="pb-2 border-b border-gray-200 flex items-center text-sm justify-between">
+          <div className="flex gap-2 items-center">
+            <Checkbox
+              partial={
+                selectedProducts.length > 0 &&
+                selectedProducts.length < filteredProducts.length
+              }
+              checked={selectedProducts.length > 0}
+              onCheckedChange={() => {
+                if (selectedProducts.length > 0) {
+                  setSelectedProducts([]);
+                } else {
+                  setSelectedProducts(
+                    filteredProducts.map((p) => p.product_id),
+                  );
+                }
+              }}
+            />{" "}
+            Select All
+            {selectedProducts.length > 0 && (
+              <span className="text-primary">
+                {selectedProducts.length} out of {filteredProducts.length}{" "}
+                selected
+              </span>
+            )}
+          </div>
+
+          {selectedProducts.length > 0 && (
+            <BulkEditModal productIds={selectedProducts} />
+          )}
+        </div>
         {filteredProducts.map((product) => (
-          <ProductRow product={product} key={product.product_id} />
+          <ProductRow
+            product={product}
+            key={product.product_id}
+            selected={selectedProducts.includes(product.product_id)}
+            setSelected={(checked) =>
+              setSelectedProducts((prev) =>
+                checked
+                  ? [...prev, product.product_id]
+                  : prev.filter((id) => id !== product.product_id),
+              )
+            }
+          />
         ))}
       </div>
     </div>

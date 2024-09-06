@@ -119,6 +119,7 @@ export const ProductProvider = ({
     refresh: boolean = false,
   ) => {
     const db = await dbPromise;
+    const index = storeName === "products" ? "product_id" : "store_id";
     const cachedData = await db?.getAll(storeName);
     setLoading(true);
     const last_updated_at = localStorage.getItem("last_updated_at");
@@ -138,15 +139,22 @@ export const ProductProvider = ({
       setter(cachedData);
     } else {
       console.log(`Fetching ${storeName} from Supabase`);
-      const { data, error } = await supabase.from(tableName).select("*");
+      const { data, error } = await supabase
+        .from(tableName)
+        .select("*")
+        .order("created_at", { ascending: false });
       localStorage.setItem("last_updated_at", new Date().toISOString());
       if (error) {
         console.error(`Error fetching ${storeName}:`, error);
       } else {
-        setter(data as T[]);
+        // Sort the data based on the index field to maintain consistent order
+        const sortedData = data.sort((a, b) =>
+          a[index].localeCompare(b[index]),
+        );
+        setter(sortedData as T[]);
         const txn = db.transaction(storeName, "readwrite");
         await Promise.all(
-          data.map((d: T) => {
+          sortedData.map((d: T) => {
             return txn.store.put(d);
           }),
         );
@@ -183,6 +191,7 @@ export const ProductProvider = ({
               .includes(searchQuery.toLowerCase())
           : false;
       }
+
       // CATEGORY FILTER
       if (productFilters?.category.length) {
         foundProduct = productFilters.category.length
