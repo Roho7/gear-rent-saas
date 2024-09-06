@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProductType } from "@/packages/types";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-import AddToCartButton from "../(shop)/store/_components/add-to-cart.button";
+import AddToCartButton from "../(store)/store/_components/add-to-cart.button";
 import { useProducts } from "../_providers/useProducts";
 
 const ProductCard = ({

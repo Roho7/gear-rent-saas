@@ -35,20 +35,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   const setUserLocally = useCallback(async (authUser: User | null) => {
-    if (authUser) {
-      const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+    try {
+      if (authUser?.id) {
+        const storedUser = JSON.parse(
+          localStorage.getItem(LOCAL_STORAGE_USER_KEY) || "null",
+        );
+        if (storedUser) {
+          setUser(storedUser);
+        } else {
+          const userData = await fetchUser(authUser.id);
+          if (!userData) {
+            throw new Error("Failed to fetch user data");
+          }
+          setUser(userData);
+          localStorage.setItem(
+            LOCAL_STORAGE_USER_KEY,
+            JSON.stringify(userData),
+          );
+        }
       } else {
-        const userData = await fetchUser(authUser.id);
-        setUser(userData);
-        localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(userData));
+        setUser(null);
+        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
       }
-    } else {
+    } catch (error) {
+      console.error("Error in setUserLocally:", error);
       setUser(null);
       localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
   const refreshUser = useCallback(async () => {
@@ -90,19 +106,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (data.user) {
           await setUserLocally(data.user);
-          toast({ title: "Logged in with Google" });
+          toast({
+            title: "Success",
+            description: "Logged in with Google successfully",
+            variant: "default",
+          });
           router.push("/");
         }
-      } catch (error) {
+      } catch (error: Error | any) {
         console.error(error);
         toast({
-          title: "Error logging in with Google",
+          title: "Google Sign-In Failed",
+          description:
+            error.message ||
+            "An unexpected error occurred during Google sign-in",
           variant: "destructive",
         });
+      } finally {
         setIsLoading(false);
       }
     },
-    [router, supabase, setUserLocally],
+    [supabase.auth, setUserLocally],
   );
 
   const handleSignUpWithEmail = useCallback(
@@ -116,18 +140,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (error) throw error;
 
-        if (data.user) {
+        if (data.user?.confirmed_at) {
           await setUserLocally(data.user);
-          toast({ title: "Signed up successfully" });
-          router.push("/");
+          toast({
+            title: "Account Created",
+            description: "Your account has been successfully created",
+            variant: "default",
+          });
+        } else {
+          // This case handles when a confirmation email is sent
+          toast({
+            title: "Verification Required",
+            description: "Please check your email to verify your account",
+            variant: "default",
+          });
         }
-      } catch (error) {
+      } catch (error: Error | any) {
         console.error(error);
-        toast({ title: "Error signing up", variant: "destructive" });
+        toast({
+          title: "Sign-Up Failed",
+          description:
+            error.message || "An unexpected error occurred during sign-up",
+          variant: "destructive",
+        });
+      } finally {
         setIsLoading(false);
       }
     },
-    [router, supabase, setUserLocally],
+    [supabase.auth, setUserLocally],
   );
 
   const handleLoginWithEmail = useCallback(
@@ -143,16 +183,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (data.user) {
           await setUserLocally(data.user);
-          toast({ title: "Logged in successfully" });
-          router.push("/");
+          toast({
+            title: "Welcome Back",
+            description: "You have successfully logged in",
+            variant: "default",
+          });
         }
-      } catch (error) {
+      } catch (error: Error | any) {
         console.error(error);
-        toast({ title: "Error logging in", variant: "destructive" });
+        toast({
+          title: "Login Failed",
+          description: error.message || "Invalid email or password",
+          variant: "destructive",
+        });
+      } finally {
         setIsLoading(false);
       }
     },
-    [router, supabase, setUserLocally],
+    [supabase.auth, setUserLocally],
   );
 
   const handleLogout = useCallback(async () => {
@@ -162,13 +210,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
 
       await setUserLocally(null);
-      toast({ title: "Logged out successfully" });
-    } catch (error) {
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out",
+        variant: "default",
+      });
+    } catch (error: Error | any) {
       console.error(error);
-      toast({ title: "Error logging out", variant: "destructive" });
+      toast({
+        title: "Logout Failed",
+        description:
+          error.message || "An unexpected error occurred during logout",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
     }
-  }, [router, supabase, setUserLocally]);
+  }, [supabase.auth, setUserLocally]);
 
   useEffect(() => {
     setIsLoading(true);

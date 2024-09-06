@@ -1,4 +1,7 @@
+import { Tables } from "@/packages/supabase.types";
 import { z } from "zod";
+
+export type Store = Tables<"tbl_stores">;
 
 export const RegisterShopFormSchema = z.object({
   store_name: z.string().min(2, {
