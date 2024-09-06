@@ -12,7 +12,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { popularLocations } from "@/data/contants";
+import { popularLocations } from "@/src/entities/models/constants";
+
 import { CommandList } from "cmdk";
 
 import { BiSearch } from "react-icons/bi";

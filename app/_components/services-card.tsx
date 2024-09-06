@@ -1,7 +1,6 @@
-import React from "react";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { servicesList } from "@/data/contants";
+import { servicesList } from "@/src/entities/models/constants";
+import React from "react";
 
 interface ServiceProps {
   icon: React.ElementType;

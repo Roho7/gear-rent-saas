@@ -6,10 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
   categoryMap,
-  expertiseMap as experienceMap,
+  expertiseMap,
   genderMap,
   styleMap,
-} from "@/data/contants";
+} from "@/src/entities/models/product";
+
 import { BiFilterAlt } from "react-icons/bi";
 
 const StoreSidebar = () => {
@@ -73,7 +74,7 @@ const StoreSidebar = () => {
           </div>
         ))}
         <Separator className="my-2" />
-        {experienceMap.map((d) => (
+        {expertiseMap.map((d) => (
           <div className="flex gap-1 text-sm items-center" key={d}>
             <Checkbox
               checked={productFilters.experience.includes(d)}

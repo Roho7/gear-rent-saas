@@ -20,15 +20,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import { GenderType, ProductMetadataType } from "@/packages/types";
+
+import { toast } from "@/components/ui/use-toast";
 import {
   categoryMap,
   expertiseMap,
   genderMap,
   metadataOptions,
-} from "@/data/contants";
-import { GenderType, ProductMetadataType } from "@/packages/types";
-
-import { toast } from "@/components/ui/use-toast";
+} from "@/src/entities/models/product";
 import { useState } from "react";
 import { MdOutlineUnfoldMore } from "react-icons/md";
 import { bulkUpdateProducts } from "../_actions/admin.actions";

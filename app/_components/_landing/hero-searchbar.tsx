@@ -20,12 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categoryMap, expertiseMap } from "@/data/contants";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { addDays, format } from "date-fns";
 import { useForm } from "react-hook-form";
 
+import { categoryMap, expertiseMap } from "@/src/entities/models/product";
 import clsx from "clsx";
 import { DateRange } from "react-day-picker";
 import { date, z } from "zod";

@@ -19,12 +19,13 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+
 import {
   categoryMap,
   expertiseMap,
   genderMap,
   metadataOptions,
-} from "@/data/contants";
+} from "@/src/entities/models/product";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
