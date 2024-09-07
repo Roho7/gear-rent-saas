@@ -1,6 +1,7 @@
 "use client";
 import { useProducts } from "@/app/_providers/useProducts";
-import ProductCard from "../../_components/product-card";
+
+import ProductCard from "@/app/_components/product-card";
 import StoreHeader from "./_components/store-header";
 import StoreSidebar from "./_components/store-sidebar";
 

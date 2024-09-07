@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 
+import { useInventory } from "@/app/(business)/_providers/useInventory";
+import CountryCombobox from "@/app/(business)/inventory/_components/country.combobox";
 import { RegisterShopFormSchema } from "@/src/entities/models/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
@@ -29,8 +31,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createClientComponentClient } from "../../_utils/supabase";
-import { useInventory } from "../_providers/useInventory";
-import CountryCombobox from "../inventory/_components/country.combobox";
 
 const RegisterBusinessPage = () => {
   const { user, refreshUser } = useAuth();

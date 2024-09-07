@@ -6,8 +6,8 @@ import { toast } from "@/components/ui/use-toast";
 
 import { redirect } from "next/navigation";
 import { useState } from "react";
-import { useAuth } from "../_providers/useAuth";
-import { createClientComponentClient } from "../_utils/supabase";
+import { useAuth } from "../../_providers/useAuth";
+import { createClientComponentClient } from "../../_utils/supabase";
 
 type Props = {};
 

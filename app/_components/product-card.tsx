@@ -10,7 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProductType } from "@/packages/types";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-import AddToCartButton from "../(store)/store/_components/add-to-cart.button";
+
+import AddToCartButton from "../(public)/(store)/store/_components/add-to-cart.button";
 import { useProducts } from "../_providers/useProducts";
 
 const ProductCard = ({
@@ -34,7 +35,7 @@ const ProductCard = ({
     <ProductCardSkeleton />
   ) : (
     <Card
-      className="min-w-80 flex flex-col gap-2"
+      className=" min-w-3/4 flex flex-col gap-2"
       onClick={() => router.push(`/store/${product.product_id}`)}
     >
       <CardHeader>

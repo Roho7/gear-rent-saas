@@ -1,7 +1,4 @@
 "use client";
-
-import { useAuth } from "@/app/_providers/useAuth";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,27 +6,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 
+import { useAuth } from "@/app/_providers/useAuth";
 import { useProducts } from "@/app/_providers/useProducts";
 import { createClientComponentClient } from "@/app/_utils/supabase";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { redirect, useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
 import { BiEdit, BiTrash } from "react-icons/bi";
-import { IoImageOutline, IoRefreshOutline } from "react-icons/io5";
-import { useInventory } from "../_providers/useInventory";
+import { IoImageOutline } from "react-icons/io5";
 import DeleteStoreModal from "./_components/confirm-delete.modal";
 import { EditStoreModal } from "./_components/edit-store.modal";
-import InventoryItemCard from "./_components/inventory.card";
 
-type EditModalRefType = {
-  open: () => void;
-  onClose: () => void;
-};
+import { useEffect, useRef } from "react";
+import { useInventory } from "../_providers/useInventory";
 
-const InventoryPage = () => {
+export default function BusinessDashboard() {
   const { user } = useAuth();
   const { fetchAndCacheData } = useProducts();
   const router = useRouter();
@@ -94,19 +86,9 @@ const InventoryPage = () => {
   if (!user?.store_id) {
     redirect("/register-store");
   }
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-40 w-full" />
-        <Skeleton className="h-40 w-full" />
-      </div>
-    );
-  }
   return (
-    <div className="flex flex-col gap-2">
-      <Card className="flex gap-2 overflow-hidden relative">
+    <div className="grid min-h-screen w-full p-8">
+      <Card className="flex gap-2 overflow-hidden relative h-1/3">
         <CardHeader className="flex-1 flex gap-2 flex-row items-start justify-between">
           <div>
             <CardTitle>{storeDetails?.store_name}</CardTitle>{" "}
@@ -167,25 +149,6 @@ const InventoryPage = () => {
           </div>
         </CardContent>
       </Card>
-      <div className="flex justify-between items-center">
-        <h1 className="text-lg my-4">Your Listings</h1>
-        <div className="flex gap-2">
-          <Button onClick={() => router.push(`/inventory/${"new"}`)}>
-            Add New Listing
-          </Button>
-          <Button onClick={() => fetchInventory()} variant={"outline"}>
-            <IoRefreshOutline />
-          </Button>
-        </div>
-      </div>
-      <Separator />
-      <div className="grid grid-cols-4 gap-2">
-        {inventory?.map((item) => (
-          <InventoryItemCard inventoryItem={item} key={item.inventory_id} />
-        ))}
-      </div>
     </div>
   );
-};
-
-export default InventoryPage;
+}

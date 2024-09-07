@@ -29,11 +29,12 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiChevronLeft, FiExternalLink } from "react-icons/fi";
 import { z } from "zod";
-import { addInventoryItem } from "../../_actions/inventory.actions";
-import CurrencyCombobox from "../_components/currency.combobox";
-import DiscountCombobox from "../_components/discount.combobox";
-import GranularityCombobox from "../_components/granularity.combobox";
-import ProductCombobox from "../_components/product.combobox";
+
+import { addInventoryItem } from "@/app/(business)/_actions/inventory.actions";
+import CurrencyCombobox from "../../_components/currency.combobox";
+import DiscountCombobox from "../../_components/discount.combobox";
+import GranularityCombobox from "../../_components/granularity.combobox";
+import ProductCombobox from "../../_components/product.combobox";
 import {
   deleteInventoryItem,
   getInventoryItem,
@@ -231,7 +232,7 @@ const AddListingPage = (props: Props) => {
    */
 
   return (
-    <section className="">
+    <main className="p-8 w-full">
       <Button
         variant={"outline"}
         onClick={() => router.back()}
@@ -239,8 +240,8 @@ const AddListingPage = (props: Props) => {
       >
         <FiChevronLeft /> Back
       </Button>
-      <div className="flex gap-4">
-        <Card>
+      <div className="flex w-full gap-4">
+        <Card className="w-2/3">
           <CardHeader>
             <CardTitle>Add Listing</CardTitle>
             <CardDescription>
@@ -526,7 +527,7 @@ const AddListingPage = (props: Props) => {
             </Form>
           </CardContent>
         </Card>
-        <Card className="flex-1">
+        <Card className="w-1/3">
           <CardHeader className="flex gap-2">
             <CardTitle>Preview</CardTitle>
             {selectedProduct && (
@@ -600,7 +601,7 @@ const AddListingPage = (props: Props) => {
           </CardContent>
         </Card>
       </div>
-    </section>
+    </main>
   );
 };
 
