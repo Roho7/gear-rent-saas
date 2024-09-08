@@ -1,0 +1,25 @@
+"use client";
+import Spinner from "@/app/_components/_shared/spinner";
+import { useAuth } from "@/app/_providers/useAuth";
+import InventoryHeader from "./_components/inventory.header";
+import InventorySidebar from "./_components/inventory.sidebar";
+import RegisterBusiness from "./_components/register-business";
+
+const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) return <Spinner />;
+  return user?.store_id ? (
+    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] max-w-screen">
+      <InventorySidebar />
+      <div className="flex flex-col">
+        <InventoryHeader />
+        {children}
+      </div>
+    </div>
+  ) : (
+    <RegisterBusiness />
+  );
+};
+
+export default BusinessLayout;

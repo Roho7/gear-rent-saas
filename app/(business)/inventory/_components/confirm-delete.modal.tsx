@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DialogClose, DialogTitle } from "@radix-ui/react-dialog";
-import { deleteStore } from "../[inventory_id]/_actions/store.actions";
+import { deleteStore } from "../listings/[inventory_id]/_actions/store.actions";
 
 type Props = {};
 
