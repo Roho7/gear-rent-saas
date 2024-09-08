@@ -68,7 +68,7 @@ const Navbar: React.FC = () => {
                   <NavigationMenuLink asChild>
                     <a
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none hover:shadow-md"
-                      href="/register-store"
+                      href="/inventory"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">
                         Rent through us

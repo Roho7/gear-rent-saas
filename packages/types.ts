@@ -3,6 +3,7 @@ import { Tables } from "./supabase.types";
 export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
   product_metadata: ProductMetadataType;
 };
+export type GearyoUser = Tables<"tbl_users">;
 export type StoreType = Tables<"tbl_stores">;
 export type InventoryType = {
   inventory_id: string;
@@ -44,3 +45,9 @@ export type ProductMetadataType =
   & {
     [key: string]: string[];
   };
+
+export type BusinessType = {
+  user: GearyoUser;
+  store: StoreType;
+  inventory: InventoryType[];
+};

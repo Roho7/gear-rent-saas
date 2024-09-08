@@ -21,7 +21,7 @@ const InventoryItemCard = ({ inventoryItem }: Props) => {
       className="flex flex-col gap-2 hover:bg-card/10"
       role="button"
       onClick={() => {
-        router.push(`/inventory/${inventoryItem.inventory_id}`);
+        router.push(`/inventory/listings/${inventoryItem.inventory_id}`);
       }}
     >
       <CardHeader>

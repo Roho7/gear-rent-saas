@@ -11,8 +11,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { fetchUser } from "../(public)/account/_actions/user.actions";
+import { getUser } from "../_actions/user.actions";
 import { createClientComponentClient } from "../_utils/supabase";
-import { fetchUser } from "../account/_actions/user.actions";
 
 interface AuthContextValue {
   handleSignUpWithEmail: (email: string, password: string) => Promise<void>;
@@ -26,8 +27,6 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const LOCAL_STORAGE_USER_KEY = "gearyo_user";
-
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<Tables<"tbl_users"> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,30 +36,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const setUserLocally = useCallback(async (authUser: User | null) => {
     try {
       if (authUser?.id) {
-        const storedUser = JSON.parse(
-          localStorage.getItem(LOCAL_STORAGE_USER_KEY) || "null",
-        );
-        if (storedUser) {
-          setUser(storedUser);
-        } else {
-          const userData = await fetchUser(authUser.id);
-          if (!userData) {
-            throw new Error("Failed to fetch user data");
-          }
-          setUser(userData);
-          localStorage.setItem(
-            LOCAL_STORAGE_USER_KEY,
-            JSON.stringify(userData),
-          );
+        const userData = await getUser();
+        if (!userData) {
+          throw new Error("Failed to fetch user data");
         }
+        setUser(userData);
       } else {
         setUser(null);
-        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
       }
     } catch (error) {
       console.error("Error in setUserLocally:", error);
       setUser(null);
-      localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+
       throw error;
     } finally {
       setIsLoading(false);
@@ -79,11 +66,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (authUser) {
         const userData = await fetchUser(authUser.id);
         setUser(userData);
-        localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(userData));
+
         toast({ title: "User data refreshed" });
       } else {
         setUser(null);
-        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
       }
     } catch (error) {
       console.error(error);
@@ -188,6 +174,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             description: "You have successfully logged in",
             variant: "default",
           });
+          router.push("/");
         }
       } catch (error: Error | any) {
         console.error(error);
@@ -231,16 +218,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     setIsLoading(true);
     const setupAuth = async () => {
-      const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-        setIsLoading(false);
-      } else {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        await setUserLocally(session?.user ?? null);
-      }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      await setUserLocally(session?.user ?? null);
 
       const { data: authListener } = supabase.auth.onAuthStateChange(
         async (event, session) => {
@@ -270,14 +251,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       refreshUser,
       isLoading,
     }),
-    [
-      handleSignUpWithEmail,
-      handleLoginWithEmail,
-      handleLogout,
-      handleSignInWithGoogle,
-      user,
-      isLoading,
-    ],
+    [user, isLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

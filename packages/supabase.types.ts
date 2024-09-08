@@ -242,9 +242,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_inventory: {
+      get_business: {
         Args: {
-          store_id_input: string
+          store_id_input?: string
         }
         Returns: Json
       }
