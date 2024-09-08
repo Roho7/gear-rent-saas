@@ -23,8 +23,8 @@ const InventorySidebar = () => {
     <div className="hidden border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <Link href="/home" className="text-white font-bold">
-            <img src="/logo-short.png" alt="" className="w-8" />
+          <Link href="/home" className="text-white font-bold w-8">
+            <img src="/logo-short.png" alt="" className="w-full h-full" />
           </Link>
           <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
             <Bell className="h-4 w-4" />

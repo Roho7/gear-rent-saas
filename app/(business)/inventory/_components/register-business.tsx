@@ -22,14 +22,16 @@ import { toast } from "@/components/ui/use-toast";
 
 import CountryCombobox from "@/app/(business)/inventory/_components/country.combobox";
 import { useAuth } from "@/app/_providers/useAuth";
+import { createClientComponentClient } from "@/app/_utils/supabase";
 import { RegisterShopFormSchema } from "@/src/entities/models/store";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createClientComponentClient } from "../../_utils/supabase";
 
-const RegisterBusinessPage = () => {
+const RegisterBusiness = () => {
   const { user } = useAuth();
+
   const form = useForm<z.infer<typeof RegisterShopFormSchema>>({
     resolver: zodResolver(RegisterShopFormSchema),
     defaultValues: {
@@ -95,6 +97,10 @@ const RegisterBusinessPage = () => {
   // useEffect(() => {
   //   getExistingStoreDetails();
   // }, [storeDetails]);
+
+  if (user?.store_id) {
+    redirect("/inventory");
+  }
 
   return (
     <section className="flex flex-col items-center gap-4 text-gray-700">
@@ -300,4 +306,4 @@ const RegisterBusinessPage = () => {
   );
 };
 
-export default RegisterBusinessPage;
+export default RegisterBusiness;
