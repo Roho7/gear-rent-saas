@@ -22,7 +22,7 @@ import { useRef } from "react";
 import { useInventory } from "../_providers/useInventory";
 
 export default function BusinessDashboard() {
-  const { fetchAndCacheData } = useProducts();
+  const { fetchAndCacheStores } = useProducts();
   const router = useRouter();
   const { storeDetails } = useInventory();
   const { user } = useAuth();
@@ -75,7 +75,7 @@ export default function BusinessDashboard() {
         });
         return;
       }
-      await fetchAndCacheData("stores", true);
+      await fetchAndCacheStores(true);
     }
   };
 
@@ -139,15 +139,21 @@ export default function BusinessDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Your Store Location</CardTitle>
+          <CardTitle>Store Location</CardTitle>
         </CardHeader>
         <CardContent>
-          <iframe
-            width="100%"
-            height="250"
-            className="mt-2"
-            src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&q=place_id:ChIJBbQud9pzAjoReuWgIJcwP3A`}
-          ></iframe>
+          {storeDetails?.google_place_id ? (
+            <iframe
+              width="100%"
+              height="250"
+              className="mt-2"
+              src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&q=place_id:${storeDetails?.google_place_id}`}
+            ></iframe>
+          ) : (
+            <div className="h-20 text-muted">
+              Your store is under review, please check back later.
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

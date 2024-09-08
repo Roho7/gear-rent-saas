@@ -15,6 +15,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { getAllProducts } from "../_actions/products.actions";
 import { createClientComponentClient } from "../_utils/supabase";
 
 interface ProductDB extends DBSchema {
@@ -32,10 +33,8 @@ type ProductContextType = {
   cartItems: CartItemType | null;
   addToCart: (product_id: string) => void;
   removeFromCart: (product_id: string) => void;
-  fetchAndCacheData: <T>(
-    storeName: "products" | "stores",
-    hardRefresh?: boolean,
-  ) => Promise<void>;
+  fetchAndCacheStores: (refresh: boolean) => Promise<void>;
+  fetchAndCacheProducts: (refresh: boolean) => Promise<void>;
   products: ProductType[];
   stores: StoreType[];
   setProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
@@ -114,47 +113,77 @@ export const ProductProvider = ({
     }));
   };
 
-  const fetchAndCacheData = async <T extends ProductType | StoreType>(
-    storeName: "products" | "stores",
-    refresh: boolean = false,
-  ) => {
+  const fetchAndCacheProducts = async (refresh: boolean = false) => {
     const db = await dbPromise;
-    const index = storeName === "products" ? "product_id" : "store_id";
-    const cachedData = await db?.getAll(storeName);
+    const cachedData = await db?.getAll("products");
     setLoading(true);
-    const last_updated_at = localStorage.getItem("last_updated_at");
-    // assigned setter
-    const setter: React.Dispatch<React.SetStateAction<any[]>> =
-      storeName === "products" ? setProducts : setStores;
-
-    // assigned tableName
-    const tableName = storeName === "products" ? "tbl_products" : "tbl_stores";
+    const last_updated_at = localStorage.getItem("products_last_updated_at");
 
     if (
       cachedData.length &&
       !refresh &&
       !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
     ) {
-      console.log(`Using cached ${storeName} data`);
-      setter(cachedData);
+      console.log("Using cached products data");
+      setProducts(cachedData);
     } else {
-      console.log(`Fetching ${storeName} from Supabase`);
+      console.log("Fetching products from Supabase");
+      const data = await getAllProducts();
+
+      if (data.length === 0) {
+        throw new Error("No products found");
+      }
+
+      localStorage.setItem(
+        "products_last_updated_at",
+        new Date().toISOString(),
+      );
+
+      const sortedData = data.sort((a, b) =>
+        a.product_id.localeCompare(b.product_id),
+      );
+      setProducts(sortedData);
+      const txn = db.transaction("products", "readwrite");
+      await Promise.all(
+        sortedData.map((d: ProductType) => {
+          return txn.store.put(d);
+        }),
+      );
+    }
+    setLoading(false);
+  };
+
+  const fetchAndCacheStores = async (refresh: boolean = false) => {
+    const db = await dbPromise;
+    const cachedData = await db?.getAll("stores");
+    setLoading(true);
+    const last_updated_at = localStorage.getItem("stores_last_updated_at");
+
+    if (
+      cachedData.length &&
+      !refresh &&
+      !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
+    ) {
+      console.log("Using cached stores data");
+      setStores(cachedData);
+    } else {
+      console.log("Fetching stores from Supabase");
       const { data, error } = await supabase
-        .from(tableName)
+        .from("tbl_stores")
         .select("*")
         .order("created_at", { ascending: false });
-      localStorage.setItem("last_updated_at", new Date().toISOString());
+
+      localStorage.setItem("stores_last_updated_at", new Date().toISOString());
       if (error) {
-        console.error(`Error fetching ${storeName}:`, error);
+        console.error("Error fetching stores:", error);
       } else {
-        // Sort the data based on the index field to maintain consistent order
         const sortedData = data.sort((a, b) =>
-          a[index].localeCompare(b[index]),
+          a.store_id.localeCompare(b.store_id),
         );
-        setter(sortedData as T[]);
-        const txn = db.transaction(storeName, "readwrite");
+        setStores(sortedData);
+        const txn = db.transaction("stores", "readwrite");
         await Promise.all(
-          sortedData.map((d: T) => {
+          sortedData.map((d: StoreType) => {
             return txn.store.put(d);
           }),
         );
@@ -164,8 +193,8 @@ export const ProductProvider = ({
   };
 
   const fetchData = useCallback(async () => {
-    await fetchAndCacheData<ProductType>("products");
-    await fetchAndCacheData<StoreType>("stores");
+    await fetchAndCacheProducts();
+    await fetchAndCacheStores();
   }, []);
 
   const updateProductMetadata = useCallback(async (product: ProductType) => {
@@ -249,7 +278,8 @@ export const ProductProvider = ({
       cartItems,
       addToCart,
       removeFromCart,
-      fetchAndCacheData,
+      fetchAndCacheStores,
+      fetchAndCacheProducts,
       products,
       stores,
       loading,
@@ -266,7 +296,8 @@ export const ProductProvider = ({
       cartItems,
       addToCart,
       removeFromCart,
-      fetchAndCacheData,
+      fetchAndCacheStores,
+      fetchAndCacheProducts,
       products,
       stores,
       loading,

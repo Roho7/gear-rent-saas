@@ -26,11 +26,14 @@ import { createClientComponentClient } from "@/app/_utils/supabase";
 import { RegisterShopFormSchema } from "@/src/entities/models/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useInventory } from "../../_providers/useInventory";
 
-const RegisterBusiness = () => {
-  const { user } = useAuth();
+const RegisterBusinessForm = () => {
+  const { user, refreshUser } = useAuth();
+  const { storeDetails } = useInventory();
 
   const form = useForm<z.infer<typeof RegisterShopFormSchema>>({
     resolver: zodResolver(RegisterShopFormSchema),
@@ -76,27 +79,27 @@ const RegisterBusiness = () => {
       });
       return;
     } finally {
-      // refreshUser();
+      refreshUser();
     }
   }
 
-  // const getExistingStoreDetails = () => {
-  //   form.reset({
-  //     store_name: storeDetails?.store_name,
-  //     country_code: storeDetails?.business_number?.slice(0, 2) || "",
-  //     business_number: storeDetails?.business_number || "",
-  //     business_email: storeDetails?.business_email || "",
-  //     address_line1: storeDetails?.address_line1 || "",
-  //     address_line2: storeDetails?.address_line2 || "",
-  //     city: storeDetails?.city || "",
-  //     country: storeDetails?.country || "",
-  //     postcode: storeDetails?.postcode || "",
-  //   });
-  // };
+  const getExistingStoreDetails = () => {
+    form.reset({
+      store_name: storeDetails?.store_name,
+      country_code: storeDetails?.business_number?.slice(0, 2) || "",
+      business_number: storeDetails?.business_number || "",
+      business_email: storeDetails?.business_email || "",
+      address_line1: storeDetails?.address_line1 || "",
+      address_line2: storeDetails?.address_line2 || "",
+      city: storeDetails?.city || "",
+      country: storeDetails?.country || "",
+      postcode: storeDetails?.postcode || "",
+    });
+  };
 
-  // useEffect(() => {
-  //   getExistingStoreDetails();
-  // }, [storeDetails]);
+  useEffect(() => {
+    getExistingStoreDetails();
+  }, [storeDetails]);
 
   if (user?.store_id) {
     redirect("/inventory");
@@ -306,4 +309,4 @@ const RegisterBusiness = () => {
   );
 };
 
-export default RegisterBusiness;
+export default RegisterBusinessForm;

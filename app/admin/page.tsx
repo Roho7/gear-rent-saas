@@ -2,6 +2,7 @@
 import { InventoryType } from "@/packages/types";
 import { useEffect, useState } from "react";
 import { BiBox, BiListCheck, BiStore } from "react-icons/bi";
+import Spinner from "../_components/_shared/spinner";
 import { useProducts } from "../_providers/useProducts";
 import { getInventory } from "./_actions/admin.actions";
 import DashboardStat from "./_components/dasboard.stat.card";
@@ -11,14 +12,21 @@ type Props = {};
 const AdminDashboardPage = (props: Props) => {
   const { stores, products } = useProducts();
   const [allInventory, setAllInventory] = useState<InventoryType[]>();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchInventory = async () => {
+      setIsLoading(true);
       const inventory = await getInventory();
       setAllInventory(inventory as InventoryType[]);
+      setIsLoading(false);
     };
     fetchInventory();
   }, []);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">

@@ -22,9 +22,7 @@ export const RegisterShopFormSchema = z.object({
   address_line1: z.string().min(5, {
     message: "Address must be at least 5 characters.",
   }),
-  address_line2: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
-  }),
+  address_line2: z.string().optional(),
   city: z.string().min(2, {
     message: "Please enter a valid city.",
   }),

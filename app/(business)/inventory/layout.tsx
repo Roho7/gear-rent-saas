@@ -3,7 +3,7 @@ import Spinner from "@/app/_components/_shared/spinner";
 import { useAuth } from "@/app/_providers/useAuth";
 import InventoryHeader from "./_components/inventory.header";
 import InventorySidebar from "./_components/inventory.sidebar";
-import RegisterBusiness from "./_components/register-business";
+import RegisterBusinessForm from "./_components/register-business";
 
 const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -18,7 +18,7 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
     </div>
   ) : (
-    <RegisterBusiness />
+    <RegisterBusinessForm />
   );
 };
 
