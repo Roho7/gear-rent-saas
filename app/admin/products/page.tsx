@@ -28,10 +28,12 @@ import {
   metadataOptions,
 } from "@/src/entities/models/product";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { EyeIcon } from "lucide-react";
 import { useState } from "react";
-import { BiUpArrowCircle } from "react-icons/bi";
+import { BiSave, BiUpArrowCircle } from "react-icons/bi";
 import { MdOutlineUnfoldMore } from "react-icons/md";
 import { BulkEditModal } from "../_components/bulk-edit.modal";
+import { hideProduct } from "./_actions/product.actions";
 
 type Props = {};
 
@@ -103,7 +105,7 @@ const ProductRow = ({
     }));
   };
 
-  const saveProduct = async () => {
+  const handleSaveProduct = async () => {
     const updatedProduct: ProductType = {
       ...product,
       product_title: productTitle,
@@ -121,6 +123,16 @@ const ProductRow = ({
     toast({
       title: "Product Updated",
     });
+  };
+  const handleHideProduct = async () => {
+    try {
+      const res = await hideProduct(product.product_id);
+      toast({
+        title: "Product Hidden",
+      });
+    } catch (error) {
+      console.error("Error hiding product:", error);
+    }
   };
 
   return (
@@ -352,7 +364,15 @@ const ProductRow = ({
             </div>
           </div>
 
-          <Button onClick={saveProduct}>Save</Button>
+          <div className="flex gap-2 ml-auto">
+            <Button variant={"outline"} onClick={handleHideProduct}>
+              <EyeIcon size={16} /> Hide
+            </Button>
+            <Button onClick={handleSaveProduct}>
+              <BiSave />
+              Save
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

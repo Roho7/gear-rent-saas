@@ -15,7 +15,7 @@ const ListingsPage = () => {
         <h1 className="text-lg font-semibold md:text-2xl">Your Listings</h1>
         <div className="flex gap-2">
           <Button onClick={() => router.push(`/inventory/listings/${"new"}`)}>
-            Add New Listing
+            Add Listing
           </Button>
           {/* <Button onClick={() => fetchInventory()} variant={"outline"}>
             <IoRefreshOutline />
@@ -34,7 +34,12 @@ const ListingsPage = () => {
             <p className="text-sm text-muted-foreground">
               You can start selling as soon as you add a product.
             </p>
-            <Button className="mt-4">Add Product</Button>
+            <Button
+              onClick={() => router.push(`/inventory/listings/${"new"}`)}
+              className="mt-4"
+            >
+              Add Listing
+            </Button>
           </div>
         </div>
       ) : (

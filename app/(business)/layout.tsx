@@ -12,7 +12,6 @@ const BusinessLayout = ({ children }: { children: React.ReactElement }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("here");
         const res = await getBusiness({});
         setBusinessData(res || null);
       } catch (error) {

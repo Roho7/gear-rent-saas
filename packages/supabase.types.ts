@@ -105,6 +105,7 @@ export type Database = {
           experience: string[] | null
           gender: Database["public"]["Enums"]["enum_genders"] | null
           image_url: string | null
+          is_hidden: boolean | null
           market_price: string | null
           product_id: string
           product_link: string | null
@@ -118,6 +119,7 @@ export type Database = {
           experience?: string[] | null
           gender?: Database["public"]["Enums"]["enum_genders"] | null
           image_url?: string | null
+          is_hidden?: boolean | null
           market_price?: string | null
           product_id?: string
           product_link?: string | null
@@ -131,6 +133,7 @@ export type Database = {
           experience?: string[] | null
           gender?: Database["public"]["Enums"]["enum_genders"] | null
           image_url?: string | null
+          is_hidden?: boolean | null
           market_price?: string | null
           product_id?: string
           product_link?: string | null
@@ -149,7 +152,7 @@ export type Database = {
           closing_time: string | null
           country: string | null
           description: string | null
-          google_link: string | null
+          google_place_id: string | null
           google_rating: number | null
           postcode: string | null
           store_id: string
@@ -166,7 +169,7 @@ export type Database = {
           closing_time?: string | null
           country?: string | null
           description?: string | null
-          google_link?: string | null
+          google_place_id?: string | null
           google_rating?: number | null
           postcode?: string | null
           store_id?: string
@@ -183,7 +186,7 @@ export type Database = {
           closing_time?: string | null
           country?: string | null
           description?: string | null
-          google_link?: string | null
+          google_place_id?: string | null
           google_rating?: number | null
           postcode?: string | null
           store_id?: string
