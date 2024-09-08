@@ -20,6 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
+import StoreSidebar from "@/app/(public)/(store)/store/_components/store-sidebar";
 import {
   categoryMap,
   expertiseMap,
@@ -27,12 +28,10 @@ import {
   metadataOptions,
 } from "@/src/entities/models/product";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { redirect, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BiUpArrowCircle } from "react-icons/bi";
 import { MdOutlineUnfoldMore } from "react-icons/md";
-import StoreSidebar from "../store/_components/store-sidebar";
-import { BulkEditModal } from "./_components/bulk-edit.modal";
+import { BulkEditModal } from "../_components/bulk-edit.modal";
 
 type Props = {};
 
@@ -45,7 +44,6 @@ const ProductRow = ({
   selected: boolean;
   setSelected: (selected: CheckedState) => void;
 }) => {
-  const { user } = useAuth();
   const [selectedGender, setSelectedGender] = useState<string | null>(
     product.gender || null,
   );
@@ -124,10 +122,6 @@ const ProductRow = ({
       title: "Product Updated",
     });
   };
-
-  if (!user?.is_admin) {
-    redirect("/");
-  }
 
   return (
     <Card className="flex gap-2">
@@ -366,16 +360,9 @@ const ProductRow = ({
 };
 
 const AllProducstPage = (props: Props) => {
-  const { user, isLoading: isAuthLoading } = useAuth();
-  const { filteredProducts, fetchAndCacheData } = useProducts();
-  const router = useRouter();
+  const { isLoading: isAuthLoading } = useAuth();
+  const { filteredProducts } = useProducts();
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!isAuthLoading && !user) {
-      router.push("/login");
-    }
-  }, [user, isAuthLoading, router]);
 
   if (isAuthLoading) {
     return (
@@ -400,74 +387,73 @@ const AllProducstPage = (props: Props) => {
     );
   }
 
-  if (!user) {
-    return null; // This will prevent any flash of content before redirect
-  }
   return (
-    <div className="flex gap-4 relative ">
+    <div className="flex h-screen overflow-hidden">
       <StoreSidebar />
-      <div
-        className="flex flex-col gap-4 w-full h-screen overflow-scroll"
-        id="product-container"
-      >
-        <Button
-          size={"icon"}
-          variant={"secondary"}
-          className="rounded-full absolute bottom-[10vh] left-[50vw] transform -translate-x-1/2 text-white"
-          onClick={() =>
-            document
-              .getElementById("product-container")
-              ?.scrollTo({ top: 0, behavior: "smooth" })
-          }
-        >
-          <BiUpArrowCircle />
-        </Button>
-        <div className="pb-2 border-b border-gray-200 flex items-center text-sm justify-between">
-          <div className="flex gap-2 items-center">
-            <Checkbox
-              partial={
-                selectedProducts.length > 0 &&
-                selectedProducts.length < filteredProducts.length
-              }
-              checked={selectedProducts.length > 0}
-              onCheckedChange={() => {
-                if (selectedProducts.length > 0) {
-                  setSelectedProducts([]);
-                } else {
-                  setSelectedProducts(
-                    filteredProducts.map((p) => p.product_id),
-                  );
+      <div className="flex-1 flex flex-col">
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center text-sm justify-between">
+            <div className="flex gap-2 items-center h-10">
+              <Checkbox
+                partial={
+                  selectedProducts.length > 0 &&
+                  selectedProducts.length < filteredProducts.length
                 }
-              }}
-            />{" "}
-            Select All
+                checked={selectedProducts.length > 0}
+                onCheckedChange={() => {
+                  if (selectedProducts.length > 0) {
+                    setSelectedProducts([]);
+                  } else {
+                    setSelectedProducts(
+                      filteredProducts.map((p) => p.product_id),
+                    );
+                  }
+                }}
+              />{" "}
+              Select All
+              {selectedProducts.length > 0 && (
+                <span className="text-primary">
+                  {selectedProducts.length} out of {filteredProducts.length}{" "}
+                  selected
+                </span>
+              )}
+            </div>
             {selectedProducts.length > 0 && (
-              <span className="text-primary">
-                {selectedProducts.length} out of {filteredProducts.length}{" "}
-                selected
-              </span>
+              <BulkEditModal productIds={selectedProducts} />
             )}
           </div>
-
-          {selectedProducts.length > 0 && (
-            <BulkEditModal productIds={selectedProducts} />
-          )}
         </div>
-        {filteredProducts.map((product) => (
-          <ProductRow
-            product={product}
-            key={product.product_id}
-            selected={selectedProducts.includes(product.product_id)}
-            setSelected={(checked) =>
-              setSelectedProducts((prev) =>
-                checked
-                  ? [...prev, product.product_id]
-                  : prev.filter((id) => id !== product.product_id),
-              )
-            }
-          />
-        ))}
+        <div className="flex-1 overflow-y-auto" id="product-container">
+          <div className="p-4 space-y-4">
+            {filteredProducts.map((product) => (
+              <ProductRow
+                product={product}
+                key={product.product_id}
+                selected={selectedProducts.includes(product.product_id)}
+                setSelected={(checked) =>
+                  setSelectedProducts((prev) =>
+                    checked
+                      ? [...prev, product.product_id]
+                      : prev.filter((id) => id !== product.product_id),
+                  )
+                }
+              />
+            ))}
+          </div>
+        </div>
       </div>
+      <Button
+        size={"icon"}
+        variant={"secondary"}
+        className="fixed bottom-4 right-4 rounded-full text-white"
+        onClick={() =>
+          document
+            .getElementById("product-container")
+            ?.scrollTo({ top: 0, behavior: "smooth" })
+        }
+      >
+        <BiUpArrowCircle />
+      </Button>
     </div>
   );
 };

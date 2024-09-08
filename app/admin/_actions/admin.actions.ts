@@ -1,6 +1,6 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
-import { ProductType } from "@/packages/types";
+import { InventoryType, ProductType } from "@/packages/types";
 import { cookies } from "next/headers";
 
 export async function bulkUpdateProducts(
@@ -20,6 +20,18 @@ export async function bulkUpdateProducts(
   );
   if (error) {
     throw new Error("Error updating products:", { cause: error.message });
+  }
+
+  return data;
+}
+
+export async function getInventory() {
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: cookieStore });
+  const { data, error } = await supabase.from("tbl_inventory").select("*")
+    .returns<InventoryType[]>();
+  if (error) {
+    throw new Error("Error fetching inventory:", { cause: error.message });
   }
 
   return data;

@@ -2,13 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
-import { IoRefreshOutline } from "react-icons/io5";
 import { useInventory } from "../../_providers/useInventory";
 import InventoryItemCard from "../_components/inventory.card";
 
 const ListingsPage = () => {
   const router = useRouter();
-  const { inventory, fetchInventory } = useInventory();
+  const { inventory } = useInventory();
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -18,9 +17,9 @@ const ListingsPage = () => {
           <Button onClick={() => router.push(`/inventory/listings/${"new"}`)}>
             Add New Listing
           </Button>
-          <Button onClick={() => fetchInventory()} variant={"outline"}>
+          {/* <Button onClick={() => fetchInventory()} variant={"outline"}>
             <IoRefreshOutline />
-          </Button>
+          </Button> */}
         </div>
       </div>
       {!inventory?.length ? (

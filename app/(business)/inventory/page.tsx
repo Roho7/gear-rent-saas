@@ -7,30 +7,30 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { useAuth } from "@/app/_providers/useAuth";
 import { useProducts } from "@/app/_providers/useProducts";
 import { createClientComponentClient } from "@/app/_utils/supabase";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import { IoImageOutline } from "react-icons/io5";
 import DeleteStoreModal from "./_components/confirm-delete.modal";
 import { EditStoreModal } from "./_components/edit-store.modal";
 
-import { useEffect, useRef } from "react";
+import { useAuth } from "@/app/_providers/useAuth";
+import { useRef } from "react";
 import { useInventory } from "../_providers/useInventory";
 
 export default function BusinessDashboard() {
-  const { user } = useAuth();
   const { fetchAndCacheData } = useProducts();
   const router = useRouter();
-  const { inventory, storeDetails, fetchInventory, isLoading } = useInventory();
+  const { storeDetails } = useInventory();
+  const { user } = useAuth();
   const imageUploadRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async () => {
     const file = imageUploadRef.current?.files?.[0];
-    if (!user?.store_id) return;
+    if (!storeDetails?.store_id) return;
     if (file) {
       const supabase = createClientComponentClient();
       const { data, error } = await supabase.storage
@@ -64,7 +64,7 @@ export default function BusinessDashboard() {
         .update({
           store_img: store_image_path,
         })
-        .eq("store_id", user?.store_id);
+        .eq("store_id", storeDetails?.store_id);
 
       if (updateError) {
         console.error("Error updating store image:", updateError);
@@ -79,15 +79,8 @@ export default function BusinessDashboard() {
     }
   };
 
-  useEffect(() => {
-    fetchInventory();
-  }, []);
-
-  if (!user?.store_id) {
-    redirect("/register-store");
-  }
   return (
-    <div className="grid min-h-screen w-full p-8">
+    <div className="flex flex-col gap-4 min-h-screen w-full p-4">
       <Card className="flex gap-2 overflow-hidden relative h-1/3">
         <CardHeader className="flex-1 flex gap-2 flex-row items-start justify-between">
           <div>
@@ -101,12 +94,6 @@ export default function BusinessDashboard() {
               <span>{storeDetails?.country}</span>
               <span>{storeDetails?.business_email}</span>
               <span>{storeDetails?.business_number}</span>
-              <iframe
-                width="450"
-                height="250"
-                className="mt-2"
-                src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&q=place_id:ChIJBbQud9pzAjoReuWgIJcwP3A`}
-              ></iframe>
             </CardDescription>
           </div>
           <div>
@@ -147,6 +134,20 @@ export default function BusinessDashboard() {
               />
             </label>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Store Location</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <iframe
+            width="100%"
+            height="250"
+            className="mt-2"
+            src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&q=place_id:ChIJBbQud9pzAjoReuWgIJcwP3A`}
+          ></iframe>
         </CardContent>
       </Card>
     </div>

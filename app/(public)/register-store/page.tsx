@@ -11,8 +11,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-import { useAuth } from "@/app/_providers/useAuth";
 import {
   Select,
   SelectContent,
@@ -22,19 +20,16 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 
-import { useInventory } from "@/app/(business)/_providers/useInventory";
 import CountryCombobox from "@/app/(business)/inventory/_components/country.combobox";
+import { useAuth } from "@/app/_providers/useAuth";
 import { RegisterShopFormSchema } from "@/src/entities/models/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect } from "next/navigation";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createClientComponentClient } from "../../_utils/supabase";
 
 const RegisterBusinessPage = () => {
-  const { user, refreshUser } = useAuth();
-  const { storeDetails } = useInventory();
+  const { user } = useAuth();
   const form = useForm<z.infer<typeof RegisterShopFormSchema>>({
     resolver: zodResolver(RegisterShopFormSchema),
     defaultValues: {
@@ -79,31 +74,27 @@ const RegisterBusinessPage = () => {
       });
       return;
     } finally {
-      refreshUser();
+      // refreshUser();
     }
   }
 
-  const getExistingStoreDetails = () => {
-    form.reset({
-      store_name: storeDetails?.store_name,
-      country_code: storeDetails?.business_number?.slice(0, 2) || "",
-      business_number: storeDetails?.business_number || "",
-      business_email: storeDetails?.business_email || "",
-      address_line1: storeDetails?.address_line1 || "",
-      address_line2: storeDetails?.address_line2 || "",
-      city: storeDetails?.city || "",
-      country: storeDetails?.country || "",
-      postcode: storeDetails?.postcode || "",
-    });
-  };
+  // const getExistingStoreDetails = () => {
+  //   form.reset({
+  //     store_name: storeDetails?.store_name,
+  //     country_code: storeDetails?.business_number?.slice(0, 2) || "",
+  //     business_number: storeDetails?.business_number || "",
+  //     business_email: storeDetails?.business_email || "",
+  //     address_line1: storeDetails?.address_line1 || "",
+  //     address_line2: storeDetails?.address_line2 || "",
+  //     city: storeDetails?.city || "",
+  //     country: storeDetails?.country || "",
+  //     postcode: storeDetails?.postcode || "",
+  //   });
+  // };
 
-  useEffect(() => {
-    getExistingStoreDetails();
-  }, [storeDetails]);
-
-  if (user?.store_id) {
-    redirect("/inventory");
-  }
+  // useEffect(() => {
+  //   getExistingStoreDetails();
+  // }, [storeDetails]);
 
   return (
     <section className="flex flex-col items-center gap-4 text-gray-700">

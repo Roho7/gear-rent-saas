@@ -21,7 +21,7 @@ const LoginPage = (props: Props) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (localStorage.getItem("user")) {
+    if (localStorage.getItem("gearyo-user")) {
       router.push("/");
     }
 

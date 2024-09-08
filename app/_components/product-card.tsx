@@ -35,7 +35,7 @@ const ProductCard = ({
     <ProductCardSkeleton />
   ) : (
     <Card
-      className=" min-w-3/4 flex flex-col gap-2"
+      className="aspect-square min-w-64 flex flex-col gap-2"
       onClick={() => router.push(`/store/${product.product_id}`)}
     >
       <CardHeader>

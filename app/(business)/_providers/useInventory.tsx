@@ -1,6 +1,10 @@
 "use client";
-import { Tables } from "@/packages/supabase.types";
-import { InventoryType, StoreType } from "@/packages/types";
+import {
+  BusinessType,
+  GearyoUser,
+  InventoryType,
+  StoreType,
+} from "@/packages/types";
 import React, {
   createContext,
   useContext,
@@ -8,12 +12,11 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { getInventory } from "../_actions/inventory.actions";
 
 interface InventoryContextValue {
-  inventory: InventoryType[] | null;
-  storeDetails: StoreType | null;
-  fetchInventory: () => Promise<void>;
+  inventory: InventoryType[] | undefined;
+  storeDetails: StoreType | undefined;
+  businessUser: GearyoUser | undefined;
   isLoading: boolean;
 }
 
@@ -22,53 +25,29 @@ const InventoryContext = createContext<InventoryContextValue | undefined>(
 );
 
 export const InventoryProvider = ({
-  user,
+  business,
   children,
 }: {
-  user: Tables<"tbl_users"> | null;
+  business: BusinessType | null;
   children: React.ReactNode;
 }) => {
-  const [storeDetails, setStoreDetails] = useState<StoreType | null>(null);
-  const [inventory, setInventory] = useState<InventoryType[] | null>(null);
+  const [storeDetails, setStoreDetails] = useState<StoreType>();
+  const [inventory, setInventory] = useState<InventoryType[]>();
+  const [businessUser, setBusinessUser] = useState<GearyoUser>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchInventory = async () => {
-    setIsLoading(true);
-    if (!user?.store_id) {
-      console.log("User does not have a store ID");
-      setIsLoading(false);
-      return;
-    }
-    try {
-      const data: {
-        store_details: StoreType;
-        inventory: InventoryType[];
-      } | null = await getInventory(user?.store_id || null);
-      if (!data) {
-        return;
-      }
-      setStoreDetails(data.store_details);
-      setInventory(data.inventory);
-      console.log("Fetched inventory from server");
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    if (user?.store_id) {
-      fetchInventory();
-    }
-    setIsLoading(false);
-  }, [user]);
+    console.log("Business data:", business);
+    setStoreDetails(business?.store);
+    setInventory(business?.inventory);
+    setBusinessUser(business?.user);
+  }, []);
 
   const value: InventoryContextValue = useMemo(
     () => ({
       inventory,
       storeDetails,
-      fetchInventory,
+      businessUser,
       isLoading,
     }),
     [inventory, storeDetails, isLoading],
