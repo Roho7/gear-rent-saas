@@ -46,7 +46,7 @@ const StoreCard = ({ store }: { store: StoreType }) => {
         </ul>
       </CardContent>
       <CardFooter>
-        <a href={store.google_link || ""} className="ml-auto">
+        <a href={store.google_place_id || ""} className="ml-auto">
           Google maps
         </a>
       </CardFooter>
