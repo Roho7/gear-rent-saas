@@ -2,7 +2,7 @@
 
 import { createServerActionClient } from "@/app/_utils/supabase";
 import { Tables } from "@/packages/supabase.types";
-import { DatabaseError } from "@/src/entities/models/errors";
+import { DatabaseError, UnknownError } from "@/src/entities/models/errors";
 import { cookies } from "next/headers";
 
 export const fetchUser = async (): Promise<Tables<"tbl_users"> | null> => {
@@ -26,12 +26,12 @@ export const fetchUser = async (): Promise<Tables<"tbl_users"> | null> => {
       throw new DatabaseError(
         "Failed to fetch user data",
         "fetchUser",
-        userError.message,
+        userError,
       );
     }
     return userData;
   } catch (error: any) {
-    throw new DatabaseError(
+    throw new UnknownError(
       "Error fetching user data",
       "fetchUser",
       error.message,

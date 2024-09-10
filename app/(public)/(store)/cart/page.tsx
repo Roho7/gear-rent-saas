@@ -14,7 +14,7 @@ import { useProducts } from "@/app/_providers/useProducts";
 import CartRowItem from "./_components/cart-row-item";
 
 const CartPage = () => {
-  const { cartItems, products } = useProducts();
+  const { cartItems, allProducts } = useProducts();
 
   return (
     <section className="m-8 flex flex-col gap-4 h-full">
@@ -27,7 +27,7 @@ const CartPage = () => {
             return (
               <CartRowItem
                 key={key}
-                product={products.find((p) => p.product_id === item)}
+                product={allProducts.find((p) => p.product_id === item)}
               />
             );
           })}
@@ -42,7 +42,7 @@ const CartPage = () => {
               <div className="flex justify-between" key={d}>
                 <p>
                   {
-                    products.find((item) => item.product_id === d)
+                    allProducts.find((item) => item.product_id === d)
                       ?.product_title
                   }
                   <span className="text-gray-400 ml-4">

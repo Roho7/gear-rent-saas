@@ -6,7 +6,8 @@ import {
   GearyoServerActionResponse,
   InventoryType,
   ProductType,
-} from "@/packages/types";
+} from "@/src/entities/models/types";
+
 import * as Sentry from "@sentry/nextjs";
 import { cookies } from "next/headers";
 

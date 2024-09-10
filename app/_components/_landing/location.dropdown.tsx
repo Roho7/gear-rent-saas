@@ -1,3 +1,4 @@
+import { useProducts } from "@/app/_providers/useProducts";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -6,37 +7,33 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
-import { FormControl } from "@/components/ui/form";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { popularLocations } from "@/src/entities/models/constants";
+import { SearchLocationType } from "@/src/entities/models/types";
 
 import { CommandList } from "cmdk";
 
 import { BiSearch } from "react-icons/bi";
 
-type Props = {
-  location: string;
-  setLocation: (value: string) => void;
-};
-
-const LocationPicker = ({ location, setLocation }: Props) => {
+const LocationPicker = () => {
+  const { searchLocation, setSearchLocation } = useProducts();
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <FormControl>
-          <Button
-            variant="outline"
-            role="combobox"
-            className="w-full justify-between"
-          >
-            {location ? location : "Search locations..."}
-            <BiSearch className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </FormControl>
+        {/* <FormControl> */}
+        <Button
+          variant="outline"
+          role="combobox"
+          className="w-full justify-between"
+        >
+          {searchLocation?.name ? searchLocation?.name : "Search locations..."}
+          <BiSearch className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+        {/* </FormControl> */}
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
@@ -44,14 +41,14 @@ const LocationPicker = ({ location, setLocation }: Props) => {
           <CommandList>
             <CommandEmpty>No location found.</CommandEmpty>
             <CommandGroup>
-              {popularLocations.map((location: string) => (
+              {popularLocations.map((location: SearchLocationType) => (
                 <CommandItem
-                  key={location}
+                  key={location.name}
                   onSelect={() => {
-                    setLocation(location);
+                    setSearchLocation(location);
                   }}
                 >
-                  {location}
+                  {location.name}
                 </CommandItem>
               ))}
             </CommandGroup>

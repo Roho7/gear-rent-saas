@@ -6,7 +6,8 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { InventoryType } from "@/packages/types";
+import { InventoryType } from "@/src/entities/models/types";
+
 import { useRouter } from "next/navigation";
 
 type Props = {
@@ -14,7 +15,7 @@ type Props = {
 };
 
 const InventoryItemCard = ({ inventoryItem }: Props) => {
-  const { products } = useProducts();
+  const { allProducts } = useProducts();
   const router = useRouter();
   return (
     <Card
@@ -39,7 +40,7 @@ const InventoryItemCard = ({ inventoryItem }: Props) => {
         <div className="h-40 w-40 mx-auto">
           <img
             src={
-              products.find((d) => d.product_id === inventoryItem.product_id)
+              allProducts.find((d) => d.product_id === inventoryItem.product_id)
                 ?.image_url || ""
             }
             alt=""

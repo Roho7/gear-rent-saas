@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-import { ProductMetadataType, ProductType } from "@/packages/types";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,6 +31,7 @@ import { FiChevronLeft, FiExternalLink } from "react-icons/fi";
 import { z } from "zod";
 
 import { addInventoryItem } from "@/app/(business)/_actions/inventory.actions";
+import { ProductMetadataType, ProductType } from "@/src/entities/models/types";
 import CurrencyCombobox from "../../_components/currency.combobox";
 import DiscountCombobox from "../../_components/discount.combobox";
 import GranularityCombobox from "../../_components/granularity.combobox";
@@ -68,7 +69,7 @@ const AddListingPage = (props: Props) => {
    * * - Custom hooks
    */
 
-  const { products } = useProducts();
+  const { allProducts } = useProducts();
   const { user } = useAuth();
   const params = useParams<{ inventory_id: string }>();
   const router = useRouter();
@@ -171,7 +172,7 @@ const AddListingPage = (props: Props) => {
         basePrice - (basePrice * form.getValues("discount_3")) / 100 || 0,
     });
     setSelectedProduct(
-      products.find((p) => p.product_id === form.getValues("product_id")),
+      allProducts.find((p) => p.product_id === form.getValues("product_id")),
     );
     setGranularity(
       form.getValues("price_granularity") === "daily" ? "day" : "hour",

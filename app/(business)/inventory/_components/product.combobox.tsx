@@ -14,8 +14,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { ProductType } from "@/packages/types";
 import { categoryMap } from "@/src/entities/models/product";
+import { ProductType } from "@/src/entities/models/types";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 type Props = {
@@ -77,12 +77,12 @@ const InnerProductList = ({
 };
 
 const ProductCombobox = ({ productId, setProductId, disabled }: Props) => {
-  const { products } = useProducts();
+  const { allProducts } = useProducts();
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState<string | null>(null);
 
   const filteredProducts = useMemo(() => {
-    return products.filter(
+    return allProducts.filter(
       (product: ProductType) =>
         product.category === category || category === null,
     );
@@ -98,7 +98,7 @@ const ProductCombobox = ({ productId, setProductId, disabled }: Props) => {
           disabled={disabled}
         >
           {productId
-            ? products.find(
+            ? allProducts.find(
                 (product: ProductType) => product.product_id === productId,
               )?.product_title
             : "Select product..."}

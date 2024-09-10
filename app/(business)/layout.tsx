@@ -1,5 +1,6 @@
 "use client";
-import { BusinessType } from "@/packages/types";
+
+import { BusinessType } from "@/src/entities/models/types";
 import React, { useEffect, useState } from "react";
 import Spinner from "../_components/_shared/spinner";
 import { getBusiness } from "./_actions/store.actions";

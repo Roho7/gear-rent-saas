@@ -1,7 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GenderType, ProductMetadataType, ProductType } from "@/packages/types";
 
 import { useAuth } from "@/app/_providers/useAuth";
 import { useProducts } from "@/app/_providers/useProducts";
@@ -27,6 +26,11 @@ import {
   genderMap,
   metadataOptions,
 } from "@/src/entities/models/product";
+import {
+  GenderType,
+  ProductMetadataType,
+  ProductType,
+} from "@/src/entities/models/types";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { EyeIcon } from "lucide-react";
 import { useState } from "react";

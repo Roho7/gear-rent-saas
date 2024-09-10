@@ -1,12 +1,14 @@
 "use client";
 import { toast } from "@/components/ui/use-toast";
 import { handleError } from "@/lib/errorHandler";
+
 import {
   CartItemType,
   ProductMetadataType,
   ProductType,
+  SearchLocationType,
   StoreType,
-} from "@/packages/types";
+} from "@/src/entities/models/types";
 import dayjs from "dayjs";
 import { DBSchema, openDB } from "idb";
 import {
@@ -36,12 +38,11 @@ type ProductContextType = {
   cartItems: CartItemType | null;
   addToCart: (product_id: string) => void;
   removeFromCart: (product_id: string) => void;
-  fetchAndCacheStores: (refresh: boolean) => Promise<void>;
   fetchAndCacheProducts: (refresh: boolean) => Promise<void>;
-  products: ProductType[];
-  stores: StoreType[];
-  setProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
-  setStores: React.Dispatch<React.SetStateAction<StoreType[]>>;
+  allProducts: ProductType[];
+  setAllProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
+  allStores: StoreType[];
+  setAllStores: React.Dispatch<React.SetStateAction<StoreType[]>>;
   loading: boolean;
   handleProductMetadataUpdate: (product: ProductType) => Promise<void>;
   filteredProducts: ProductType[];
@@ -49,6 +50,10 @@ type ProductContextType = {
   setProductFilters: React.Dispatch<React.SetStateAction<ProductFilterType>>;
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  searchLocation: SearchLocationType | null;
+  setSearchLocation: React.Dispatch<
+    React.SetStateAction<SearchLocationType | null>
+  >;
 };
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
@@ -65,10 +70,12 @@ export const ProductProvider = ({
     const savedCart = localStorage.getItem("cart");
     return savedCart ? JSON.parse(savedCart) : [];
   });
-  const [products, setProducts] = useState<ProductType[]>([]);
-  const [stores, setStores] = useState<StoreType[]>([]);
+  const [allProducts, setAllProducts] = useState<ProductType[]>([]);
+  const [allStores, setAllStores] = useState<StoreType[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchLocation, setSearchLocation] =
+    useState<SearchLocationType | null>(null);
   const [productFilters, setProductFilters] = useState<ProductFilterType>({
     category: [],
     colors: [],
@@ -128,7 +135,7 @@ export const ProductProvider = ({
       !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
     ) {
       console.log("Using cached products data");
-      setProducts(cachedData);
+      setAllProducts(cachedData);
     } else {
       console.log("Fetching products from Supabase");
       const { success, data } = await getAllProducts();
@@ -141,7 +148,7 @@ export const ProductProvider = ({
         const sortedData = data.sort((a, b) =>
           a.product_id.localeCompare(b.product_id),
         );
-        setProducts(sortedData);
+        setAllProducts(sortedData);
         const txn = db.transaction("products", "readwrite");
         await Promise.all(
           sortedData.map((d: ProductType) => {
@@ -157,7 +164,6 @@ export const ProductProvider = ({
     }
     setLoading(false);
   };
-
   const fetchAndCacheStores = async (refresh: boolean = false) => {
     const db = await dbPromise;
     const cachedData = await db?.getAll("stores");
@@ -170,13 +176,10 @@ export const ProductProvider = ({
       !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
     ) {
       console.log("Using cached stores data");
-      setStores(cachedData);
+      setAllStores(cachedData);
     } else {
       console.log("Fetching stores from Supabase");
-      const { data, error } = await supabase
-        .from("tbl_stores")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("tbl_stores").select("*");
 
       localStorage.setItem("stores_last_updated_at", new Date().toISOString());
       if (error) {
@@ -185,7 +188,7 @@ export const ProductProvider = ({
         const sortedData = data.sort((a, b) =>
           a.store_id.localeCompare(b.store_id),
         );
-        setStores(sortedData);
+        setAllStores(sortedData);
         const txn = db.transaction("stores", "readwrite");
         await Promise.all(
           sortedData.map((d: StoreType) => {
@@ -226,7 +229,7 @@ export const ProductProvider = ({
   // -------------------------------------------------------------------------- //
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    return allProducts.filter((product) => {
       let foundProduct = true;
       if (searchQuery) {
         foundProduct = product.product_title
@@ -273,7 +276,7 @@ export const ProductProvider = ({
       }
       return foundProduct;
     });
-  }, [products, productFilters, searchQuery]);
+  }, [allProducts, productFilters, searchQuery]);
 
   useEffect(() => {
     fetchData();
@@ -293,33 +296,34 @@ export const ProductProvider = ({
       cartItems,
       addToCart,
       removeFromCart,
-      fetchAndCacheStores,
       fetchAndCacheProducts,
-      products,
-      stores,
+      allProducts,
+      allStores,
       loading,
-      setProducts,
-      setStores,
+      setAllProducts,
+      setAllStores,
       handleProductMetadataUpdate,
       filteredProducts,
       productFilters,
       setProductFilters,
       searchQuery,
       setSearchQuery,
+      searchLocation,
+      setSearchLocation,
     }),
     [
       cartItems,
       addToCart,
       removeFromCart,
-      fetchAndCacheStores,
       fetchAndCacheProducts,
-      products,
-      stores,
+      allProducts,
+      allStores,
       loading,
       handleProductMetadataUpdate,
       filteredProducts,
       productFilters,
       searchQuery,
+      searchLocation,
     ],
   );
 

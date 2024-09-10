@@ -1,15 +1,17 @@
 "use server";
 import { handleError } from "@/lib/errorHandler";
 import { createServerResponse } from "@/lib/serverResponse";
-import { Tables } from "@/packages/supabase.types";
-import { GearyoServerActionResponse } from "@/packages/types";
 import { DatabaseError } from "@/src/entities/models/errors";
+import {
+  GearyoServerActionResponse,
+  ProductType,
+} from "@/src/entities/models/types";
 import * as Sentry from "@sentry/nextjs";
 import { cookies } from "next/headers";
 import { createServerActionClient } from "../_utils/supabase";
 
 export const getAllProducts = async (): Promise<
-  GearyoServerActionResponse<Tables<"tbl_products">[]>
+  GearyoServerActionResponse<ProductType[]>
 > => {
   try {
     const cookieStore = cookies();
@@ -21,7 +23,11 @@ export const getAllProducts = async (): Promise<
       .order("created_at", { ascending: false });
 
     if (error || !data) {
-      throw new DatabaseError("Error fetching products", error.message);
+      throw new DatabaseError(
+        "Error fetching products",
+        "getAllProducts",
+        error,
+      );
     }
     return createServerResponse({
       success: true,

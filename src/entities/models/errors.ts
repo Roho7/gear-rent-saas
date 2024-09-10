@@ -1,3 +1,5 @@
+import { AuthError, PostgrestError } from "@supabase/supabase-js";
+
 class ServerError extends Error {
   functionName: string;
   errorMessage?: string;
@@ -12,15 +14,17 @@ class ServerError extends Error {
 export class UnknownError extends ServerError {
   constructor(message: string, functionName: string, errorMessage?: string) {
     super(message, functionName, errorMessage);
+    this.message = "Unknown error";
     this.name = "UnknownError";
   }
 }
 
 export class DatabaseError extends ServerError {
-  constructor(message: string, functionName: string, errorMessage?: string) {
-    super(message, functionName, errorMessage);
+  error?: PostgrestError;
+  constructor(message: string, functionName: string, error?: PostgrestError) {
+    super(message, functionName);
     this.name = "DatabaseError";
-    this.errorMessage = errorMessage;
+    this.error = error;
   }
 }
 
@@ -32,9 +36,11 @@ export class ValidationError extends Error {
 }
 
 export class AuthenticationError extends ServerError {
-  constructor(message: string, functionName: string) {
+  error?: AuthError;
+  constructor(message: string, functionName: string, error?: AuthError) {
     super(message, functionName);
     this.name = "AuthenticationError";
+    this.error = error;
   }
 }
 

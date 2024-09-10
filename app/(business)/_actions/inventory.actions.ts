@@ -1,8 +1,9 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
 import { TablesUpdate } from "@/packages/supabase.types";
-import { GearyoServerActionResponse } from "@/packages/types";
-import { DatabaseError, UnknownError } from "@/src/entities/models/errors";
+
+import { DatabaseError } from "@/src/entities/models/errors";
+import { GearyoServerActionResponse } from "@/src/entities/models/types";
 import { cookies } from "next/headers";
 
 export const addInventoryItem = async (
@@ -10,35 +11,26 @@ export const addInventoryItem = async (
     inventory_data?: TablesUpdate<"tbl_inventory">;
   },
 ): Promise<GearyoServerActionResponse> => {
-  try {
-    const cookieStore = cookies();
-    const supabase = createServerActionClient({ cookies: cookieStore });
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: cookieStore });
 
-    if (!inventory_data?.product_id) {
-      throw new Error("Product ID or Store ID not provided");
-    }
+  if (!inventory_data?.product_id) {
+    throw new Error("Product ID or Store ID not provided");
+  }
 
-    const { data, error } = await supabase.from("tbl_inventory").upsert(
-      inventory_data,
-    );
+  const { data, error } = await supabase.from("tbl_inventory").upsert(
+    inventory_data,
+  );
 
-    if (error) {
-      throw new DatabaseError(
-        "Error adding inventory item",
-        "addInventoryItem",
-        error.message,
-      );
-    }
-
-    return {
-      success: true,
-      message: "Inventory item added successfully",
-    };
-  } catch (error: any) {
-    throw new UnknownError(
+  if (error) {
+    throw new DatabaseError(
       "Error adding inventory item",
       "addInventoryItem",
-      error.message,
+      error,
     );
   }
+  return {
+    success: true,
+    message: "Inventory item added successfully",
+  };
 };

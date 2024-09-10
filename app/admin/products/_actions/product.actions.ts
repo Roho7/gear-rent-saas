@@ -1,8 +1,12 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
 import { createServerResponse } from "@/lib/serverResponse";
-import { GearyoServerActionResponse, ProductType } from "@/packages/types";
+
 import { DatabaseError, UnknownError } from "@/src/entities/models/errors";
+import {
+  GearyoServerActionResponse,
+  ProductType,
+} from "@/src/entities/models/types";
 import { cookies } from "next/headers";
 
 export const updateProductMetadata = async (
@@ -43,6 +47,10 @@ export const hideProduct = async (
       data,
     });
   } catch (error: any) {
-    throw new UnknownError("Error hiding product", error.message);
+    throw new UnknownError(
+      "Error hiding product",
+      "hideProduct",
+      error.message,
+    );
   }
 };
