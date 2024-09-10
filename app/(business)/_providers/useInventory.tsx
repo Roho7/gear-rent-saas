@@ -1,10 +1,11 @@
 "use client";
+
 import {
   BusinessType,
   GearyoUser,
   InventoryType,
   StoreType,
-} from "@/packages/types";
+} from "@/src/entities/models/types";
 import React, {
   createContext,
   useContext,

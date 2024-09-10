@@ -1,7 +1,8 @@
 "use client";
-import { InventoryType } from "@/packages/types";
+
+import { InventoryType } from "@/src/entities/models/types";
 import { useEffect, useState } from "react";
-import { BiBox, BiListCheck, BiStore } from "react-icons/bi";
+import { BiBox, BiListCheck } from "react-icons/bi";
 import Spinner from "../_components/_shared/spinner";
 import { useProducts } from "../_providers/useProducts";
 import { getInventory } from "./_actions/admin.actions";
@@ -10,15 +11,15 @@ import DashboardStat from "./_components/dasboard.stat.card";
 type Props = {};
 
 const AdminDashboardPage = (props: Props) => {
-  const { stores, products } = useProducts();
+  const { allProducts } = useProducts();
   const [allInventory, setAllInventory] = useState<InventoryType[]>();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchInventory = async () => {
       setIsLoading(true);
-      const inventory = await getInventory();
-      setAllInventory(inventory as InventoryType[]);
+      const res = await getInventory();
+      setAllInventory(res.data as InventoryType[]);
       setIsLoading(false);
     };
     fetchInventory();
@@ -32,14 +33,14 @@ const AdminDashboardPage = (props: Props) => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <h1 className="text-4xl font-bold">Gearyo Admin</h1>
       <div className="flex gap-2">
-        <DashboardStat
-          value={stores.length.toString()}
+        {/* <DashboardStat
+          value={allStores.length.toString()}
           title="Total Stores"
-          description="Total number of stores registered"
+          description="Total number of allStores registered"
           icon={<BiStore />}
-        />
+        /> */}
         <DashboardStat
-          value={products.length.toString()}
+          value={allProducts.length.toString()}
           title="Total Products"
           description="Total number of products"
           icon={<BiBox />}

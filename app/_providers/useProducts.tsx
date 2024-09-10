@@ -1,10 +1,14 @@
 "use client";
+import { toast } from "@/components/ui/use-toast";
+import { handleError } from "@/lib/errorHandler";
+
 import {
   CartItemType,
   ProductMetadataType,
   ProductType,
+  SearchLocationType,
   StoreType,
-} from "@/packages/types";
+} from "@/src/entities/models/types";
 import dayjs from "dayjs";
 import { DBSchema, openDB } from "idb";
 import {
@@ -15,8 +19,9 @@ import {
   useMemo,
   useState,
 } from "react";
-import { getAllProducts } from "../_actions/products.actions";
+import { getAllProducts } from "../_actions/all-products.actions";
 import { createClientComponentClient } from "../_utils/supabase";
+import { updateProductMetadata } from "../admin/products/_actions/product.actions";
 
 interface ProductDB extends DBSchema {
   products: {
@@ -33,19 +38,22 @@ type ProductContextType = {
   cartItems: CartItemType | null;
   addToCart: (product_id: string) => void;
   removeFromCart: (product_id: string) => void;
-  fetchAndCacheStores: (refresh: boolean) => Promise<void>;
   fetchAndCacheProducts: (refresh: boolean) => Promise<void>;
-  products: ProductType[];
-  stores: StoreType[];
-  setProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
-  setStores: React.Dispatch<React.SetStateAction<StoreType[]>>;
+  allProducts: ProductType[];
+  setAllProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
+  allStores: StoreType[];
+  setAllStores: React.Dispatch<React.SetStateAction<StoreType[]>>;
   loading: boolean;
-  updateProductMetadata: (product: ProductType) => Promise<void>;
+  handleProductMetadataUpdate: (product: ProductType) => Promise<void>;
   filteredProducts: ProductType[];
   productFilters: ProductFilterType;
   setProductFilters: React.Dispatch<React.SetStateAction<ProductFilterType>>;
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  searchLocation: SearchLocationType | null;
+  setSearchLocation: React.Dispatch<
+    React.SetStateAction<SearchLocationType | null>
+  >;
 };
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
@@ -62,10 +70,12 @@ export const ProductProvider = ({
     const savedCart = localStorage.getItem("cart");
     return savedCart ? JSON.parse(savedCart) : [];
   });
-  const [products, setProducts] = useState<ProductType[]>([]);
-  const [stores, setStores] = useState<StoreType[]>([]);
+  const [allProducts, setAllProducts] = useState<ProductType[]>([]);
+  const [allStores, setAllStores] = useState<StoreType[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchLocation, setSearchLocation] =
+    useState<SearchLocationType | null>(null);
   const [productFilters, setProductFilters] = useState<ProductFilterType>({
     category: [],
     colors: [],
@@ -114,9 +124,9 @@ export const ProductProvider = ({
   };
 
   const fetchAndCacheProducts = async (refresh: boolean = false) => {
+    setLoading(true);
     const db = await dbPromise;
     const cachedData = await db?.getAll("products");
-    setLoading(true);
     const last_updated_at = localStorage.getItem("products_last_updated_at");
 
     if (
@@ -125,34 +135,35 @@ export const ProductProvider = ({
       !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
     ) {
       console.log("Using cached products data");
-      setProducts(cachedData);
+      setAllProducts(cachedData);
     } else {
       console.log("Fetching products from Supabase");
-      const data = await getAllProducts();
+      const { success, data } = await getAllProducts();
 
-      if (data.length === 0) {
-        throw new Error("No products found");
+      if (success && data) {
+        localStorage.setItem(
+          "products_last_updated_at",
+          new Date().toISOString(),
+        );
+        const sortedData = data.sort((a, b) =>
+          a.product_id.localeCompare(b.product_id),
+        );
+        setAllProducts(sortedData);
+        const txn = db.transaction("products", "readwrite");
+        await Promise.all(
+          sortedData.map((d: ProductType) => {
+            return txn.store.put(d);
+          }),
+        );
+        toast({
+          title: "Products refreshed",
+          variant: "default",
+          description: "Products fetched from database",
+        });
       }
-
-      localStorage.setItem(
-        "products_last_updated_at",
-        new Date().toISOString(),
-      );
-
-      const sortedData = data.sort((a, b) =>
-        a.product_id.localeCompare(b.product_id),
-      );
-      setProducts(sortedData);
-      const txn = db.transaction("products", "readwrite");
-      await Promise.all(
-        sortedData.map((d: ProductType) => {
-          return txn.store.put(d);
-        }),
-      );
     }
     setLoading(false);
   };
-
   const fetchAndCacheStores = async (refresh: boolean = false) => {
     const db = await dbPromise;
     const cachedData = await db?.getAll("stores");
@@ -165,13 +176,10 @@ export const ProductProvider = ({
       !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
     ) {
       console.log("Using cached stores data");
-      setStores(cachedData);
+      setAllStores(cachedData);
     } else {
       console.log("Fetching stores from Supabase");
-      const { data, error } = await supabase
-        .from("tbl_stores")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("tbl_stores").select("*");
 
       localStorage.setItem("stores_last_updated_at", new Date().toISOString());
       if (error) {
@@ -180,7 +188,7 @@ export const ProductProvider = ({
         const sortedData = data.sort((a, b) =>
           a.store_id.localeCompare(b.store_id),
         );
-        setStores(sortedData);
+        setAllStores(sortedData);
         const txn = db.transaction("stores", "readwrite");
         await Promise.all(
           sortedData.map((d: StoreType) => {
@@ -197,21 +205,31 @@ export const ProductProvider = ({
     await fetchAndCacheStores();
   }, []);
 
-  const updateProductMetadata = useCallback(async (product: ProductType) => {
-    const { data, error } = await supabase.from("tbl_products").upsert(product);
-    if (error) {
-      console.error("Error updating product metadata:", error);
-    } else {
-      console.log("Updated product metadata:", data);
-    }
-  }, []);
+  const handleProductMetadataUpdate = useCallback(
+    async (product: ProductType) => {
+      try {
+        const { success } = await updateProductMetadata(product);
+        if (success) {
+          await fetchAndCacheProducts(true);
+          toast({
+            title: "Product metadata updated",
+            variant: "default",
+            description: "Product metadata updated successfully",
+          });
+        }
+      } catch (error: any) {
+        handleError(error, "handleProductMetadataUpdate");
+      }
+    },
+    [],
+  );
 
   // -------------------------------------------------------------------------- //
   //                               FILTERED PRODUCTS                            //
   // -------------------------------------------------------------------------- //
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    return allProducts.filter((product) => {
       let foundProduct = true;
       if (searchQuery) {
         foundProduct = product.product_title
@@ -258,7 +276,7 @@ export const ProductProvider = ({
       }
       return foundProduct;
     });
-  }, [products, productFilters, searchQuery]);
+  }, [allProducts, productFilters, searchQuery]);
 
   useEffect(() => {
     fetchData();
@@ -278,33 +296,34 @@ export const ProductProvider = ({
       cartItems,
       addToCart,
       removeFromCart,
-      fetchAndCacheStores,
       fetchAndCacheProducts,
-      products,
-      stores,
+      allProducts,
+      allStores,
       loading,
-      setProducts,
-      setStores,
-      updateProductMetadata,
+      setAllProducts,
+      setAllStores,
+      handleProductMetadataUpdate,
       filteredProducts,
       productFilters,
       setProductFilters,
       searchQuery,
       setSearchQuery,
+      searchLocation,
+      setSearchLocation,
     }),
     [
       cartItems,
       addToCart,
       removeFromCart,
-      fetchAndCacheStores,
       fetchAndCacheProducts,
-      products,
-      stores,
+      allProducts,
+      allStores,
       loading,
-      updateProductMetadata,
+      handleProductMetadataUpdate,
       filteredProducts,
       productFilters,
       searchQuery,
+      searchLocation,
     ],
   );
 

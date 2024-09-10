@@ -6,7 +6,7 @@ import Hero from "@/app/_components/_landing/hero";
 import LogoRibbon from "@/app/_components/_landing/logo-ribbon";
 import ProductRibbon from "@/app/_components/product-ribbon";
 import ServicesSection from "@/app/_components/services-card";
-import { Separator } from "@radix-ui/react-separator";
+import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
   return (

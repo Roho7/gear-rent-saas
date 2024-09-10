@@ -1,6 +1,8 @@
 "use client";
 import { toast } from "@/components/ui/use-toast";
 import { Tables } from "@/packages/supabase.types";
+import { signOut } from "@/src/controllers/signin.controller";
+import { GearyoUser } from "@/src/entities/models/types";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import React, {
@@ -12,7 +14,6 @@ import React, {
   useState,
 } from "react";
 import { fetchUser } from "../(public)/account/_actions/user.actions";
-import { getUser } from "../_actions/user.actions";
 import { createClientComponentClient } from "../_utils/supabase";
 
 interface AuthContextValue {
@@ -28,7 +29,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<Tables<"tbl_users"> | null>(null);
+  const [user, setUser] = useState<GearyoUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClientComponentClient();
   const router = useRouter();
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const setUserLocally = useCallback(async (authUser: User | null) => {
     try {
       if (authUser?.id) {
-        const userData = await getUser();
+        const userData = await fetchUser();
         if (!userData) {
           throw new Error("Failed to fetch user data");
         }
@@ -57,22 +58,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const refreshUser = useCallback(async () => {
     setIsLoading(true);
     try {
-      const {
-        data: { user: authUser },
-        error,
-      } = await supabase.auth.getUser();
-      if (error) throw error;
-
-      if (authUser) {
-        const userData = await fetchUser(authUser.id);
-        setUser(userData);
-
-        toast({ title: "User data refreshed" });
-      } else {
-        setUser(null);
-      }
+      const userData = await fetchUser();
+      setUser(userData);
+      toast({ title: "User data refreshed" });
     } catch (error) {
-      console.error(error);
       toast({ title: "Error refreshing user data", variant: "destructive" });
     } finally {
       setIsLoading(false);
@@ -193,16 +182,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const handleLogout = useCallback(async () => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-
-      await setUserLocally(null);
-      toast({
-        title: "Logged Out",
-        description: "You have been successfully logged out",
-        variant: "default",
-      });
-    } catch (error: Error | any) {
+      const { success, message } = await signOut();
+      if (success) {
+        setUserLocally(null);
+        toast({
+          title: "Logged Out",
+          description: "You have been successfully logged out",
+          variant: "default",
+        });
+      }
+    } catch (error: any) {
       console.error(error);
       toast({
         title: "Logout Failed",

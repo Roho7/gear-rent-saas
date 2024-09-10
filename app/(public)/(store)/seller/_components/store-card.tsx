@@ -4,7 +4,8 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { StoreType } from "@/packages/types";
+import { StoreType } from "@/src/entities/models/types";
+
 import { FaAddressCard, FaStar } from "react-icons/fa";
 import { MdCall } from "react-icons/md";
 

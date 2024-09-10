@@ -3,11 +3,13 @@ import { Tables } from "@/packages/supabase.types";
 export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
   product_metadata: ProductMetadataType;
 };
+export type GearyoUser = Tables<"tbl_users">;
 export type StoreType = Tables<"tbl_stores">;
 export type InventoryType = {
   inventory_id: string;
   product_id: string;
   base_price: string;
+  store_id: string;
   product_title: string;
   category: string;
   product_metadata: ProductMetadataType;
@@ -44,3 +46,22 @@ export type ProductMetadataType =
   & {
     [key: string]: string[];
   };
+
+export type BusinessType = {
+  user: GearyoUser;
+  store: StoreType;
+  inventory: InventoryType[];
+};
+
+export type GearyoServerActionResponse<T = void> = {
+  success: boolean;
+  message: string;
+  data?: T;
+};
+
+export type SearchLocationType = {
+  name: string;
+  lat: number;
+  lng: number;
+  radius?: number;
+};

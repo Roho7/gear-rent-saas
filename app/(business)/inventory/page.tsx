@@ -7,25 +7,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { useProducts } from "@/app/_providers/useProducts";
 import { createClientComponentClient } from "@/app/_utils/supabase";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import { IoImageOutline } from "react-icons/io5";
 import DeleteStoreModal from "./_components/confirm-delete.modal";
 import { EditStoreModal } from "./_components/edit-store.modal";
 
-import { useAuth } from "@/app/_providers/useAuth";
 import { useRef } from "react";
 import { useInventory } from "../_providers/useInventory";
 
 export default function BusinessDashboard() {
-  const { fetchAndCacheStores } = useProducts();
-  const router = useRouter();
   const { storeDetails } = useInventory();
-  const { user } = useAuth();
   const imageUploadRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async () => {
@@ -75,7 +69,6 @@ export default function BusinessDashboard() {
         });
         return;
       }
-      await fetchAndCacheStores(true);
     }
   };
 

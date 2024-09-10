@@ -26,6 +26,7 @@ import { CalendarIcon } from "@radix-ui/react-icons";
 import { addDays, format } from "date-fns";
 import { useForm } from "react-hook-form";
 
+import { Label } from "@/components/ui/label";
 import { categoryMap, expertiseMap } from "@/src/entities/models/product";
 import clsx from "clsx";
 import { DateRange } from "react-day-picker";
@@ -41,7 +42,6 @@ const FormSchema = z.object({
       to: date().optional(),
     })
     .optional() as z.ZodType<DateRange, any>,
-  location: z.string().optional(),
 });
 
 const MainSearchbar = () => {
@@ -127,8 +127,10 @@ const MainSearchbar = () => {
           control={form.control}
           name="rentPeriod"
           render={({ field }) => (
-            <FormItem className="w-full px-2 border-r border-gray-100">
-              <FormLabel className="text-gray-400">Rent from</FormLabel>
+            <FormItem className="w-full px-2 border-r border-gray-100 flex flex-col">
+              <FormLabel className="text-gray-400 pt-1 mb-1">
+                Rent period
+              </FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -136,7 +138,7 @@ const MainSearchbar = () => {
                       id="date"
                       variant={"outline"}
                       className={clsx(
-                        "w-[300px] justify-start text-left font-normal",
+                        "w-full justify-start text-left font-normal",
                         !date && "text-muted-foreground",
                       )}
                     >
@@ -172,19 +174,9 @@ const MainSearchbar = () => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="location"
-          render={({ field }) => (
-            <FormItem className="w-full px-2">
-              <FormLabel className="text-gray-400">Location</FormLabel>
-              <LocationPicker
-                location={field.value ?? ""}
-                setLocation={field.onChange}
-              />
-            </FormItem>
-          )}
-        />
+        <Label className="text-gray-400">Location</Label>
+        <LocationPicker />
+
         <Button type="submit" className="mt-auto">
           Search
         </Button>

@@ -1,27 +1,77 @@
+import { FaChessRook, FaSkiing } from "react-icons/fa";
 import { FaBagShopping } from "react-icons/fa6";
-import { GoClockFill } from "react-icons/go";
 import { PiUsersFill } from "react-icons/pi";
-import { RiTentFill } from "react-icons/ri";
+import { SearchLocationType } from "./types";
 
-export const popularLocations = [
-  "Chamonix, France",
-  "Whistler, Canada",
-  "Zermatt, Switzerland",
-  "Aspen, USA",
-  "St. Anton, Austria",
-  "Niseko, Japan",
-  "Verbier, Switzerland",
-  "Vail, USA",
-  "Cortina d'Ampezzo, Italy",
-  "Kitzbühel, Austria",
+export const popularLocations: SearchLocationType[] = [
+  {
+    name: "Chamonix, France",
+    lat: 45.9237,
+    lng: 6.8694,
+    radius: 10000, // 10km radius
+  },
+  {
+    name: "Whistler, Canada",
+    lat: 50.1162,
+    lng: -122.9535,
+    radius: 15000, // 15km radius
+  },
+  {
+    name: "Zermatt, Switzerland",
+    lat: 46.0207,
+    lng: 7.7491,
+    radius: 8000, // 8km radius
+  },
+  {
+    name: "Aspen, USA",
+    lat: 39.1911,
+    lng: -106.8175,
+    radius: 12000, // 12km radius
+  },
+  {
+    name: "St. Anton, Austria",
+    lat: 47.1284,
+    lng: 10.2687,
+    radius: 10000, // 10km radius
+  },
+  {
+    name: "Niseko, Japan",
+    lat: 42.8048,
+    lng: 140.6874,
+    radius: 20000, // 20km radius
+  },
+  {
+    name: "Verbier, Switzerland",
+    lat: 46.0969,
+    lng: 7.2285,
+    radius: 10000, // 10km radius
+  },
+  {
+    name: "Vail, USA",
+    lat: 39.6433,
+    lng: -106.3781,
+    radius: 15000, // 15km radius
+  },
+  {
+    name: "Cortina d'Ampezzo, Italy",
+    lat: 46.5404,
+    lng: 12.1356,
+    radius: 10000, // 10km radius
+  },
+  {
+    name: "Kitzbühel, Austria",
+    lat: 47.4449,
+    lng: 12.3918,
+    radius: 8000, // 8km radius
+  },
 ];
 
 export const servicesList = [
   {
-    icon: RiTentFill,
+    icon: FaSkiing,
     title: "Wide Range of Gear",
     description:
-      "Access a diverse selection of high-quality outdoor equipment for all your adventures.",
+      "From skis to surfboards, find the gear you need for every sport.",
   },
   {
     icon: FaBagShopping,
@@ -36,9 +86,8 @@ export const servicesList = [
       "Support local businesses by renting from nearby outdoor gear shops in your area.",
   },
   {
-    icon: GoClockFill,
-    title: "Flexible Durations",
-    description:
-      "Rent gear for as long as you need, from a few hours to several days or weeks.",
+    icon: FaChessRook,
+    title: "Trusted Sellers",
+    description: "Gear you trust, from sellers you trust – anytime, anywhere.",
   },
 ];

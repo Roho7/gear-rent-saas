@@ -1,19 +1,21 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
 import { TablesUpdate } from "@/packages/supabase.types";
+
+import { DatabaseError } from "@/src/entities/models/errors";
+import { GearyoServerActionResponse } from "@/src/entities/models/types";
 import { cookies } from "next/headers";
 
 export const addInventoryItem = async (
   { inventory_data }: {
     inventory_data?: TablesUpdate<"tbl_inventory">;
   },
-) => {
+): Promise<GearyoServerActionResponse> => {
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
 
   if (!inventory_data?.product_id) {
-    console.error("Product ID or Store ID not provided");
-    return;
+    throw new Error("Product ID or Store ID not provided");
   }
 
   const { data, error } = await supabase.from("tbl_inventory").upsert(
@@ -21,8 +23,14 @@ export const addInventoryItem = async (
   );
 
   if (error) {
-    console.error("Error inserting data:", error);
-    return;
+    throw new DatabaseError(
+      "Error adding inventory item",
+      "addInventoryItem",
+      error,
+    );
   }
-  console.log("Successfully added inventory item", data);
+  return {
+    success: true,
+    message: "Inventory item added successfully",
+  };
 };

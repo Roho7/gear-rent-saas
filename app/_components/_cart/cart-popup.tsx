@@ -15,7 +15,7 @@ import CartItemCard from "./cart-item-cart";
 type Props = {};
 
 const CartPopup = (props: Props) => {
-  const { products } = useProducts();
+  const { allProducts } = useProducts();
   const { cartItems } = useProducts();
   const router = useRouter();
 
@@ -59,7 +59,7 @@ const CartPopup = (props: Props) => {
                 .map((item, key) => {
                   return (
                     <CartItemCard
-                      product={products.find((p) => p.product_id === item)}
+                      product={allProducts.find((p) => p.product_id === item)}
                       key={item}
                     />
                   );

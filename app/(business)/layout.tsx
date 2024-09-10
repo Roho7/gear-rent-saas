@@ -1,5 +1,6 @@
 "use client";
-import { BusinessType } from "@/packages/types";
+
+import { BusinessType } from "@/src/entities/models/types";
 import React, { useEffect, useState } from "react";
 import Spinner from "../_components/_shared/spinner";
 import { getBusiness } from "./_actions/store.actions";
@@ -12,11 +13,13 @@ const BusinessLayout = ({ children }: { children: React.ReactElement }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getBusiness({});
-        setBusinessData(res || null);
-      } catch (error) {
-        console.error("Error fetching business data:", error);
+        const { success, data, message } = await getBusiness({});
+        if (success) {
+          setBusinessData(data || null);
+        }
+      } catch (error: any) {
         setBusinessData(null);
+        throw new Error(error.message);
       } finally {
         setIsLoading(false);
       }

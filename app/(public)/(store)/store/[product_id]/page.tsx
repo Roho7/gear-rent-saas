@@ -12,10 +12,18 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-import { ProductMetadataKeys } from "@/packages/types";
-import { useMemo } from "react";
+import LocationPicker from "@/app/_components/_landing/location.dropdown";
+import {
+  InventoryType,
+  ProductMetadataKeys,
+} from "@/src/entities/models/types";
+import { useEffect, useMemo, useState } from "react";
 import { BiDollar } from "react-icons/bi";
 import { FaClock } from "react-icons/fa";
+import {
+  getInventoryForProduct,
+  getNearbyStores,
+} from "../_actions/store-inventory.action";
 import AddToCartButton from "../_components/add-to-cart.button";
 
 const MetadataMap: Record<ProductMetadataKeys, any> = {
@@ -37,17 +45,44 @@ const MetadataMap: Record<ProductMetadataKeys, any> = {
 };
 
 const ProductPage = ({ params }: { params: { product_id: string } }) => {
-  const { products } = useProducts();
+  const { allProducts, allStores, searchLocation } = useProducts();
   const { cartItems } = useProducts();
+  const [nearbyStoreIds, setNearbyStoreIds] = useState<string[]>([]);
+  const [inventory, setInventory] = useState<InventoryType[]>([]);
 
   const activeProduct = useMemo(() => {
-    return products.find((p) => p.product_id === params.product_id);
-  }, [params.product_id, products]);
+    return allProducts.find((p) => p.product_id === params.product_id);
+  }, [params.product_id, allProducts]);
 
   const addedToCart = useMemo(() => {
     if (!activeProduct || !cartItems) return false;
     return cartItems[activeProduct?.product_id || ""]?.quantity > 0 || false;
   }, [cartItems, activeProduct]);
+
+  const nearbyStores = useMemo(() => {
+    return allStores.filter((store) => nearbyStoreIds.includes(store.store_id));
+  }, [nearbyStoreIds, inventory]);
+
+  useEffect(() => {
+    if (searchLocation && activeProduct) {
+      // Fetch nearby stores and inventory
+      const fetchNearbyStoresAndInventory = async () => {
+        const store_ids = await getNearbyStores(
+          searchLocation.lat,
+          searchLocation.lng,
+        );
+        setNearbyStoreIds(store_ids);
+
+        const inv = await getInventoryForProduct(
+          activeProduct.product_id,
+          store_ids,
+        );
+        setInventory(inv);
+      };
+
+      fetchNearbyStoresAndInventory();
+    }
+  }, [searchLocation, activeProduct]);
 
   if (!activeProduct) {
     return <div className="text-center p-8">Product not found</div>;
@@ -55,6 +90,7 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <LocationPicker />
       <div className="flex flex-col md:flex-row gap-8">
         <Card className="flex-1 overflow-hidden">
           <CardContent className="pt-4">
@@ -99,7 +135,7 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
                     return (
                       <div className="flex gap-1" key={key}>
                         {MetadataMap[key as ProductMetadataKeys].label}{" "}
-                        {metadata.map((g: string, index) => (
+                        {metadata.map((g: string, index: number) => (
                           <span className="flex gap-0.5 capitalize" key={index}>
                             {g}
                           </span>
@@ -145,9 +181,52 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
           </CardFooter>
         </Card>
       </div>
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-4">
+          Available for Rent Nearby
+        </h2>
+        {nearbyStoreIds.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {nearbyStores.map((store) => {
+              const storeInventory = inventory.find(
+                (i) => i.store_id === store.store_id,
+              );
+
+              console.log("llll", storeInventory);
+              if (!storeInventory) return null;
+
+              return (
+                <Card key={store.store_id}>
+                  <CardHeader>
+                    <CardTitle>{store.store_name}</CardTitle>
+                    <CardDescription>
+                      {store.address_line1}, {store.city}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p>Available: {storeInventory.available_units}</p>
+                    <p>
+                      Price: ${storeInventory.base_price} per{" "}
+                      {storeInventory.price_granularity}
+                    </p>
+                  </CardContent>
+                  <CardFooter>
+                    {/* <AddToCartButton
+                      addedToCart={false}
+                      product={activeProduct}
+                      storeId={store_ids}
+                    /> */}
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
+        ) : (
+          <p>No nearby rentals available for this product.</p>
+        )}
+      </div>
 
       <div className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4">You might also like</h2>
         <ProductRibbon />
       </div>
     </div>

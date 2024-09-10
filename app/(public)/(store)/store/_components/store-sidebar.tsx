@@ -19,12 +19,15 @@ const StoreSidebar = () => {
     productFilters,
     setSearchQuery,
     fetchAndCacheProducts,
+    loading,
   } = useProducts();
 
   return (
     <aside className="flex gap-2 justify-start flex-col w-[15vw] max-w-[20vw] bg-secondary/50 p-4 rounded-md ">
       <div className="flex flex-col gap-2">
-        <Button onClick={() => fetchAndCacheProducts(true)}>Refresh</Button>
+        <Button loading={loading} onClick={() => fetchAndCacheProducts(true)}>
+          Refresh
+        </Button>
         <Input
           placeholder="Search"
           onChange={(e) => setSearchQuery(e.target.value)}
