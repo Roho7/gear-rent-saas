@@ -1,7 +1,6 @@
+import { FaChessRook, FaSkiing } from "react-icons/fa";
 import { FaBagShopping } from "react-icons/fa6";
-import { GoClockFill } from "react-icons/go";
 import { PiUsersFill } from "react-icons/pi";
-import { RiTentFill } from "react-icons/ri";
 
 export const popularLocations = [
   "Chamonix, France",
@@ -18,10 +17,10 @@ export const popularLocations = [
 
 export const servicesList = [
   {
-    icon: RiTentFill,
+    icon: FaSkiing,
     title: "Wide Range of Gear",
     description:
-      "Access a diverse selection of high-quality outdoor equipment for all your adventures.",
+      "From skis to surfboards, find the gear you need for every sport.",
   },
   {
     icon: FaBagShopping,
@@ -36,9 +35,8 @@ export const servicesList = [
       "Support local businesses by renting from nearby outdoor gear shops in your area.",
   },
   {
-    icon: GoClockFill,
-    title: "Flexible Durations",
-    description:
-      "Rent gear for as long as you need, from a few hours to several days or weeks.",
+    icon: FaChessRook,
+    title: "Trusted Sellers",
+    description: "Gear you trust, from sellers you trust – anytime, anywhere.",
   },
 ];

@@ -1,14 +1,18 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
-import { BusinessType } from "@/packages/types";
+import { BusinessType, GearyoServerActionResponse } from "@/packages/types";
+import {
+  AuthenticationError,
+  UnknownError,
+} from "@/src/entities/models/errors";
 
 import * as Sentry from "@sentry/nextjs";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
-import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
-export async function getBusiness({ store_id }: { store_id?: string }) {
+export async function getBusiness(
+  { store_id }: { store_id?: string },
+): Promise<GearyoServerActionResponse<BusinessType | undefined>> {
   try {
     const cookieStore = cookies();
     const supabase = createServerActionClient({ cookies: cookieStore });
@@ -19,7 +23,7 @@ export async function getBusiness({ store_id }: { store_id?: string }) {
     } = await supabase.auth.refreshSession();
 
     if (session_error || !session?.access_token) {
-      redirect("/login");
+      throw new AuthenticationError("No session found", "getBusiness");
     }
 
     let res: PostgrestSingleResponse<BusinessType> = {
@@ -54,8 +58,8 @@ export async function getBusiness({ store_id }: { store_id?: string }) {
 
     const { data } = res;
 
-    const jwt = jwtDecode(session.access_token);
-    const session_store_id: string[] = (jwt as any).app_metadata;
+    // const jwt = jwtDecode(session.access_token);
+    // const session_store_id: string[] = (jwt as any).app_metadata;
 
     // console.log("session_store_id", session_store_id);
     // const db_org_ids = data?.store.store_id;
@@ -79,13 +83,21 @@ export async function getBusiness({ store_id }: { store_id?: string }) {
     //   await supabase.auth.setSession(session);
     // }
 
-    return data;
+    return {
+      success: true,
+      message: "Business fetched successfully",
+      data,
+    };
   } catch (error: any) {
     Sentry.captureException(error, {
       tags: {
         stack: "getBusiness",
       },
     });
-    return null;
+    throw new UnknownError(
+      "Error fetching business",
+      "getBusiness",
+      error.message,
+    );
   }
 }

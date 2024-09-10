@@ -1,9 +1,9 @@
 "use server";
 
 import { createServerActionClient } from "@/app/_utils/supabase";
-
+import * as Sentry from "@sentry/nextjs";
 import { cookies, headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { DatabaseError } from "../entities/models/errors";
 
 export const signInWithGoogle = async (token: string) => {
   try {
@@ -16,7 +16,8 @@ export const signInWithGoogle = async (token: string) => {
     });
     return data;
   } catch (error: any) {
-    throw new Error(error);
+    Sentry.captureException(error);
+    throw new DatabaseError(error, "signInWithGoogle");
   }
 };
 
@@ -31,13 +32,20 @@ export const signInWithEmail = async (email: string, password: string) => {
     });
     return data;
   } catch (error: any) {
-    throw new Error(error);
+    Sentry.captureException(error);
+    throw new DatabaseError(error, "signInWithEmail");
   }
 };
 
 export const signOut = async () => {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({ cookies: cookieStore });
-  const { error } = await supabase.auth.signOut();
-  redirect("/login");
+  try {
+    const cookieStore = cookies();
+    const supabase = createServerActionClient({ cookies: cookieStore });
+    const { error } = await supabase.auth.signOut();
+
+    return { success: true, message: "Logged out successfully" };
+  } catch (error: any) {
+    Sentry.captureException(error);
+    throw new DatabaseError(error, "signOut");
+  }
 };

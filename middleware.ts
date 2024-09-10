@@ -1,13 +1,13 @@
 import { updateSession } from "@/packages/supabase/utils/middleware";
 import { type NextRequest, NextResponse } from "next/server";
-import { getUser } from "./app/_actions/user.actions";
+import { fetchUser } from "./app/(public)/account/_actions/user.actions";
 
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request);
 
   if (request.nextUrl.pathname.startsWith("/admin")) {
     try {
-      const user = await getUser();
+      const user = await fetchUser();
 
       if (!user) {
         return NextResponse.redirect(new URL("/", request.url));

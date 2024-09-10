@@ -1,5 +1,7 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
+import { GearyoServerActionResponse } from "@/packages/types";
+import { DatabaseError, UnknownError } from "@/src/entities/models/errors";
 import { cookies } from "next/headers";
 
 export async function getInventoryItem(inventory_id: string) {
@@ -19,19 +21,32 @@ export async function getInventoryItem(inventory_id: string) {
   return data;
 }
 
-export async function deleteInventoryItem(inventory_id: string) {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({ cookies: cookieStore });
+export async function deleteListing(
+  inventory_id: string,
+): Promise<GearyoServerActionResponse> {
+  try {
+    const cookieStore = cookies();
+    const supabase = createServerActionClient({ cookies: cookieStore });
 
-  const { data, error } = await supabase.from("tbl_inventory").delete().eq(
-    "inventory_id",
-    inventory_id,
-  );
+    const { error } = await supabase.from("tbl_inventory").delete().eq(
+      "inventory_id",
+      inventory_id,
+    );
 
-  if (error) {
-    console.error("Error deleting inventory item:", error);
-    return null;
+    if (error) {
+      throw new DatabaseError(
+        "Error deleting Listing",
+        "deleteListing",
+        error.message,
+      );
+    }
+
+    return { success: true, message: "Listing deleted" };
+  } catch (error: any) {
+    throw new UnknownError(
+      "Error deleting Listing",
+      "deleteListing",
+      error.message,
+    );
   }
-
-  return data;
 }

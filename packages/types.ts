@@ -51,3 +51,9 @@ export type BusinessType = {
   store: StoreType;
   inventory: InventoryType[];
 };
+
+export type GearyoServerActionResponse<T = void> = {
+  success: boolean;
+  message: string;
+  data?: T;
+};

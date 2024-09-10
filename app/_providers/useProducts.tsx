@@ -1,4 +1,6 @@
 "use client";
+import { toast } from "@/components/ui/use-toast";
+import { handleError } from "@/lib/errorHandler";
 import {
   CartItemType,
   ProductMetadataType,
@@ -15,8 +17,9 @@ import {
   useMemo,
   useState,
 } from "react";
-import { getAllProducts } from "../_actions/products.actions";
+import { getAllProducts } from "../_actions/all-products.actions";
 import { createClientComponentClient } from "../_utils/supabase";
+import { updateProductMetadata } from "../admin/products/_actions/product.actions";
 
 interface ProductDB extends DBSchema {
   products: {
@@ -40,7 +43,7 @@ type ProductContextType = {
   setProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
   setStores: React.Dispatch<React.SetStateAction<StoreType[]>>;
   loading: boolean;
-  updateProductMetadata: (product: ProductType) => Promise<void>;
+  handleProductMetadataUpdate: (product: ProductType) => Promise<void>;
   filteredProducts: ProductType[];
   productFilters: ProductFilterType;
   setProductFilters: React.Dispatch<React.SetStateAction<ProductFilterType>>;
@@ -114,9 +117,9 @@ export const ProductProvider = ({
   };
 
   const fetchAndCacheProducts = async (refresh: boolean = false) => {
+    setLoading(true);
     const db = await dbPromise;
     const cachedData = await db?.getAll("products");
-    setLoading(true);
     const last_updated_at = localStorage.getItem("products_last_updated_at");
 
     if (
@@ -128,27 +131,29 @@ export const ProductProvider = ({
       setProducts(cachedData);
     } else {
       console.log("Fetching products from Supabase");
-      const data = await getAllProducts();
+      const { success, data } = await getAllProducts();
 
-      if (data.length === 0) {
-        throw new Error("No products found");
+      if (success && data) {
+        localStorage.setItem(
+          "products_last_updated_at",
+          new Date().toISOString(),
+        );
+        const sortedData = data.sort((a, b) =>
+          a.product_id.localeCompare(b.product_id),
+        );
+        setProducts(sortedData);
+        const txn = db.transaction("products", "readwrite");
+        await Promise.all(
+          sortedData.map((d: ProductType) => {
+            return txn.store.put(d);
+          }),
+        );
+        toast({
+          title: "Products refreshed",
+          variant: "default",
+          description: "Products fetched from database",
+        });
       }
-
-      localStorage.setItem(
-        "products_last_updated_at",
-        new Date().toISOString(),
-      );
-
-      const sortedData = data.sort((a, b) =>
-        a.product_id.localeCompare(b.product_id),
-      );
-      setProducts(sortedData);
-      const txn = db.transaction("products", "readwrite");
-      await Promise.all(
-        sortedData.map((d: ProductType) => {
-          return txn.store.put(d);
-        }),
-      );
     }
     setLoading(false);
   };
@@ -197,14 +202,24 @@ export const ProductProvider = ({
     await fetchAndCacheStores();
   }, []);
 
-  const updateProductMetadata = useCallback(async (product: ProductType) => {
-    const { data, error } = await supabase.from("tbl_products").upsert(product);
-    if (error) {
-      console.error("Error updating product metadata:", error);
-    } else {
-      console.log("Updated product metadata:", data);
-    }
-  }, []);
+  const handleProductMetadataUpdate = useCallback(
+    async (product: ProductType) => {
+      try {
+        const { success } = await updateProductMetadata(product);
+        if (success) {
+          await fetchAndCacheProducts(true);
+          toast({
+            title: "Product metadata updated",
+            variant: "default",
+            description: "Product metadata updated successfully",
+          });
+        }
+      } catch (error: any) {
+        handleError(error, "handleProductMetadataUpdate");
+      }
+    },
+    [],
+  );
 
   // -------------------------------------------------------------------------- //
   //                               FILTERED PRODUCTS                            //
@@ -285,7 +300,7 @@ export const ProductProvider = ({
       loading,
       setProducts,
       setStores,
-      updateProductMetadata,
+      handleProductMetadataUpdate,
       filteredProducts,
       productFilters,
       setProductFilters,
@@ -301,7 +316,7 @@ export const ProductProvider = ({
       products,
       stores,
       loading,
-      updateProductMetadata,
+      handleProductMetadataUpdate,
       filteredProducts,
       productFilters,
       searchQuery,

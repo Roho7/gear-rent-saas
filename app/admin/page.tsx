@@ -17,8 +17,8 @@ const AdminDashboardPage = (props: Props) => {
   useEffect(() => {
     const fetchInventory = async () => {
       setIsLoading(true);
-      const inventory = await getInventory();
-      setAllInventory(inventory as InventoryType[]);
+      const res = await getInventory();
+      setAllInventory(res.data as InventoryType[]);
       setIsLoading(false);
     };
     fetchInventory();

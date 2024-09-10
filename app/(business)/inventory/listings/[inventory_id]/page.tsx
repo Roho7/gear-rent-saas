@@ -35,10 +35,7 @@ import CurrencyCombobox from "../../_components/currency.combobox";
 import DiscountCombobox from "../../_components/discount.combobox";
 import GranularityCombobox from "../../_components/granularity.combobox";
 import ProductCombobox from "../../_components/product.combobox";
-import {
-  deleteInventoryItem,
-  getInventoryItem,
-} from "./_actions/inventory.actions";
+import { deleteListing, getInventoryItem } from "./_actions/inventory.actions";
 
 type Props = {};
 
@@ -47,6 +44,7 @@ const addListingForm = z.object({
   description: z.string().min(10, { message: "Please enter a description" }),
   base_price: z
     .string()
+    .min(1, { message: "Please enter a price" })
     .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
       message: "Please enter a valid price",
     }),
@@ -116,7 +114,6 @@ const AddListingPage = (props: Props) => {
 
   async function onSubmit(data: z.infer<typeof addListingForm>) {
     try {
-      console.log("Submitting data", data);
       if (!user) throw new Error("User not found");
       const formattedData = {
         ...data,
@@ -125,34 +122,40 @@ const AddListingPage = (props: Props) => {
           params.inventory_id === "new" ? undefined : params.inventory_id,
       };
 
-      await addInventoryItem({ inventory_data: formattedData });
+      const res = await addInventoryItem({ inventory_data: formattedData });
+
+      if (res?.success) {
+        toast({
+          title:
+            params.inventory_id !== "new"
+              ? "Listing updated successfully"
+              : "Listing added successfully",
+        });
+        router.back();
+      }
+    } catch (error: any) {
       toast({
-        title:
-          params.inventory_id !== "new"
-            ? "Listing updated successfully"
-            : "Listing added successfully",
-      });
-      router.push("/inventory");
-    } catch (error) {
-      console.error("Error inserting data:", error);
-      toast({
-        variant: "destructive",
         title: "Error submitting form",
+        variant: "destructive",
+        description: error.message ?? "Please try again later",
       });
     }
   }
 
-  const handleDeleteInventoryItem = async () => {
+  const handleDeleteListing = async () => {
     try {
-      await deleteInventoryItem(params.inventory_id);
+      const { success, message } = await deleteListing(params.inventory_id);
+      if (success) {
+        toast({
+          title: message,
+        });
+        router.back();
+      }
+    } catch (error: any) {
       toast({
-        title: "Listing deleted",
-      });
-      router.push("/inventory");
-    } catch (error) {
-      console.error("Error deleting listing:", error);
-      toast({
-        title: "Error deleting listing",
+        title: "Could not delete listing",
+        variant: "destructive",
+        description: error.message ?? "Please try again later",
       });
     }
   };
@@ -232,18 +235,19 @@ const AddListingPage = (props: Props) => {
    */
 
   return (
-    <main className="p-8 w-full">
+    <main className="p-4 overflow-y-auto overflow-x-hidden h-full flex flex-col max-w-full gap-2">
       <Button
         variant={"outline"}
         onClick={() => router.back()}
-        className="bg-white my-2"
+        size="sm"
+        className="bg-white max-w-fit"
       >
         <FiChevronLeft /> Back
       </Button>
-      <div className="flex w-full gap-4">
-        <Card className="w-2/3">
+      <div className="flex flex-col lg:flex-row flex-1 gap-2">
+        <Card className="lg:w-2/3">
           <CardHeader>
-            <CardTitle>Add Listing</CardTitle>
+            <CardTitle>Add New Listing</CardTitle>
             <CardDescription>
               Create a new listing by filling up these details
             </CardDescription>
@@ -450,7 +454,7 @@ const AddListingPage = (props: Props) => {
                     )}
                   />
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2 flex-1">
                   <FormField
                     control={form.control}
                     name="discount_1"
@@ -509,15 +513,17 @@ const AddListingPage = (props: Props) => {
                 <div className="flex gap-2 ml-auto mt-auto">
                   {params.inventory_id !== "new" && (
                     <Button
+                      type="button"
+                      size="sm"
                       variant={"destructive"}
                       onClick={() => {
-                        handleDeleteInventoryItem();
+                        handleDeleteListing();
                       }}
                     >
                       Delete Listing
                     </Button>
                   )}
-                  <Button type="submit">
+                  <Button type="submit" size="sm">
                     {params.inventory_id !== "new"
                       ? "Update Listing"
                       : "Publish"}

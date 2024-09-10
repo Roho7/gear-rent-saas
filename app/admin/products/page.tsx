@@ -58,7 +58,9 @@ const ProductRow = ({
   const [productCategory, setProductCategory] = useState<string>(
     product.category || "",
   );
-  const [productExperience, setProductExperience] = useState<string[]>([]);
+  const [productExperience, setProductExperience] = useState<string[]>(
+    product.experience || [],
+  );
   const [productImage, setProductImage] = useState<string>(
     product.image_url || "",
   );
@@ -78,7 +80,7 @@ const ProductRow = ({
     }, {} as Record<keyof ProductMetadataType, boolean>),
   );
 
-  const { updateProductMetadata } = useProducts();
+  const { handleProductMetadataUpdate } = useProducts();
 
   const addMetadataProperty = () => {
     if (newMetadataType && !productMetadata[newMetadataType]) {
@@ -119,19 +121,21 @@ const ProductRow = ({
         ...productMetadata,
       },
     };
-    await updateProductMetadata(updatedProduct);
-    toast({
-      title: "Product Updated",
-    });
+    await handleProductMetadataUpdate(updatedProduct);
   };
   const handleHideProduct = async () => {
     try {
-      const res = await hideProduct(product.product_id);
+      const { success } = await hideProduct(product.product_id);
+      if (success)
+        toast({
+          title: "Product Hidden",
+        });
+    } catch (error: any) {
       toast({
-        title: "Product Hidden",
+        title: "Error hiding product",
+        description: error.message ?? "Unknown error",
+        variant: "destructive",
       });
-    } catch (error) {
-      console.error("Error hiding product:", error);
     }
   };
 

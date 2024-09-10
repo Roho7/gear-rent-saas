@@ -1,5 +1,7 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
+import { createServerResponse } from "@/lib/serverResponse";
+import { UnknownError } from "@/src/entities/models/errors";
 import { cookies } from "next/headers";
 
 export const deleteStore = async (store_id: string) => {
@@ -21,18 +23,30 @@ export const deleteStore = async (store_id: string) => {
 export const uploadStoreImage = async (
   { store_id, file }: { store_id: string | undefined; file: File },
 ) => {
-  const cookiesStore = cookies();
-  const supabase = createServerActionClient({ cookies: cookiesStore });
-  if (!store_id) return;
-  const { data, error } = await supabase.storage
-    .from("store")
-    .upload(`store-${store_id}`, file, {
-      upsert: true,
-    });
+  try {
+    const cookiesStore = cookies();
+    const supabase = createServerActionClient({ cookies: cookiesStore });
+    if (!store_id) return;
+    const { data, error } = await supabase.storage
+      .from("store")
+      .upload(`store-${store_id}`, file, {
+        upsert: true,
+      });
 
-  if (error) {
-    console.error("Error uploading store image:", error);
-    return;
+    if (error) {
+      console.error("Error uploading store image:", error);
+      return;
+    }
+    return createServerResponse({
+      success: true,
+      message: "Store image uploaded",
+      data,
+    });
+  } catch (error: any) {
+    throw new UnknownError(
+      "Error uploading store image",
+      "uploadStoreImage",
+      error.message,
+    );
   }
-  return data;
 };
