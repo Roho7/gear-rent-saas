@@ -1,5 +1,5 @@
 import { useProducts } from "@/app/_providers/useProducts";
-import { ProductType } from "@/packages/types";
+import { ProductType } from "@/src/entities/models/types";
 
 type Props = {
   product: ProductType | undefined;

@@ -1,8 +1,8 @@
 "use client";
 import { toast } from "@/components/ui/use-toast";
 import { Tables } from "@/packages/supabase.types";
-import { GearyoUser } from "@/packages/types";
 import { signOut } from "@/src/controllers/signin.controller";
+import { GearyoUser } from "@/src/entities/models/types";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import React, {

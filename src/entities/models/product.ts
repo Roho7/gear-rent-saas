@@ -1,4 +1,4 @@
-import { ProductMetadataKeys } from "@/packages/types";
+import { ProductMetadataKeys } from "./types";
 
 export const metadataOptions: ProductMetadataKeys[] = [
   "heights",

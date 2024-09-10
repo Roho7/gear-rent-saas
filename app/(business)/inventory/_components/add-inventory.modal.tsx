@@ -8,7 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ProductType } from "@/packages/types";
+import { ProductType } from "@/src/entities/models/types";
+
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useState } from "react";
 

@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { ProductType } from "@/packages/types";
+import { ProductType } from "@/src/entities/models/types";
 
 const CartItemCard = ({ product }: { product: ProductType | undefined }) => {
   if (!product) {
