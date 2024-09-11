@@ -8,7 +8,7 @@ alter table "public"."tbl_stores" add column "longitude" numeric;
 
 set check_function_bodies = off;
 
-create type "public"."geometry_dump" as ("path" integer[], "geom" geometry);
+-- create type "public"."geometry_dump" as ("path" integer[], "geom" geometry);
 
 CREATE OR REPLACE FUNCTION public.get_nearby_stores(lat numeric, lng numeric, radius numeric)
  RETURNS uuid[]
@@ -28,7 +28,7 @@ END;
 $function$
 ;
 
-create type "public"."valid_detail" as ("valid" boolean, "reason" character varying, "location" geometry);
+-- create type "public"."valid_detail" as ("valid" boolean, "reason" character varying, "location" geometry);
 
 grant delete on table "public"."spatial_ref_sys" to "anon";
 
