@@ -1,39 +1,73 @@
-import { updateSession } from "@/packages/supabase/utils/middleware";
 import { type NextRequest, NextResponse } from "next/server";
 import { fetchUser } from "./app/(public)/account/_actions/user.actions";
+import { createMiddlewareClient } from "./app/_utils/supabase";
+
+// Define an array of protected routes
+const protectedRoutes = ["/inventory", "/account"]; // Add more routes as needed
+const adminRoutes = ["/admin"]; // Routes that require admin access
 
 export async function middleware(request: NextRequest) {
-  const response = await updateSession(request);
+  const response = NextResponse.next();
+  const supabase = createMiddlewareClient(request, response);
 
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    try {
-      const user = await fetchUser();
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    const pathname = request.nextUrl.pathname;
 
+    // Check if the current path starts with any of the protected routes
+    const isProtectedRoute = protectedRoutes.some((route) =>
+      pathname.startsWith(route)
+    );
+    const isAdminRoute = adminRoutes.some((route) =>
+      pathname.startsWith(route)
+    );
+
+    if (isProtectedRoute || isAdminRoute) {
       if (!user) {
-        return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/login", request.url));
       }
 
-      if (!user.is_admin) {
-        return NextResponse.redirect(new URL("/", request.url));
+      if (isAdminRoute) {
+        const gearyoUser = await fetchUser();
+        if (!gearyoUser?.is_admin) {
+          return NextResponse.redirect(new URL("/", request.url));
+        }
       }
-    } catch (error) {
-      console.error("Error getting user:", error);
-      return NextResponse.redirect(new URL("/", request.url));
     }
-  }
 
-  return response;
+    // Update custom cookies if user is authenticated
+    // if (user) {
+    //   const gearyoUser = await fetchUser();
+    //   response.cookies.set(
+    //     "is_admin",
+    //     gearyoUser?.is_admin ? "true" : "false",
+    //     {
+    //       httpOnly: true,
+    //       secure: process.env.NODE_ENV === "production",
+    //       sameSite: "strict",
+    //       maxAge: 60 * 60 * 24 * 7, // 1 week
+    //     },
+    //   );
+    //   if (gearyoUser?.store_id) {
+    //     response.cookies.set("store_id", gearyoUser.store_id, {
+    //       httpOnly: true,
+    //       secure: process.env.NODE_ENV === "production",
+    //       sameSite: "strict",
+    //       maxAge: 60 * 60 * 24 * 7, // 1 week
+    //     });
+    //   }
+    // }
+
+    return response;
+  } catch (error) {
+    console.error("Middleware error:", error);
+    return NextResponse.redirect(new URL("/error", request.url));
+  }
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    "/admin/:path*",
+    ...protectedRoutes.map((route) => `${route}/:path*`),
+    ...adminRoutes.map((route) => `${route}/:path*`),
   ],
 };

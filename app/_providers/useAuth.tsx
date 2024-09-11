@@ -1,6 +1,6 @@
 "use client";
 import { toast } from "@/components/ui/use-toast";
-import { Tables } from "@/packages/supabase.types";
+import { cacheUser, clearUserCache, getCachedUser } from "@/lib/useCache";
 import { signOut } from "@/src/controllers/signin.controller";
 import { GearyoUser } from "@/src/entities/models/types";
 import { User } from "@supabase/supabase-js";
@@ -22,7 +22,7 @@ interface AuthContextValue {
   handleSignInWithGoogle: (response: { credential: string }) => Promise<void>;
   handleLogout: () => Promise<void>;
   refreshUser: () => Promise<void>;
-  user: Tables<"tbl_users"> | null;
+  user: GearyoUser | null;
   isLoading: boolean;
 }
 
@@ -34,38 +34,77 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClientComponentClient();
   const router = useRouter();
 
-  const setUserLocally = useCallback(async (authUser: User | null) => {
-    try {
-      if (authUser?.id) {
-        const userData = await fetchUser();
-        if (!userData) {
-          throw new Error("Failed to fetch user data");
-        }
-        setUser(userData);
-      } else {
-        setUser(null);
+  const fetchAndSetUser = useCallback(async (authUser: User | null) => {
+    if (authUser?.id) {
+      const cachedUser = getCachedUser();
+      if (cachedUser) {
+        setUser(cachedUser);
+        setIsLoading(false);
+        return;
       }
-    } catch (error) {
-      console.error("Error in setUserLocally:", error);
-      setUser(null);
 
-      throw error;
-    } finally {
-      setIsLoading(false);
+      try {
+        const userData = await fetchUser();
+        if (userData) {
+          setUser(userData);
+          cacheUser(userData);
+        } else {
+          console.error("Failed to fetch user data");
+          setUser(null);
+          clearUserCache();
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setUser(null);
+        clearUserCache();
+      }
+    } else {
+      setUser(null);
+      clearUserCache();
     }
+    setIsLoading(false);
   }, []);
 
   const refreshUser = useCallback(async () => {
     setIsLoading(true);
     try {
-      const userData = await fetchUser();
-      setUser(userData);
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+      await fetchAndSetUser(authUser);
       toast({ title: "User data refreshed" });
     } catch (error) {
+      console.error("Error refreshing user data:", error);
       toast({ title: "Error refreshing user data", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const setupAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      await fetchAndSetUser(session?.user ?? null);
+
+      const { data: authListener } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+            await fetchAndSetUser(session?.user ?? null);
+          } else if (event === "SIGNED_OUT") {
+            setUser(null);
+            clearUserCache();
+          }
+        },
+      );
+
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    };
+
+    setupAuth();
   }, [supabase.auth]);
 
   const handleSignInWithGoogle = useCallback(
@@ -80,7 +119,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error) throw error;
 
         if (data.user) {
-          await setUserLocally(data.user);
+          await fetchAndSetUser(data.user);
           toast({
             title: "Success",
             description: "Logged in with Google successfully",
@@ -88,7 +127,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           });
           router.push("/");
         }
-      } catch (error: Error | any) {
+      } catch (error: any) {
         console.error(error);
         toast({
           title: "Google Sign-In Failed",
@@ -101,7 +140,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading(false);
       }
     },
-    [supabase.auth, setUserLocally],
+    [fetchAndSetUser, router, supabase.auth],
   );
 
   const handleSignUpWithEmail = useCallback(
@@ -116,21 +155,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error) throw error;
 
         if (data.user?.confirmed_at) {
-          await setUserLocally(data.user);
+          await fetchAndSetUser(data.user);
           toast({
             title: "Account Created",
             description: "Your account has been successfully created",
             variant: "default",
           });
         } else {
-          // This case handles when a confirmation email is sent
           toast({
             title: "Verification Required",
             description: "Please check your email to verify your account",
             variant: "default",
           });
         }
-      } catch (error: Error | any) {
+      } catch (error: any) {
         console.error(error);
         toast({
           title: "Sign-Up Failed",
@@ -142,7 +180,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading(false);
       }
     },
-    [supabase.auth, setUserLocally],
+    [fetchAndSetUser, supabase.auth],
   );
 
   const handleLoginWithEmail = useCallback(
@@ -157,7 +195,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error) throw error;
 
         if (data.user) {
-          await setUserLocally(data.user);
+          await fetchAndSetUser(data.user);
           toast({
             title: "Welcome Back",
             description: "You have successfully logged in",
@@ -165,7 +203,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           });
           router.push("/");
         }
-      } catch (error: Error | any) {
+      } catch (error: any) {
         console.error(error);
         toast({
           title: "Login Failed",
@@ -176,7 +214,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading(false);
       }
     },
-    [supabase.auth, setUserLocally],
+    [fetchAndSetUser, router, supabase.auth],
   );
 
   const handleLogout = useCallback(async () => {
@@ -184,7 +222,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { success, message } = await signOut();
       if (success) {
-        setUserLocally(null);
+        setUser(null);
+        clearUserCache();
         toast({
           title: "Logged Out",
           description: "You have been successfully logged out",
@@ -202,33 +241,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [supabase.auth, setUserLocally]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const setupAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      await setUserLocally(session?.user ?? null);
-
-      const { data: authListener } = supabase.auth.onAuthStateChange(
-        async (event, session) => {
-          if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-            await setUserLocally(session?.user ?? null);
-          } else if (event === "SIGNED_OUT") {
-            await setUserLocally(null);
-          }
-        },
-      );
-
-      return () => {
-        authListener.subscription.unsubscribe();
-      };
-    };
-
-    setupAuth();
-  }, [supabase.auth, setUserLocally]);
+  }, []);
 
   const value: AuthContextValue = useMemo(
     () => ({
@@ -240,7 +253,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       refreshUser,
       isLoading,
     }),
-    [user, isLoading],
+    [
+      handleSignUpWithEmail,
+      handleLoginWithEmail,
+      handleLogout,
+      handleSignInWithGoogle,
+      user,
+      refreshUser,
+      isLoading,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -248,10 +269,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = (): AuthContextValue => {
   const authContext = useContext(AuthContext);
-
   if (!authContext) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-
   return authContext;
 };
