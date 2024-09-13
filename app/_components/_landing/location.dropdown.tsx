@@ -1,4 +1,3 @@
-import { useProducts } from "@/app/_providers/useProducts";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -7,6 +6,7 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
+import { FormControl } from "@/components/ui/form";
 import {
   Popover,
   PopoverContent,
@@ -19,21 +19,41 @@ import { CommandList } from "cmdk";
 
 import { BiSearch } from "react-icons/bi";
 
-const LocationPicker = () => {
-  const { searchLocation, setSearchLocation } = useProducts();
+type Props = {
+  isForm?: boolean;
+  searchLocation: SearchLocationType | null;
+  setSearchLocation: (location: SearchLocationType | null) => void;
+};
+
+const LocationPicker = ({
+  isForm = false,
+  searchLocation,
+  setSearchLocation,
+}: Props) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        {/* <FormControl> */}
-        <Button
-          variant="outline"
-          role="combobox"
-          className="w-full justify-between"
-        >
-          {searchLocation?.name ? searchLocation?.name : "Search locations..."}
-          <BiSearch className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-        {/* </FormControl> */}
+        {isForm ? (
+          <FormControl>
+            <Button
+              variant="outline"
+              role="combobox"
+              className="justify-between"
+            >
+              {searchLocation?.name
+                ? searchLocation?.name
+                : "Search locations..."}
+              <BiSearch className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </FormControl>
+        ) : (
+          <Button variant="outline" role="combobox" className="justify-between">
+            {searchLocation?.name
+              ? searchLocation?.name
+              : "Search locations..."}
+            <BiSearch className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>

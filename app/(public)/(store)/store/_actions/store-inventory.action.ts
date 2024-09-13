@@ -1,6 +1,7 @@
 "use server";
 
 import { createServerActionClient } from "@/app/_utils/supabase";
+import { DatabaseError } from "@/src/entities/models/errors";
 import { InventoryType } from "@/src/entities/models/types";
 
 import { cookies } from "next/headers";
@@ -35,23 +36,18 @@ export const getInventoryForProduct = async (
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
 
-  console.log(
-    "Fetching inventory for product",
-    productId,
-    "from stores",
-    storeIds,
-  );
-
   const { data, error } = await supabase
     .from("tbl_inventory")
     .select("*")
     .eq("product_id", productId)
-    .in("store_id", storeIds).returns<InventoryType[]>();
+    .in("store_id", storeIds);
 
   if (error) {
-    console.error("Error fetching inventory:", error);
-    return [];
+    throw new DatabaseError(
+      "Error fetching inventory for product",
+      error.message,
+    );
   }
-  console.log(data);
-  return data || [];
+
+  return data as InventoryType[];
 };
