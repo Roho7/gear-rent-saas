@@ -13,11 +13,15 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import LocationPicker from "@/app/_components/_landing/location.dropdown";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/components/ui/use-toast";
+import { HeroSearchFormType } from "@/src/entities/models/formSchemas";
 import {
   InventoryType,
   ProductMetadataKeys,
 } from "@/src/entities/models/types";
 import { useEffect, useMemo, useState } from "react";
+
 import { BiDollar } from "react-icons/bi";
 import { FaClock } from "react-icons/fa";
 import {
@@ -45,10 +49,12 @@ const MetadataMap: Record<ProductMetadataKeys, any> = {
 };
 
 const ProductPage = ({ params }: { params: { product_id: string } }) => {
-  const { allProducts, allStores, searchLocation } = useProducts();
+  const { allProducts, allStores, searchLocation, setSearchLocation } =
+    useProducts();
   const { cartItems } = useProducts();
   const [nearbyStoreIds, setNearbyStoreIds] = useState<string[]>([]);
   const [inventory, setInventory] = useState<InventoryType[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const activeProduct = useMemo(() => {
     return allProducts.find((p) => p.product_id === params.product_id);
@@ -64,25 +70,46 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
   }, [nearbyStoreIds, inventory]);
 
   useEffect(() => {
-    if (searchLocation && activeProduct) {
-      // Fetch nearby stores and inventory
-      const fetchNearbyStoresAndInventory = async () => {
-        const store_ids = await getNearbyStores(
-          searchLocation.lat,
-          searchLocation.lng,
-        );
-        setNearbyStoreIds(store_ids);
+    try {
+      setLoading(true);
+      if (searchLocation && activeProduct) {
+        // Fetch nearby stores and inventory
+        const fetchNearbyStoresAndInventory = async () => {
+          const store_ids = await getNearbyStores(
+            searchLocation.lat,
+            searchLocation.lng,
+          );
+          setNearbyStoreIds(store_ids);
 
-        const inv = await getInventoryForProduct(
-          activeProduct.product_id,
-          store_ids,
-        );
-        setInventory(inv);
-      };
+          const inv = await getInventoryForProduct(
+            activeProduct.product_id,
+            store_ids,
+          );
+          setInventory(inv);
+        };
 
-      fetchNearbyStoresAndInventory();
+        fetchNearbyStoresAndInventory();
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message ?? "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   }, [searchLocation, activeProduct]);
+
+  useEffect(() => {
+    setSearchLocation(
+      (
+        JSON.parse(
+          localStorage.getItem("search-results") || "{}",
+        ) as (typeof HeroSearchFormType)["_output"]
+      ).location,
+    );
+  }, []);
 
   if (!activeProduct) {
     return <div className="text-center p-8">Product not found</div>;
@@ -90,7 +117,6 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <LocationPicker />
       <div className="flex flex-col md:flex-row gap-8">
         <Card className="flex-1 overflow-hidden">
           <CardContent className="pt-4">
@@ -182,10 +208,21 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
         </Card>
       </div>
       <div className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4">
-          Available for Rent Nearby
-        </h2>
-        {nearbyStoreIds.length > 0 ? (
+        <div className="flex gap-2 items-center mb-2">
+          <span className="text-2xl font-semibold">Rent near</span>
+          <LocationPicker
+            setSearchLocation={setSearchLocation}
+            searchLocation={searchLocation}
+          />
+        </div>
+        {loading && (
+          <div className="flex gap-2">
+            <Skeleton className="h-48 w-72" />
+            <Skeleton className="h-48 w-72" />
+            <Skeleton className="h-48 w-72" />
+          </div>
+        )}
+        {!loading && nearbyStoreIds.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {nearbyStores.map((store) => {
               const storeInventory = inventory.find(
@@ -221,6 +258,8 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
               );
             })}
           </div>
+        ) : !searchLocation ? (
+          <p>Select a location to view available stores</p>
         ) : (
           <p>No nearby rentals available for this product.</p>
         )}

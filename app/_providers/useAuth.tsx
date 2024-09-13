@@ -29,10 +29,21 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<GearyoUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  /**
+   * * - Custom hooks
+   */
   const supabase = createClientComponentClient();
   const router = useRouter();
+
+  /**
+   * * - States
+   */
+  const [user, setUser] = useState<GearyoUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // -------------------------------------------------------------------------- //
+  //                                 HELPERS                                    //
+  // -------------------------------------------------------------------------- //
 
   const fetchAndSetUser = useCallback(async (authUser: User | null) => {
     if (authUser?.id) {
@@ -81,31 +92,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  useEffect(() => {
-    const setupAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      await fetchAndSetUser(session?.user ?? null);
+  // -------------------------------------------------------------------------- //
+  //                               AUTH FUNCTIONS                               //
+  // -------------------------------------------------------------------------- //
 
-      const { data: authListener } = supabase.auth.onAuthStateChange(
-        async (event, session) => {
-          if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-            await fetchAndSetUser(session?.user ?? null);
-          } else if (event === "SIGNED_OUT") {
-            setUser(null);
-            clearUserCache();
-          }
-        },
-      );
-
-      return () => {
-        authListener.subscription.unsubscribe();
-      };
-    };
-
-    setupAuth();
-  }, [supabase.auth]);
+  // *                              GOOGLE SIGN IN                            * //
 
   const handleSignInWithGoogle = useCallback(
     async (response: { credential: string }) => {
@@ -142,6 +133,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     },
     [fetchAndSetUser, router, supabase.auth],
   );
+
+  // *                              EMAIL SIGN-UP                            * //
 
   const handleSignUpWithEmail = useCallback(
     async (email: string, password: string) => {
@@ -183,6 +176,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [fetchAndSetUser, supabase.auth],
   );
 
+  // *                               EMAIL SIGN-IN                             * //
+
   const handleLoginWithEmail = useCallback(
     async (email: string, password: string) => {
       setIsLoading(true);
@@ -216,6 +211,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     },
     [fetchAndSetUser, router, supabase.auth],
   );
+  // *                                     LOGOUT                               * //
 
   const handleLogout = useCallback(async () => {
     setIsLoading(true);
@@ -242,6 +238,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(false);
     }
   }, []);
+
+  // -------------------------------------------------------------------------- //
+  // *                                  EFFECTS                              *  //
+  // -------------------------------------------------------------------------- //
+
+  /** Effect subscribe to auth change events */
+  useEffect(() => {
+    const setupAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      await fetchAndSetUser(session?.user ?? null);
+
+      const { data: authListener } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+            await fetchAndSetUser(session?.user ?? null);
+          } else if (event === "SIGNED_OUT") {
+            setUser(null);
+            clearUserCache();
+          }
+        },
+      );
+
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    };
+
+    setupAuth();
+  }, [supabase.auth]);
 
   const value: AuthContextValue = useMemo(
     () => ({

@@ -10,8 +10,6 @@ import {
 import { DialogClose, DialogTitle } from "@radix-ui/react-dialog";
 import { deleteStore } from "../listings/[inventory_id]/_actions/store.actions";
 
-type Props = {};
-
 const DeleteStoreModal = ({ children }: { children: React.ReactNode }) => {
   const { user, refreshUser } = useAuth();
   const handleStoreDelete = async () => {

@@ -26,27 +26,15 @@ import { CalendarIcon } from "@radix-ui/react-icons";
 import { addDays, format } from "date-fns";
 import { useForm } from "react-hook-form";
 
-import { Label } from "@/components/ui/label";
+import { HeroSearchFormType } from "@/src/entities/models/formSchemas";
 import { categoryMap, expertiseMap } from "@/src/entities/models/product";
 import clsx from "clsx";
-import { DateRange } from "react-day-picker";
 import { date, z } from "zod";
 import LocationPicker from "./location.dropdown";
 
-const FormSchema = z.object({
-  category: z.string().optional(),
-  experience: z.string().optional(),
-  rentPeriod: z
-    .object({
-      from: date().optional(),
-      to: date().optional(),
-    })
-    .optional() as z.ZodType<DateRange, any>,
-});
-
 const MainSearchbar = () => {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof HeroSearchFormType>>({
+    resolver: zodResolver(HeroSearchFormType),
     defaultValues: {
       rentPeriod: {
         from: new Date(),
@@ -55,10 +43,15 @@ const MainSearchbar = () => {
     },
   });
 
+  const handleSearch = async (data: z.infer<typeof HeroSearchFormType>) => {
+    console.log(data);
+    localStorage.setItem("search-results", JSON.stringify(data));
+  };
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(() => {})}
+        onSubmit={form.handleSubmit(handleSearch)}
         className="bg-white rounded-md text-black flex items-center p-2 shadow-lg"
       >
         <FormField
@@ -173,9 +166,20 @@ const MainSearchbar = () => {
             </FormItem>
           )}
         />
-
-        <Label className="text-gray-400">Location</Label>
-        <LocationPicker />
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem className="w-full px-2 border-r border-gray-100 flex flex-col">
+              <FormLabel className="text-gray-400">Location</FormLabel>
+              <LocationPicker
+                setSearchLocation={field.onChange}
+                searchLocation={field.value}
+                isForm={true}
+              />
+            </FormItem>
+          )}
+        />
 
         <Button type="submit" className="mt-auto">
           Search
