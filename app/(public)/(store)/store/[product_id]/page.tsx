@@ -116,8 +116,8 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row gap-8">
+    <div className="container mx-auto px-4 flex flex-col gap-4">
+      <div className="flex flex-col md:flex-row gap-2">
         <Card className="flex-1 overflow-hidden">
           <CardContent className="pt-4">
             <img

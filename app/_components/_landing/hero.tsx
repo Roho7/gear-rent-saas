@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import { useTheme } from "next-themes";
-import MainSearchbar from "./hero-searchbar";
 
 type Props = {};
 
@@ -19,7 +18,7 @@ const Hero = (props: Props) => {
           <p className="text-right mt-4">
             An open marketplace to rent adventure gear
           </p>
-          <MainSearchbar />
+          {/* <MainSearchbar /> */}
           {/* <CTA
             callback={() => router.replace("/store")}
             classNames="absolute right-8 bottom-8"

@@ -27,7 +27,7 @@ const UserPage = (props: Props) => {
   };
 
   return (
-    <div>
+    <div className="h-screen">
       <Card>
         <CardHeader>
           <h1>Account</h1>

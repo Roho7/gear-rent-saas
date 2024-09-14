@@ -16,9 +16,9 @@ export default function PublicLayout({
     return <Spinner />;
   }
   return (
-    <section className={"overflow-x-hidden flex flex-col min-h-screen "}>
+    <section className={"overflow-x-hidden min-h-screen relative"}>
       <Navbar />
-      <main className="flex-grow px-8 py-4">{children}</main>
+      <main className="flex-grow px-8 py-4 mt-28">{children}</main>
       <Footer />
     </section>
   );

@@ -43,7 +43,7 @@ export default function RootLayout({
         >
           <AuthProvider>
             <ProductProvider>
-              <main className="flex-grow">{children}</main>
+              {children}
               <Toaster />
             </ProductProvider>
           </AuthProvider>
