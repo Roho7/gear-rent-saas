@@ -34,12 +34,12 @@ const ProductCard = ({
     <ProductCardSkeleton />
   ) : (
     <Card
-      className="aspect-square min-w-64 flex flex-col gap-2"
+      className=" min-w-64 flex flex-col gap-2 h-full"
       onClick={() => router.push(`/store/${product.product_id}`)}
     >
       <CardHeader>
         <CardTitle>{product.product_title}</CardTitle>
-        <CardDescription className="text-secondary">
+        <CardDescription className="text-secondary leading-1 truncate">
           {product.description}
         </CardDescription>
       </CardHeader>
