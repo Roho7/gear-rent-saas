@@ -21,8 +21,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { useProducts } from "@/app/_providers/useProducts";
 import { Label } from "@/components/ui/label";
-import { HeroSearchFormType } from "@/src/entities/models/formSchemas";
+import { MainSearchFormSchema } from "@/src/entities/models/formSchemas";
 import { categoryMap, expertiseMap } from "@/src/entities/models/product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "@radix-ui/react-icons";
@@ -98,8 +99,9 @@ const MainSearchbar = ({
   setCollapsed: React.Dispatch<SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
-  const form = useForm<z.infer<typeof HeroSearchFormType>>({
-    resolver: zodResolver(HeroSearchFormType),
+  const { fetchListings } = useProducts();
+  const form = useForm<z.infer<typeof MainSearchFormSchema>>({
+    resolver: zodResolver(MainSearchFormSchema),
     defaultValues: {
       rentPeriod: {
         from: new Date(),
@@ -108,25 +110,26 @@ const MainSearchbar = ({
       location: {
         ...(
           JSON.parse(localStorage.getItem("search-results") || "{}") ||
-          ({} as (typeof HeroSearchFormType)["_output"])
+          ({} as (typeof MainSearchFormSchema)["_output"])
         ).location,
       },
     },
   });
 
-  const handleSearch = async (data: z.infer<typeof HeroSearchFormType>) => {
+  const handleSearch = async (data: z.infer<typeof MainSearchFormSchema>) => {
     localStorage.setItem("search-results", JSON.stringify(data));
+    await fetchListings(data);
     router.push("/store");
   };
 
   return (
     <div className="flex flex-col items-center relative">
       <CollapsedSearchBar
-        location={form.getValues().location.name}
-        from={form.getValues().rentPeriod.from}
-        to={form.getValues().rentPeriod.to}
-        experience={form.getValues().experience}
-        sport={form.getValues().category}
+        location={form.getValues().location?.name}
+        from={form.getValues().rentPeriod?.from}
+        to={form.getValues().rentPeriod?.to}
+        experience={form.getValues()?.experience}
+        sport={form.getValues()?.sport}
         collapsed={collapsed}
         setCollapsed={setCollapsed}
       />
@@ -134,7 +137,7 @@ const MainSearchbar = ({
         <form
           onSubmit={form.handleSubmit(handleSearch)}
           className={clsx(
-            "bg-white rounded-md text-black flex animate-in items-center p-2 shadow-md transition-all delay-75 ease-out",
+            " rounded-md text-black flex animate-in items-center p-2 transition-all delay-75 ease-out",
             collapsed
               ? "-translate-y-[100%] opacity-0"
               : "translate-y-[-20%] opacity-100",
@@ -145,7 +148,7 @@ const MainSearchbar = ({
             name="location"
             render={({ field }) => (
               <FormItem className="w-48 px-2 border-r border-gray-100 flex flex-col">
-                <FormLabel className="text-gray-400 text-xs">
+                <FormLabel className="text-gray-400 text-xs pt-1">
                   Location
                 </FormLabel>
                 <LocationPicker
@@ -208,7 +211,7 @@ const MainSearchbar = ({
           />
           <FormField
             control={form.control}
-            name="category"
+            name="sport"
             render={({ field }) => (
               <FormItem className="w-48 px-2 border-r border-gray-100 flex-col flex gap-0.5">
                 <Label className="text-gray-400 text-xs mb-0">Sport</Label>
@@ -279,7 +282,7 @@ const MainSearchbar = ({
 
           <Button
             type="submit"
-            className=" ml-2 px-2 rounded-full w-10 h-10 shrink-0"
+            className="mt-auto ml-2 px-2 rounded-full w-10 h-10 shrink-0"
             size={"icon"}
           >
             <BiSearch />

@@ -1,29 +1,16 @@
 "use client";
 
-import { InventoryType } from "@/src/entities/models/types";
-import { useEffect, useState } from "react";
 import { BiBox, BiListCheck, BiStore } from "react-icons/bi";
 import Spinner from "../_components/_shared/spinner";
 import { useProducts } from "../_providers/useProducts";
-import { getInventory } from "./_actions/admin.actions";
 import DashboardStat from "./_components/dasboard.stat.card";
+import { useAdmin } from "./_providers/useAdmin";
 
 type Props = {};
 
 const AdminDashboardPage = (props: Props) => {
   const { allProducts, allStores } = useProducts();
-  const [allInventory, setAllInventory] = useState<InventoryType[]>();
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchInventory = async () => {
-      setIsLoading(true);
-      const res = await getInventory();
-      setAllInventory(res.data as InventoryType[]);
-      setIsLoading(false);
-    };
-    fetchInventory();
-  }, []);
+  const { allInventory, isLoading } = useAdmin();
 
   if (isLoading) {
     return <Spinner />;

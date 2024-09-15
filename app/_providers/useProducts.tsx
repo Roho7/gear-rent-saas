@@ -3,6 +3,11 @@ import { toast } from "@/components/ui/use-toast";
 import { handleError } from "@/lib/errorHandler";
 
 import {
+  MainSearchFormOutputType,
+  MainSearchFormSchema,
+} from "@/src/entities/models/formSchemas";
+import {
+  AvailableListingsType,
   CartItemType,
   ProductMetadataType,
   ProductType,
@@ -20,6 +25,7 @@ import {
   useState,
 } from "react";
 import { getAllProducts } from "../_actions/all-products.actions";
+import { searchListings } from "../_actions/listings.actions";
 import { createClientComponentClient } from "../_utils/supabase";
 import { updateProductMetadata } from "../admin/products/_actions/product.actions";
 
@@ -54,6 +60,9 @@ type ProductContextType = {
   setSearchLocation: React.Dispatch<
     React.SetStateAction<SearchLocationType | null>
   >;
+  availableListings: AvailableListingsType[] | undefined;
+  setAvailableListings: React.Dispatch<AvailableListingsType[] | undefined>;
+  fetchListings: (data: MainSearchFormOutputType) => Promise<void>;
 };
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
@@ -76,6 +85,11 @@ export const ProductProvider = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [searchLocation, setSearchLocation] =
     useState<SearchLocationType | null>(null);
+  const [availableListings, setAvailableListings] =
+    useState<AvailableListingsType[]>();
+  const [localStorageSearch, setLocalStorageSearch] = useState<
+    (typeof MainSearchFormSchema)["_output"] | null
+  >(null);
   const [productFilters, setProductFilters] = useState<ProductFilterType>({
     category: [],
     colors: [],
@@ -164,6 +178,7 @@ export const ProductProvider = ({
     }
     setLoading(false);
   };
+
   const fetchAndCacheStores = async (refresh: boolean = false) => {
     const db = await dbPromise;
     const cachedData = await db?.getAll("stores");
@@ -200,6 +215,22 @@ export const ProductProvider = ({
     setLoading(false);
   };
 
+  const fetchListings = async ({
+    experience,
+    sport,
+    rentPeriod,
+    location,
+  }: MainSearchFormOutputType) => {
+    const res = await searchListings({
+      experience,
+      sport,
+      rentPeriod,
+      location,
+    });
+
+    setAvailableListings(res);
+  };
+
   const fetchData = useCallback(async () => {
     await fetchAndCacheProducts();
     await fetchAndCacheStores();
@@ -231,6 +262,28 @@ export const ProductProvider = ({
   const filteredProducts = useMemo(() => {
     return allProducts.filter((product) => {
       let foundProduct = true;
+
+      // Apply localStorage search filters
+      if (localStorageSearch) {
+        if (
+          localStorageSearch.sport &&
+          product.category !== localStorageSearch.sport
+        ) {
+          return false;
+        }
+        if (
+          localStorageSearch.experience &&
+          (!product.product_metadata?.experience ||
+            !product.product_metadata.experience.includes(
+              localStorageSearch.experience,
+            ))
+        ) {
+          return false;
+        }
+        // Add more conditions for other search parameters as needed
+      }
+
+      // Existing search query filter
       if (searchQuery) {
         foundProduct = product.product_title
           ? product.product_title
@@ -239,44 +292,39 @@ export const ProductProvider = ({
           : false;
       }
 
-      // CATEGORY FILTER
+      // Existing category filter
       if (productFilters?.category.length) {
-        foundProduct = productFilters.category.length
-          ? productFilters.category.includes(product.category || "")
-          : true;
+        foundProduct = productFilters.category.includes(product.category || "");
       }
 
-      // ----- METADATA FILTERS ----- //
-
-      // GENDER FILTER
+      // Existing metadata filters
       if (productFilters?.gender.length) {
         foundProduct = product.product_metadata?.gender
-          ? product?.product_metadata?.gender?.some((gender: string) =>
-              productFilters?.gender.includes(gender),
+          ? product.product_metadata.gender.some((gender: string) =>
+              productFilters.gender.includes(gender),
             )
           : false;
       }
 
-      // EXPERIENCE FILTER
       if (productFilters?.experience.length) {
         foundProduct = product.product_metadata?.experience
-          ? product?.product_metadata?.experience?.some((exp: string) =>
-              productFilters?.experience.includes(exp),
+          ? product.product_metadata.experience.some((exp: string) =>
+              productFilters.experience.includes(exp),
             )
           : false;
       }
 
-      // STYLE FILTER
       if (productFilters?.style.length) {
         foundProduct = product.product_metadata?.style
-          ? product?.product_metadata?.style?.some((style: string) =>
-              productFilters?.style.includes(style),
+          ? product.product_metadata.style.some((style: string) =>
+              productFilters.style.includes(style),
             )
           : false;
       }
+
       return foundProduct;
     });
-  }, [allProducts, productFilters, searchQuery]);
+  }, [allProducts, productFilters, searchQuery, localStorageSearch]);
 
   useEffect(() => {
     fetchData();
@@ -290,6 +338,13 @@ export const ProductProvider = ({
     // Save cart to localStorage whenever it changes
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
+
+  useEffect(() => {
+    const searchData = localStorage.getItem("search-results");
+    if (searchData) {
+      setLocalStorageSearch(JSON.parse(searchData));
+    }
+  }, []);
 
   const values = useMemo(
     () => ({
@@ -310,6 +365,9 @@ export const ProductProvider = ({
       setSearchQuery,
       searchLocation,
       setSearchLocation,
+      availableListings,
+      setAvailableListings,
+      fetchListings,
     }),
     [
       cartItems,
@@ -324,6 +382,8 @@ export const ProductProvider = ({
       productFilters,
       searchQuery,
       searchLocation,
+      availableListings,
+      fetchListings,
     ],
   );
 

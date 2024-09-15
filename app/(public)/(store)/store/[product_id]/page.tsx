@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import LocationPicker from "@/app/_components/_landing/location.dropdown";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
-import { HeroSearchFormType } from "@/src/entities/models/formSchemas";
+import { MainSearchFormSchema } from "@/src/entities/models/formSchemas";
 import {
   InventoryType,
   ProductMetadataKeys,
@@ -106,7 +106,7 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
       (
         JSON.parse(
           localStorage.getItem("search-results") || "{}",
-        ) as (typeof HeroSearchFormType)["_output"]
+        ) as (typeof MainSearchFormSchema)["_output"]
       ).location,
     );
   }, []);

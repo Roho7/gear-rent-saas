@@ -2,8 +2,8 @@ import { DateRange } from "react-day-picker";
 import { date, z } from "zod";
 import { SearchLocationType } from "./types";
 
-export const HeroSearchFormType = z.object({
-  category: z.string().optional(),
+export const MainSearchFormSchema = z.object({
+  sport: z.string().optional(),
   experience: z.string().optional(),
   rentPeriod: z
     .object({
@@ -19,4 +19,4 @@ export const HeroSearchFormType = z.object({
   }).optional() as z.ZodType<SearchLocationType, any>,
 });
 
-const m = {} as typeof HeroSearchFormType["_output"];
+export type MainSearchFormOutputType = typeof MainSearchFormSchema["_output"];

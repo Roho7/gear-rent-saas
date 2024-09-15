@@ -65,3 +65,15 @@ export type SearchLocationType = {
   lng: number;
   radius?: number;
 };
+
+export type AvailableListingsType = {
+  product_id: string;
+  store_id: string;
+  base_price: number;
+  currency_code: string;
+  available_from: string;
+  available_until: string;
+  lat: number;
+  lng: number;
+  distance: number | null;
+};
