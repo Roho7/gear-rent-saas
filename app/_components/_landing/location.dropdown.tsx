@@ -61,6 +61,13 @@ const LocationPicker = ({
           <CommandList>
             <CommandEmpty>No location found.</CommandEmpty>
             <CommandGroup>
+              <CommandItem
+                onSelect={() => {
+                  setSearchLocation(null);
+                }}
+              >
+                Anywhere
+              </CommandItem>
               {popularLocations.map((location: SearchLocationType) => (
                 <CommandItem
                   key={location.name}

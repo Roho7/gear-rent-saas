@@ -52,6 +52,67 @@ export type Database = {
         }
         Relationships: []
       }
+      tbl_bookings: {
+        Row: {
+          booking_date: string
+          booking_id: string
+          currency_code: string
+          end_date: string
+          inventory_id: string
+          start_date: string
+          status: Database["public"]["Enums"]["booking_status"]
+          store_id: string
+          total_price: number
+          user_id: string
+        }
+        Insert: {
+          booking_date?: string
+          booking_id?: string
+          currency_code: string
+          end_date: string
+          inventory_id: string
+          start_date: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          store_id: string
+          total_price: number
+          user_id: string
+        }
+        Update: {
+          booking_date?: string
+          booking_id?: string
+          currency_code?: string
+          end_date?: string
+          inventory_id?: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          store_id?: string
+          total_price?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tbl_bookings_inventory_id_fkey"
+            columns: ["inventory_id"]
+            isOneToOne: false
+            referencedRelation: "tbl_inventory"
+            referencedColumns: ["inventory_id"]
+          },
+          {
+            foreignKeyName: "tbl_bookings_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "tbl_stores"
+            referencedColumns: ["store_id"]
+          },
+          {
+            foreignKeyName: "tbl_bookings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "tbl_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       tbl_inventory: {
         Row: {
           available_units: number | null
@@ -110,6 +171,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "tbl_products"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "tbl_inventory_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "view_available_products"
             referencedColumns: ["product_id"]
           },
           {
@@ -178,7 +246,9 @@ export type Database = {
           description: string | null
           google_place_id: string | null
           google_rating: number | null
+          latitude: number | null
           location: unknown | null
+          longitude: number | null
           postcode: string | null
           store_id: string
           store_img: string | null
@@ -196,7 +266,9 @@ export type Database = {
           description?: string | null
           google_place_id?: string | null
           google_rating?: number | null
+          latitude?: number | null
           location?: unknown | null
+          longitude?: number | null
           postcode?: string | null
           store_id?: string
           store_img?: string | null
@@ -214,7 +286,9 @@ export type Database = {
           description?: string | null
           google_place_id?: string | null
           google_rating?: number | null
+          latitude?: number | null
           location?: unknown | null
+          longitude?: number | null
           postcode?: string | null
           store_id?: string
           store_img?: string | null
@@ -310,6 +384,29 @@ export type Database = {
           type?: string | null
         }
         Relationships: []
+      }
+      view_available_products: {
+        Row: {
+          available_units: number | null
+          base_price: string | null
+          category: string | null
+          city: string | null
+          country: string | null
+          experience: string[] | null
+          location: unknown | null
+          product_id: string | null
+          product_title: string | null
+          store_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tbl_inventory_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "tbl_stores"
+            referencedColumns: ["store_id"]
+          },
+        ]
       }
     }
     Functions: {
@@ -1118,13 +1215,7 @@ export type Database = {
           lng: number
           radius: number
         }
-        Returns: {
-          store_id: string
-          store_name: string
-          address_line1: string
-          city: string
-          distance: number
-        }[]
+        Returns: string[]
       }
       get_proj4_from_srid: {
         Args: {
@@ -1425,6 +1516,26 @@ export type Database = {
       postgis_wagyu_version: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      search_active_listings: {
+        Args: {
+          sport?: string
+          experience_input?: string
+          rent_period_from?: string
+          rent_period_to?: string
+          latitude_input?: number
+          longitude_input?: number
+          radius?: number
+        }
+        Returns: {
+          product_id: string
+          store_id: string
+          base_price: number
+          currency_code: string
+          latitude: number
+          longitude: number
+          distance: number
+        }[]
       }
       spheroid_in: {
         Args: {
@@ -3365,6 +3476,7 @@ export type Database = {
       }
     }
     Enums: {
+      booking_status: "pending" | "confirmed" | "completed" | "cancelled"
       enum_genders: "male" | "female" | "unisex"
       enum_price_granularity_type: "daily" | "hourly"
     }

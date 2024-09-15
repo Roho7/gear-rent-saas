@@ -2,8 +2,8 @@
 import clsx from "clsx";
 import { useState } from "react";
 import CartPopup from "../_cart/cart-popup";
-import MainSearchbar from "../_landing/hero-searchbar";
-import UserButton from "./user-button";
+import MainSearchbar from "../_landing/main-searchbar";
+import UserDropdown from "./user.dropdown";
 
 const Navbar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
   return (
     <nav
       className={clsx(
-        "navbar px-4 py-4 mb-2 flex justify-between border-b items-center w-full fixed top-0 z-10 transition-all ease-in-out",
+        "navbar px-8 py-4 mb-2 flex justify-between border-b items-center w-full fixed top-0 z-10 transition-all ease-in-out",
         collapsed ? "h-14 glass" : "h-28 bg-background",
       )}
     >
@@ -129,7 +129,7 @@ const Navbar: React.FC = () => {
       <div className="flex gap-2 items-center">
         {/* <ModeSwitcher /> */}
         <CartPopup />
-        <UserButton />
+        <UserDropdown />
       </div>
       {/* </div> */}
     </nav>

@@ -12,10 +12,14 @@ import { useRouter } from "next/navigation";
 
 type Props = {
   inventoryItem: InventoryType;
+  showStoreDetails?: boolean;
 };
 
-const InventoryItemCard = ({ inventoryItem }: Props) => {
-  const { allProducts } = useProducts();
+const InventoryItemCard = ({
+  inventoryItem,
+  showStoreDetails = false,
+}: Props) => {
+  const { allProducts, allStores } = useProducts();
   const router = useRouter();
   return (
     <Card
@@ -59,6 +63,14 @@ const InventoryItemCard = ({ inventoryItem }: Props) => {
           {inventoryItem.base_price} /{" "}
           {inventoryItem.price_granularity === "daily" ? "day" : "hour"}
         </h2>
+        {showStoreDetails && (
+          <p className="text-muted text-xs">
+            {
+              allStores.find((p) => p.store_id === inventoryItem.store_id)
+                ?.store_name
+            }
+          </p>
+        )}
       </CardFooter>
     </Card>
   );
