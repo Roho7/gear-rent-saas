@@ -95,9 +95,11 @@ const CollapsedSearchBar = ({
 const MainSearchbar = ({
   collapsed,
   setCollapsed,
+  setIsSearchActive,
 }: {
   collapsed: boolean;
   setCollapsed: React.Dispatch<SetStateAction<boolean>>;
+  setIsSearchActive: React.Dispatch<SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -107,6 +109,7 @@ const MainSearchbar = ({
   });
 
   const handleSearch = async (data: z.infer<typeof MainSearchFormSchema>) => {
+    setIsSearchActive(false);
     const searchParams = new URLSearchParams();
 
     if (data.sport) searchParams.append("sport", data.sport);
@@ -176,6 +179,7 @@ const MainSearchbar = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSearch)}
+          onClick={() => setIsSearchActive(true)}
           className={clsx(
             " rounded-md text-black flex animate-in items-center p-2 transition-all delay-75 ease-out",
             collapsed
