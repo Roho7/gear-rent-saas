@@ -2,7 +2,7 @@ create type "public"."booking_status" as enum ('pending', 'confirmed', 'complete
 
 create table "public"."tbl_bookings" (
     "booking_id" uuid not null default uuid_generate_v4(),
-    "inventory_id" uuid not null,
+    "listing_id" uuid not null,
     "store_id" uuid not null,
     "user_id" uuid not null,
     "status" booking_status not null default 'pending'::booking_status,
@@ -18,7 +18,7 @@ alter table "public"."tbl_bookings" enable row level security;
 
 CREATE INDEX idx_bookings_end_date ON public.tbl_bookings USING btree (end_date);
 
-CREATE INDEX idx_bookings_inventory_id ON public.tbl_bookings USING btree (inventory_id);
+CREATE INDEX idx_bookings_listing_id ON public.tbl_bookings USING btree (listing_id);
 
 CREATE INDEX idx_bookings_start_date ON public.tbl_bookings USING btree (start_date);
 
@@ -40,9 +40,9 @@ alter table "public"."tbl_bookings" add constraint "check_positive_price" CHECK 
 
 alter table "public"."tbl_bookings" validate constraint "check_positive_price";
 
-alter table "public"."tbl_bookings" add constraint "tbl_bookings_inventory_id_fkey" FOREIGN KEY (inventory_id) REFERENCES tbl_inventory(inventory_id) not valid;
+alter table "public"."tbl_bookings" add constraint "tbl_bookings_listing_id_fkey" FOREIGN KEY (listing_id) REFERENCES tbl_listings(listing_id) not valid;
 
-alter table "public"."tbl_bookings" validate constraint "tbl_bookings_inventory_id_fkey";
+alter table "public"."tbl_bookings" validate constraint "tbl_bookings_listing_id_fkey";
 
 alter table "public"."tbl_bookings" add constraint "tbl_bookings_store_id_fkey" FOREIGN KEY (store_id) REFERENCES tbl_stores(store_id) not valid;
 
@@ -79,7 +79,7 @@ BEGIN
         FROM 
             tbl_products p
         LEFT JOIN 
-            tbl_inventory i ON p.product_id = i.product_id
+            tbl_listings i ON p.product_id = i.product_id
         LEFT JOIN 
             tbl_stores s ON i.store_id = s.store_id
         WHERE 

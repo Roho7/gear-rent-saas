@@ -16,7 +16,7 @@ SELECT
 FROM 
     tbl_stores s
 JOIN 
-    tbl_inventory i ON s.store_id = i.store_id
+    tbl_listings i ON s.store_id = i.store_id
 JOIN
     tbl_products p ON i.product_id = p.product_id;
 

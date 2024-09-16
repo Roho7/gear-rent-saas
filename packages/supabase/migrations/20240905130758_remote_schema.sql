@@ -112,7 +112,7 @@ BEGIN
             'inventory', (
                 SELECT jsonb_agg(
                     jsonb_build_object(
-                        'inventory_id', i.inventory_id,
+                        'listing_id', i.listing_id,
                         'product_id', i.product_id,
                         'product_title', p.product_title,
                         'product_metadata', p.product_metadata,
@@ -127,7 +127,7 @@ BEGIN
                         'discount_3', i.discount_3
                     )
                 )
-                FROM tbl_inventory i
+                FROM tbl_listings i
                 LEFT JOIN tbl_products p ON p.product_id = i.product_id
                 WHERE store_id = store_id_input
             )
@@ -272,12 +272,12 @@ SET default_tablespace = '';
 SET default_table_access_method = "heap";
 
 
-CREATE TABLE IF NOT EXISTS "public"."tbl_inventory" (
+CREATE TABLE IF NOT EXISTS "public"."tbl_listings" (
     "product_id" "uuid",
     "store_id" "uuid",
     "total_units" integer,
     "available_units" integer,
-    "inventory_id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "listing_id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "base_price" "text",
     "currency_code" "text",
     "price_granularity" "public"."enum_price_granularity_type" DEFAULT 'daily'::"public"."enum_price_granularity_type",
@@ -289,18 +289,18 @@ CREATE TABLE IF NOT EXISTS "public"."tbl_inventory" (
 );
 
 
-ALTER TABLE "public"."tbl_inventory" OWNER TO "postgres";
+ALTER TABLE "public"."tbl_listings" OWNER TO "postgres";
 
 
-COMMENT ON COLUMN "public"."tbl_inventory"."discount_1" IS 'Discount for 3-7 days';
-
-
-
-COMMENT ON COLUMN "public"."tbl_inventory"."discount_2" IS 'Discount for 7-14 days';
+COMMENT ON COLUMN "public"."tbl_listings"."discount_1" IS 'Discount for 3-7 days';
 
 
 
-COMMENT ON COLUMN "public"."tbl_inventory"."discount_3" IS 'Discount for 14 days or more';
+COMMENT ON COLUMN "public"."tbl_listings"."discount_2" IS 'Discount for 7-14 days';
+
+
+
+COMMENT ON COLUMN "public"."tbl_listings"."discount_3" IS 'Discount for 14 days or more';
 
 
 
@@ -359,8 +359,8 @@ CREATE TABLE IF NOT EXISTS "public"."tbl_users" (
 ALTER TABLE "public"."tbl_users" OWNER TO "postgres";
 
 
-ALTER TABLE ONLY "public"."tbl_inventory"
-    ADD CONSTRAINT "tbl_inventory_pkey" PRIMARY KEY ("inventory_id");
+ALTER TABLE ONLY "public"."tbl_listings"
+    ADD CONSTRAINT "tbl_listings_pkey" PRIMARY KEY ("listing_id");
 
 
 
@@ -402,13 +402,13 @@ CREATE OR REPLACE TRIGGER "update_user_store_ids_trigger" AFTER INSERT ON "publi
 
 
 
-ALTER TABLE ONLY "public"."tbl_inventory"
-    ADD CONSTRAINT "tbl_inventory_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "public"."tbl_products"("product_id") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY "public"."tbl_listings"
+    ADD CONSTRAINT "tbl_listings_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "public"."tbl_products"("product_id") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
-ALTER TABLE ONLY "public"."tbl_inventory"
-    ADD CONSTRAINT "tbl_inventory_store_id_fkey" FOREIGN KEY ("store_id") REFERENCES "public"."tbl_stores"("store_id") ON UPDATE CASCADE ON DELETE SET NULL;
+ALTER TABLE ONLY "public"."tbl_listings"
+    ADD CONSTRAINT "tbl_listings_store_id_fkey" FOREIGN KEY ("store_id") REFERENCES "public"."tbl_stores"("store_id") ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 
@@ -429,7 +429,7 @@ CREATE POLICY "ALL for authenticated" ON "public"."tbl_users" USING (true) WITH 
 
 
 
-CREATE POLICY "ALL for owner" ON "public"."tbl_inventory" USING (("store_id" IN ( SELECT "public"."get_user_store_ids"() AS "get_user_store_ids")));
+CREATE POLICY "ALL for owner" ON "public"."tbl_listings" USING (("store_id" IN ( SELECT "public"."get_user_store_ids"() AS "get_user_store_ids")));
 
 
 
@@ -441,7 +441,7 @@ CREATE POLICY "Read for all" ON "public"."tbl_products" FOR SELECT USING (true);
 
 
 
-ALTER TABLE "public"."tbl_inventory" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "public"."tbl_listings" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."tbl_products" ENABLE ROW LEVEL SECURITY;
@@ -706,9 +706,9 @@ GRANT ALL ON FUNCTION "public"."update_user_store_ids"() TO "service_role";
 
 
 
-GRANT ALL ON TABLE "public"."tbl_inventory" TO "anon";
-GRANT ALL ON TABLE "public"."tbl_inventory" TO "authenticated";
-GRANT ALL ON TABLE "public"."tbl_inventory" TO "service_role";
+GRANT ALL ON TABLE "public"."tbl_listings" TO "anon";
+GRANT ALL ON TABLE "public"."tbl_listings" TO "authenticated";
+GRANT ALL ON TABLE "public"."tbl_listings" TO "service_role";
 
 
 

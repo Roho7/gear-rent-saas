@@ -3,7 +3,7 @@
 import {
   BusinessType,
   GearyoUser,
-  InventoryType,
+  ListingType,
   StoreType,
 } from "@/src/entities/models/types";
 import React, {
@@ -15,7 +15,7 @@ import React, {
 } from "react";
 
 interface InventoryContextValue {
-  inventory: InventoryType[] | undefined;
+  inventory: ListingType[] | undefined;
   storeDetails: StoreType | undefined;
   businessUser: GearyoUser | undefined;
   isLoading: boolean;
@@ -33,7 +33,7 @@ export const InventoryProvider = ({
   children: React.ReactNode;
 }) => {
   const [storeDetails, setStoreDetails] = useState<StoreType>();
-  const [inventory, setInventory] = useState<InventoryType[]>();
+  const [inventory, setInventory] = useState<ListingType[]>();
   const [businessUser, setBusinessUser] = useState<GearyoUser>();
   const [isLoading, setIsLoading] = useState(false);
 

@@ -2,7 +2,7 @@
 
 import { createServerActionClient } from "@/app/_utils/supabase";
 import { DatabaseError } from "@/src/entities/models/errors";
-import { InventoryType } from "@/src/entities/models/types";
+import { ListingType } from "@/src/entities/models/types";
 
 import { cookies } from "next/headers";
 
@@ -32,12 +32,12 @@ export const getNearbyStores = async (
 export const getInventoryForProduct = async (
   productId: string,
   storeIds: string[],
-): Promise<InventoryType[]> => {
+): Promise<ListingType[]> => {
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
 
   const { data, error } = await supabase
-    .from("tbl_inventory")
+    .from("tbl_listings")
     .select("*")
     .eq("product_id", productId)
     .in("store_id", storeIds);
@@ -49,5 +49,5 @@ export const getInventoryForProduct = async (
     );
   }
 
-  return data as InventoryType[];
+  return data as ListingType[];
 };

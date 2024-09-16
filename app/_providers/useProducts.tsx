@@ -340,7 +340,7 @@ export const ProductProvider = ({
   }, [cartItems]);
 
   useEffect(() => {
-    const searchData = localStorage.getItem("search-results");
+    const searchData = localStorage.getItem("main-search-details");
     if (searchData) {
       setLocalStorageSearch(JSON.parse(searchData));
     }

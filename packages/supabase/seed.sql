@@ -622,10 +622,10 @@ INSERT INTO "public"."tbl_stores" ("store_id", "google_link", "store_name", "goo
 
 
 --
--- Data for Name: tbl_inventory; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tbl_listings; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."tbl_inventory" ("product_id", "store_id", "total_units", "available_units", "inventory_id", "base_price", "currency_code", "price_granularity", "discount_1", "discount_2", "discount_3", "description", "product_metadata") VALUES
+INSERT INTO "public"."tbl_listings" ("product_id", "store_id", "total_units", "available_units", "listing_id", "base_price", "currency_code", "price_granularity", "discount_1", "discount_2", "discount_3", "description", "product_metadata") VALUES
 	('cebba1c9-7745-4af3-bfe2-1e95ca2f4252', NULL, NULL, NULL, '062c7d38-fcbd-4779-9692-2cd37ca72afe', NULL, NULL, 'daily', NULL, NULL, NULL, NULL, NULL),
 	('147a2d29-59f5-4882-bf12-e3b386142cbb', NULL, NULL, NULL, '3a05e13c-a7ec-4567-b646-79729864397e', NULL, NULL, 'daily', NULL, NULL, NULL, NULL, NULL),
 	('aff30f4f-ee66-4bf0-945a-8b246d220882', NULL, NULL, NULL, '52f7ebe7-3619-4c82-8ce3-7904c18b575e', NULL, NULL, 'daily', NULL, NULL, NULL, NULL, NULL),

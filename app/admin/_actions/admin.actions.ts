@@ -4,7 +4,7 @@ import { handleError } from "@/lib/errorHandler";
 import { createServerResponse } from "@/lib/serverResponse";
 import {
   GearyoServerActionResponse,
-  InventoryType,
+  ListingType,
   ProductType,
 } from "@/src/entities/models/types";
 
@@ -53,13 +53,13 @@ export async function bulkUpdateProducts(
 }
 
 export async function getInventory(): Promise<
-  GearyoServerActionResponse<InventoryType[]>
+  GearyoServerActionResponse<ListingType[]>
 > {
   try {
     const cookieStore = cookies();
     const supabase = createServerActionClient({ cookies: cookieStore });
-    const { data, error } = await supabase.from("tbl_inventory").select("*")
-      .returns<InventoryType[]>();
+    const { data, error } = await supabase.from("tbl_listings").select("*")
+      .returns<ListingType[]>();
 
     if (error) {
       handleError(error, "getInventory");

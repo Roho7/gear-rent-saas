@@ -5,8 +5,8 @@ export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
 };
 export type GearyoUser = Tables<"tbl_users">;
 export type StoreType = Tables<"tbl_stores">;
-export type InventoryType = {
-  inventory_id: string;
+export type ListingType = {
+  listing_id: string;
   product_id: string;
   base_price: string;
   store_id: string;
@@ -50,7 +50,7 @@ export type ProductMetadataType =
 export type BusinessType = {
   user: GearyoUser;
   store: StoreType;
-  inventory: InventoryType[];
+  inventory: ListingType[];
 };
 
 export type GearyoServerActionResponse<T = void> = {

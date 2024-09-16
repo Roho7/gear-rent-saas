@@ -1,5 +1,5 @@
 "use client";
-import InventoryItemCard from "@/app/(business)/inventory/_components/inventory.card";
+import ListingItemCard from "@/app/(business)/inventory/_components/listing.card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
@@ -41,9 +41,9 @@ const AdminListingsPage = (props: Props) => {
           <Separator />
           <div className="grid grid-cols-4 gap-2 h-[80vh] overflow-y-scroll pb-8">
             {allInventory?.map((item) => (
-              <InventoryItemCard
+              <ListingItemCard
                 inventoryItem={item}
-                key={item.inventory_id}
+                key={item.listing_id}
                 showStoreDetails={true}
               />
             ))}

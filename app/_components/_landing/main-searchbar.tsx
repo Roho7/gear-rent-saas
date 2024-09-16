@@ -109,7 +109,7 @@ const MainSearchbar = ({
       },
       location: {
         ...(
-          JSON.parse(localStorage.getItem("search-results") || "{}") ||
+          JSON.parse(localStorage.getItem("main-search-details") || "{}") ||
           ({} as (typeof MainSearchFormSchema)["_output"])
         ).location,
       },
@@ -117,7 +117,7 @@ const MainSearchbar = ({
   });
 
   const handleSearch = async (data: z.infer<typeof MainSearchFormSchema>) => {
-    localStorage.setItem("search-results", JSON.stringify(data));
+    localStorage.setItem("main-search-details", JSON.stringify(data));
     await fetchListings(data);
     router.push("/store");
   };
