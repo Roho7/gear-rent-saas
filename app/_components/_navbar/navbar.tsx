@@ -143,7 +143,7 @@ const Navbar: React.FC = () => {
       </nav>
       {isSearchActive && (
         <div
-          className="absolute bg-primary/20 inset-0 z-10"
+          className="absolute bg-primary/30 inset-0 z-10"
           onClick={() => setIsSearchActive(false)}
         ></div>
       )}

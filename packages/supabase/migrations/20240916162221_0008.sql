@@ -1,5 +1,3 @@
-drop function if exists "public"."get_inventory"(store_id_input uuid);
-
 set check_function_bodies = off;
 
 CREATE OR REPLACE FUNCTION public.get_business(store_id_input uuid DEFAULT NULL::uuid)
@@ -50,6 +48,25 @@ BEGIN
         ) INTO return_data;
 
     RETURN return_data;
+END;
+$function$
+;
+
+CREATE OR REPLACE FUNCTION public.tigger_update_new_user()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+BEGIN
+  INSERT INTO public.tbl_users (user_id, email, name, phone, created_at)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    NEW.raw_user_meta_data->>'name',
+    NEW.phone,
+    NEW.created_at
+  );
+  RETURN NEW;
 END;
 $function$
 ;

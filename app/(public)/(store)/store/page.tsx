@@ -16,8 +16,8 @@ const StorePage = () => {
   });
 
   useEffect(() => {
-    const sport = searchParams.get("sport") || "";
-    const locationId = searchParams.get("locationId") || "";
+    const sport = searchParams.get("sport") ?? null;
+    const locationId = searchParams.get("locationId") ?? null;
     const lat = searchParams.get("lat");
     const lng = searchParams.get("lng");
     const radius = searchParams.get("radius");
@@ -44,7 +44,7 @@ const StorePage = () => {
       },
     };
     setSearchResults({
-      sport,
+      sport: sport || "",
       location: {
         name: popularLocations.find((l) => l.id === locationId)?.name || "",
       },

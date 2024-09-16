@@ -36,12 +36,11 @@ BEGIN
             l.product_metadata
         FROM 
             tbl_products p
-        LEFT JOIN 
+        INNER JOIN 
             tbl_listings l ON p.product_id = l.product_id
-        LEFT JOIN 
+        INNER JOIN 
             tbl_stores s ON l.store_id = s.store_id
         WHERE 
-            l.listing_id IS NOT NULL AND
             (sport IS NULL OR p.category = sport)
             AND (experience_input IS NULL OR experience_input = ANY(p.experience))
             AND (
