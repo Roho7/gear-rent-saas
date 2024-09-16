@@ -23,10 +23,17 @@ BEGIN
             END AS distance,
             ST_Y(s.location::geometry) AS latitude,
             l.store_id,
+            l.listing_id,
             ST_X(s.location::geometry) AS longitude,
-            l.base_price::TEXT,
             p.product_id,
-            l.currency_code
+            l.base_price::TEXT,
+            l.currency_code,
+            l.price_granularity,
+            l.discount_1,
+            l.discount_2,
+            l.discount_3,
+            l.description,
+            l.product_metadata
         FROM 
             tbl_products p
         LEFT JOIN 
@@ -34,6 +41,7 @@ BEGIN
         LEFT JOIN 
             tbl_stores s ON l.store_id = s.store_id
         WHERE 
+            l.listing_id IS NOT NULL AND
             (sport IS NULL OR p.category = sport)
             AND (experience_input IS NULL OR experience_input = ANY(p.experience))
             AND (

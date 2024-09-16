@@ -116,7 +116,7 @@ export type Database = {
       tbl_listings: {
         Row: {
           available_units: number | null
-          base_price: string | null
+          base_price: number | null
           currency_code: string | null
           description: string | null
           discount_1: number | null
@@ -133,7 +133,7 @@ export type Database = {
         }
         Insert: {
           available_units?: number | null
-          base_price?: string | null
+          base_price?: number | null
           currency_code?: string | null
           description?: string | null
           discount_1?: number | null
@@ -150,7 +150,7 @@ export type Database = {
         }
         Update: {
           available_units?: number | null
-          base_price?: string | null
+          base_price?: number | null
           currency_code?: string | null
           description?: string | null
           discount_1?: number | null

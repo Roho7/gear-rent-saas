@@ -21,10 +21,10 @@ import { toast } from "@/components/ui/use-toast";
 
 import StoreSidebar from "@/app/(public)/(store)/store/_components/store-sidebar";
 import {
-  categoryMap,
   expertiseMap,
   genderMap,
   metadataOptions,
+  sportMap,
 } from "@/src/entities/models/product";
 import {
   GenderType,
@@ -178,7 +178,7 @@ const ProductRow = ({
               </SelectTrigger>
               <SelectContent position="popper">
                 <SelectGroup>
-                  {categoryMap.map((category) => (
+                  {sportMap.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
                     </SelectItem>

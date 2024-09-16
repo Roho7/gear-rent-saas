@@ -41,12 +41,7 @@ import { deleteListing, getInventoryItem } from "./_actions/inventory.actions";
 const addListingForm = z.object({
   product_id: z.string().min(1, { message: "Please select a product" }),
   description: z.string().min(10, { message: "Please enter a description" }),
-  base_price: z
-    .string()
-    .min(1, { message: "Please enter a price" })
-    .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-      message: "Please enter a valid price",
-    }),
+  base_price: z.coerce.number().min(1, { message: "Please enter a price" }),
   price_granularity: z.enum(["daily", "hourly"]).default("daily"),
   currency_code: z.string().min(1, { message: "Please select a currency" }),
   discount_1: z.number().min(0, { message: "Please enter a valid discount" }),
@@ -93,7 +88,7 @@ const AddListingPage = () => {
       product_id: "",
       description: "",
       currency_code: "GBP",
-      base_price: "",
+      base_price: 0,
       price_granularity: "daily",
       discount_1: 0,
       discount_2: 0,
@@ -159,7 +154,7 @@ const AddListingPage = () => {
   };
 
   const updateDiscountedPrices = () => {
-    const basePrice = parseInt(form.getValues("base_price"));
+    const basePrice = form.getValues("base_price");
     setDiscountedPrices({
       discount1:
         basePrice - (basePrice * form.getValues("discount_1")) / 100 || 0,
@@ -208,7 +203,7 @@ const AddListingPage = () => {
       product_id: item?.product_id || "",
       description: item?.description || "",
       currency_code: item?.currency_code || "USD",
-      base_price: item?.base_price?.toString() || "",
+      base_price: item?.base_price || 0,
       price_granularity: item.price_granularity || "daily",
       discount_1: item?.discount_1 || 0,
       discount_2: item?.discount_2 || 0,
@@ -257,7 +252,7 @@ const AddListingPage = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 onChange={() =>
                   setDiscountedPrices(() => {
-                    const basePrice = parseInt(form.getValues("base_price"));
+                    const basePrice = form.getValues("base_price");
                     return {
                       discount1:
                         basePrice -

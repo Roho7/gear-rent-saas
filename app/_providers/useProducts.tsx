@@ -2,10 +2,7 @@
 import { toast } from "@/components/ui/use-toast";
 import { handleError } from "@/lib/errorHandler";
 
-import {
-  MainSearchFormOutputType,
-  MainSearchFormSchema,
-} from "@/src/entities/models/formSchemas";
+import { MainSearchFormOutputType } from "@/src/entities/models/formSchemas";
 import {
   AvailableListingsType,
   CartItemType,
@@ -87,9 +84,7 @@ export const ProductProvider = ({
     useState<SearchLocationType | null>(null);
   const [availableListings, setAvailableListings] =
     useState<AvailableListingsType[]>();
-  const [localStorageSearch, setLocalStorageSearch] = useState<
-    (typeof MainSearchFormSchema)["_output"] | null
-  >(null);
+
   const [productFilters, setProductFilters] = useState<ProductFilterType>({
     category: [],
     colors: [],
@@ -263,27 +258,7 @@ export const ProductProvider = ({
     return allProducts.filter((product) => {
       let foundProduct = true;
 
-      // Apply localStorage search filters
-      if (localStorageSearch) {
-        if (
-          localStorageSearch.sport &&
-          product.category !== localStorageSearch.sport
-        ) {
-          return false;
-        }
-        if (
-          localStorageSearch.experience &&
-          (!product.product_metadata?.experience ||
-            !product.product_metadata.experience.includes(
-              localStorageSearch.experience,
-            ))
-        ) {
-          return false;
-        }
-        // Add more conditions for other search parameters as needed
-      }
-
-      // Existing search query filter
+      // Search query filter
       if (searchQuery) {
         foundProduct = product.product_title
           ? product.product_title
@@ -324,7 +299,7 @@ export const ProductProvider = ({
 
       return foundProduct;
     });
-  }, [allProducts, productFilters, searchQuery, localStorageSearch]);
+  }, [allProducts, productFilters, searchQuery]);
 
   useEffect(() => {
     fetchData();
@@ -338,13 +313,6 @@ export const ProductProvider = ({
     // Save cart to localStorage whenever it changes
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
-
-  useEffect(() => {
-    const searchData = localStorage.getItem("main-search-details");
-    if (searchData) {
-      setLocalStorageSearch(JSON.parse(searchData));
-    }
-  }, []);
 
   const values = useMemo(
     () => ({

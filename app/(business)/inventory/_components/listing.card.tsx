@@ -6,6 +6,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { formatPrice } from "@/lib/utils";
 import { ListingType } from "@/src/entities/models/types";
 
 import { useRouter } from "next/navigation";
@@ -60,8 +61,11 @@ const ListingItemCard = ({
           className="font-bold text-primary
         "
         >
-          {inventoryItem.base_price} /{" "}
-          {inventoryItem.price_granularity === "daily" ? "day" : "hour"}
+          {formatPrice({
+            base_price: inventoryItem.base_price,
+            currency_code: inventoryItem.currency_code,
+          })}{" "}
+          / {inventoryItem.price_granularity === "daily" ? "day" : "hour"}
         </h2>
         {showStoreDetails && (
           <p className="text-muted text-xs">
