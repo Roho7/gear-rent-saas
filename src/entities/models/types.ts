@@ -5,10 +5,10 @@ export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
 };
 export type GearyoUser = Tables<"tbl_users">;
 export type StoreType = Tables<"tbl_stores">;
-export type InventoryType = {
-  inventory_id: string;
+export type ListingType = {
+  listing_id: string;
   product_id: string;
-  base_price: string;
+  base_price: number;
   store_id: string;
   product_title: string;
   category: string;
@@ -50,7 +50,7 @@ export type ProductMetadataType =
 export type BusinessType = {
   user: GearyoUser;
   store: StoreType;
-  inventory: InventoryType[];
+  inventory: ListingType[];
 };
 
 export type GearyoServerActionResponse<T = void> = {
@@ -60,6 +60,7 @@ export type GearyoServerActionResponse<T = void> = {
 };
 
 export type SearchLocationType = {
+  id: string;
   name: string;
   lat: number;
   lng: number;
@@ -68,12 +69,19 @@ export type SearchLocationType = {
 
 export type AvailableListingsType = {
   product_id: string;
+  listing_id: string;
   store_id: string;
   base_price: number;
   currency_code: string;
   available_from: string;
   available_until: string;
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
   distance: number | null;
+  description: string;
+  price_granularity: PriceGranularityType;
+  discount_1: number;
+  discount_2: number;
+  discount_3: number;
+  product_metadata: ProductMetadataType;
 };

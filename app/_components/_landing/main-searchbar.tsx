@@ -21,17 +21,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { useProducts } from "@/app/_providers/useProducts";
 import { Label } from "@/components/ui/label";
+import { popularLocations } from "@/src/entities/models/constants";
 import { MainSearchFormSchema } from "@/src/entities/models/formSchemas";
-import { categoryMap, expertiseMap } from "@/src/entities/models/product";
+import { expertiseMap, sportMap } from "@/src/entities/models/product";
+import { SearchLocationType } from "@/src/entities/models/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import clsx from "clsx";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import dayjs from "dayjs";
-import { useRouter } from "next/navigation";
-import { SetStateAction } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BiSearch } from "react-icons/bi";
 import { FaSkiing, FaTrophy } from "react-icons/fa";
@@ -94,33 +95,75 @@ const CollapsedSearchBar = ({
 const MainSearchbar = ({
   collapsed,
   setCollapsed,
+  setIsSearchActive,
 }: {
   collapsed: boolean;
   setCollapsed: React.Dispatch<SetStateAction<boolean>>;
+  setIsSearchActive: React.Dispatch<SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
-  const { fetchListings } = useProducts();
+  const searchParams = useSearchParams();
+
   const form = useForm<z.infer<typeof MainSearchFormSchema>>({
     resolver: zodResolver(MainSearchFormSchema),
-    defaultValues: {
-      rentPeriod: {
-        from: new Date(),
-        to: addDays(new Date(), 7),
-      },
-      location: {
-        ...(
-          JSON.parse(localStorage.getItem("search-results") || "{}") ||
-          ({} as (typeof MainSearchFormSchema)["_output"])
-        ).location,
-      },
-    },
   });
 
   const handleSearch = async (data: z.infer<typeof MainSearchFormSchema>) => {
-    localStorage.setItem("search-results", JSON.stringify(data));
-    await fetchListings(data);
-    router.push("/store");
+    setIsSearchActive(false);
+    const searchParams = new URLSearchParams();
+
+    if (data.sport) searchParams.append("sport", data.sport);
+    if (data.experience) searchParams.append("experience", data.experience);
+    if (data.rentPeriod?.from)
+      searchParams.append(
+        "checkin",
+        format(data.rentPeriod.from, "yyyy-MM-dd"),
+      );
+    if (data.rentPeriod?.to)
+      searchParams.append("checkout", format(data.rentPeriod.to, "yyyy-MM-dd"));
+    if (data.location) {
+      searchParams.append("locationId", data.location.id);
+      searchParams.append("lat", data.location.lat.toString());
+      searchParams.append("lng", data.location.lng.toString());
+      if (data.location.radius)
+        searchParams.append("radius", data.location.radius.toString());
+    }
+
+    const searchUrl = `/store?${searchParams.toString()}`;
+    router.push(searchUrl);
   };
+
+  useEffect(() => {
+    const sport = searchParams.get("sport");
+    const experience = searchParams.get("experience");
+    const checkin = searchParams.get("checkin");
+    const checkout = searchParams.get("checkout");
+    const locationId = searchParams.get("locationId");
+    const lat = searchParams.get("lat");
+    const lng = searchParams.get("lng");
+    const radius = searchParams.get("radius");
+
+    if (sport) form.setValue("sport", sport);
+    if (experience) form.setValue("experience", experience);
+
+    if (checkin && checkout) {
+      form.setValue("rentPeriod", {
+        from: new Date(checkin),
+        to: new Date(checkout),
+      });
+    }
+
+    if (locationId && lat && lng) {
+      const location: SearchLocationType = {
+        id: locationId,
+        name: popularLocations.find((l) => l.id === locationId)?.name || "",
+        lat: parseFloat(lat),
+        lng: parseFloat(lng),
+        radius: radius ? parseFloat(radius) : undefined,
+      };
+      form.setValue("location", location);
+    }
+  }, [searchParams, form]);
 
   return (
     <div className="flex flex-col items-center relative">
@@ -136,6 +179,7 @@ const MainSearchbar = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSearch)}
+          onClick={() => setIsSearchActive(true)}
           className={clsx(
             " rounded-md text-black flex animate-in items-center p-2 transition-all delay-75 ease-out",
             collapsed
@@ -220,15 +264,15 @@ const MainSearchbar = ({
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger id="category" className="py-4 capitalize">
+                    <SelectTrigger id="sport" className="py-4 capitalize">
                       <SelectValue
-                        placeholder="Select Sport"
+                        placeholder={field.value ?? "Select Sport"}
                         className="outline-none"
                       />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent position="popper">
-                    {categoryMap.map((category) => (
+                    {sportMap.map((category) => (
                       <SelectItem
                         key={category}
                         value={category}
@@ -258,7 +302,7 @@ const MainSearchbar = ({
                   <FormControl>
                     <SelectTrigger id="experience" className="py-4 capitalize">
                       <SelectValue
-                        placeholder="Select Experience"
+                        placeholder={field.value ?? "Select Experience"}
                         className="outline-none"
                       />
                     </SelectTrigger>
@@ -269,6 +313,7 @@ const MainSearchbar = ({
                         key={experience}
                         value={experience}
                         className="capitalize"
+                        onSelect={() => field.onChange(experience)}
                       >
                         {experience}
                       </SelectItem>

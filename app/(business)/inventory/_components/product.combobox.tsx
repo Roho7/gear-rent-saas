@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { categoryMap } from "@/src/entities/models/product";
+import { sportMap } from "@/src/entities/models/product";
 import { ProductType } from "@/src/entities/models/types";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
@@ -112,7 +112,7 @@ const ProductCombobox = ({ productId, setProductId, disabled }: Props) => {
             <CommandList>
               <CommandEmpty>No product found.</CommandEmpty>
               <CommandGroup>
-                {categoryMap.map((c: string) => (
+                {sportMap.map((c: string) => (
                   <CommandItem
                     key={c}
                     value={c || ""}

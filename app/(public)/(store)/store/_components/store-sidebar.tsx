@@ -5,9 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
-  categoryMap,
   expertiseMap,
   genderMap,
+  sportMap,
   styleMap,
 } from "@/src/entities/models/product";
 
@@ -23,7 +23,7 @@ const StoreSidebar = () => {
   } = useProducts();
 
   return (
-    <aside className="flex gap-2 justify-start flex-col w-[15vw] max-w-[20vw] bg-secondary/50 p-4 rounded-md ">
+    <aside className="flex gap-2 justify-start flex-col w-[15vw] max-w-[20vw] bg-muted/50 p-4 ">
       <div className="flex flex-col gap-2">
         <Button loading={loading} onClick={() => fetchAndCacheProducts(true)}>
           Refresh
@@ -35,7 +35,7 @@ const StoreSidebar = () => {
         <h2 className="text-gray-400 flex items-center gap-2 my-2">
           <BiFilterAlt className="" /> Filters
         </h2>
-        {categoryMap.map((d) => (
+        {sportMap.map((d) => (
           <div className="flex gap-1 text-sm items-center" key={d}>
             <Checkbox
               checked={productFilters.category.includes(d)}

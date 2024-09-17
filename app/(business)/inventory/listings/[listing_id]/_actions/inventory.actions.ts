@@ -4,13 +4,13 @@ import { DatabaseError } from "@/src/entities/models/errors";
 import { GearyoServerActionResponse } from "@/src/entities/models/types";
 import { cookies } from "next/headers";
 
-export async function getInventoryItem(inventory_id: string) {
+export async function getInventoryItem(listing_id: string) {
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
 
-  const { data, error } = await supabase.from("tbl_inventory").select("*").eq(
-    "inventory_id",
-    inventory_id,
+  const { data, error } = await supabase.from("tbl_listings").select("*").eq(
+    "listing_id",
+    listing_id,
   ).single();
 
   if (error) {
@@ -22,14 +22,14 @@ export async function getInventoryItem(inventory_id: string) {
 }
 
 export async function deleteListing(
-  inventory_id: string,
+  listing_id: string,
 ): Promise<GearyoServerActionResponse> {
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
 
-  const { error } = await supabase.from("tbl_inventory").delete().eq(
-    "inventory_id",
-    inventory_id,
+  const { error } = await supabase.from("tbl_listings").delete().eq(
+    "listing_id",
+    listing_id,
   );
 
   if (error) {

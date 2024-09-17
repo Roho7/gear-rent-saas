@@ -16,10 +16,7 @@ import LocationPicker from "@/app/_components/_landing/location.dropdown";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { MainSearchFormSchema } from "@/src/entities/models/formSchemas";
-import {
-  InventoryType,
-  ProductMetadataKeys,
-} from "@/src/entities/models/types";
+import { ListingType, ProductMetadataKeys } from "@/src/entities/models/types";
 import { useEffect, useMemo, useState } from "react";
 
 import { BiDollar } from "react-icons/bi";
@@ -48,12 +45,12 @@ const MetadataMap: Record<ProductMetadataKeys, any> = {
   },
 };
 
-const ProductPage = ({ params }: { params: { product_id: string } }) => {
+const ListingPage = ({ params }: { params: { product_id: string } }) => {
   const { allProducts, allStores, searchLocation, setSearchLocation } =
     useProducts();
   const { cartItems } = useProducts();
   const [nearbyStoreIds, setNearbyStoreIds] = useState<string[]>([]);
-  const [inventory, setInventory] = useState<InventoryType[]>([]);
+  const [inventory, setInventory] = useState<ListingType[]>([]);
   const [loading, setLoading] = useState(false);
 
   const activeProduct = useMemo(() => {
@@ -105,7 +102,7 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
     setSearchLocation(
       (
         JSON.parse(
-          localStorage.getItem("search-results") || "{}",
+          localStorage.getItem("main-search-details") || "{}",
         ) as (typeof MainSearchFormSchema)["_output"]
       ).location,
     );
@@ -272,4 +269,4 @@ const ProductPage = ({ params }: { params: { product_id: string } }) => {
   );
 };
 
-export default ProductPage;
+export default ListingPage;

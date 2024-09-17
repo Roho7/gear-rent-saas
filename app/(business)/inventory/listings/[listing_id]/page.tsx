@@ -38,17 +38,10 @@ import GranularityCombobox from "../../_components/granularity.combobox";
 import ProductCombobox from "../../_components/product.combobox";
 import { deleteListing, getInventoryItem } from "./_actions/inventory.actions";
 
-type Props = {};
-
 const addListingForm = z.object({
   product_id: z.string().min(1, { message: "Please select a product" }),
   description: z.string().min(10, { message: "Please enter a description" }),
-  base_price: z
-    .string()
-    .min(1, { message: "Please enter a price" })
-    .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-      message: "Please enter a valid price",
-    }),
+  base_price: z.coerce.number().min(1, { message: "Please enter a price" }),
   price_granularity: z.enum(["daily", "hourly"]).default("daily"),
   currency_code: z.string().min(1, { message: "Please select a currency" }),
   discount_1: z.number().min(0, { message: "Please enter a valid discount" }),
@@ -64,14 +57,14 @@ const addListingForm = z.object({
     .passthrough(),
 });
 
-const AddListingPage = (props: Props) => {
+const AddListingPage = () => {
   /**
    * * - Custom hooks
    */
 
   const { allProducts } = useProducts();
   const { user } = useAuth();
-  const params = useParams<{ inventory_id: string }>();
+  const params = useParams<{ listing_id: string }>();
   const router = useRouter();
 
   /**
@@ -94,8 +87,8 @@ const AddListingPage = (props: Props) => {
     defaultValues: {
       product_id: "",
       description: "",
-      currency_code: "USD",
-      base_price: "",
+      currency_code: "GBP",
+      base_price: 0,
       price_granularity: "daily",
       discount_1: 0,
       discount_2: 0,
@@ -119,8 +112,7 @@ const AddListingPage = (props: Props) => {
       const formattedData = {
         ...data,
         store_id: user?.store_id,
-        inventory_id:
-          params.inventory_id === "new" ? undefined : params.inventory_id,
+        listing_id: params.listing_id === "new" ? undefined : params.listing_id,
       };
 
       const res = await addInventoryItem({ inventory_data: formattedData });
@@ -128,7 +120,7 @@ const AddListingPage = (props: Props) => {
       if (res?.success) {
         toast({
           title:
-            params.inventory_id !== "new"
+            params.listing_id !== "new"
               ? "Listing updated successfully"
               : "Listing added successfully",
         });
@@ -145,7 +137,7 @@ const AddListingPage = (props: Props) => {
 
   const handleDeleteListing = async () => {
     try {
-      const { success, message } = await deleteListing(params.inventory_id);
+      const { success, message } = await deleteListing(params.listing_id);
       if (success) {
         toast({
           title: message,
@@ -162,7 +154,7 @@ const AddListingPage = (props: Props) => {
   };
 
   const updateDiscountedPrices = () => {
-    const basePrice = parseInt(form.getValues("base_price"));
+    const basePrice = form.getValues("base_price");
     setDiscountedPrices({
       discount1:
         basePrice - (basePrice * form.getValues("discount_1")) / 100 || 0,
@@ -211,7 +203,7 @@ const AddListingPage = (props: Props) => {
       product_id: item?.product_id || "",
       description: item?.description || "",
       currency_code: item?.currency_code || "USD",
-      base_price: item?.base_price?.toString() || "",
+      base_price: item?.base_price || 0,
       price_granularity: item.price_granularity || "daily",
       discount_1: item?.discount_1 || 0,
       discount_2: item?.discount_2 || 0,
@@ -226,8 +218,8 @@ const AddListingPage = (props: Props) => {
   };
 
   useEffect(() => {
-    if (params.inventory_id && params.inventory_id !== "new") {
-      fetchInventoryItem(params.inventory_id);
+    if (params.listing_id && params.listing_id !== "new") {
+      fetchInventoryItem(params.listing_id);
     }
   }, [params]);
 
@@ -260,7 +252,7 @@ const AddListingPage = (props: Props) => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 onChange={() =>
                   setDiscountedPrices(() => {
-                    const basePrice = parseInt(form.getValues("base_price"));
+                    const basePrice = form.getValues("base_price");
                     return {
                       discount1:
                         basePrice -
@@ -286,7 +278,7 @@ const AddListingPage = (props: Props) => {
                       <FormControl>
                         <ProductCombobox
                           productId={field.value}
-                          disabled={params.inventory_id !== "new"}
+                          disabled={params.listing_id !== "new"}
                           setProductId={form.setValue.bind(null, "product_id")}
                         />
                       </FormControl>
@@ -512,7 +504,7 @@ const AddListingPage = (props: Props) => {
                   />
                 </div>
                 <div className="flex gap-2 ml-auto mt-auto">
-                  {params.inventory_id !== "new" && (
+                  {params.listing_id !== "new" && (
                     <Button
                       type="button"
                       size="sm"
@@ -525,9 +517,7 @@ const AddListingPage = (props: Props) => {
                     </Button>
                   )}
                   <Button type="submit" size="sm">
-                    {params.inventory_id !== "new"
-                      ? "Update Listing"
-                      : "Publish"}
+                    {params.listing_id !== "new" ? "Update Listing" : "Publish"}
                   </Button>
                 </div>
               </form>

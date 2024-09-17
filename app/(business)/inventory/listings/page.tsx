@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import { useInventory } from "../../_providers/useInventory";
-import InventoryItemCard from "../_components/inventory.card";
+import ListingItemCard from "../_components/listing.card";
 
 const ListingsPage = () => {
   const router = useRouter();
@@ -47,7 +47,7 @@ const ListingsPage = () => {
           <Separator />
           <div className="grid grid-cols-4 gap-2">
             {inventory?.map((item) => (
-              <InventoryItemCard inventoryItem={item} key={item.inventory_id} />
+              <ListingItemCard inventoryItem={item} key={item.listing_id} />
             ))}
           </div>
         </>

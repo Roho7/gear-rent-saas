@@ -70,7 +70,7 @@ const LocationPicker = ({
               </CommandItem>
               {popularLocations.map((location: SearchLocationType) => (
                 <CommandItem
-                  key={location.name}
+                  key={location.id}
                   onSelect={() => {
                     setSearchLocation(location);
                   }}

@@ -35,29 +35,6 @@ export async function middleware(request: NextRequest) {
       }
     }
 
-    // Update custom cookies if user is authenticated
-    // if (user) {
-    //   const gearyoUser = await fetchUser();
-    //   response.cookies.set(
-    //     "is_admin",
-    //     gearyoUser?.is_admin ? "true" : "false",
-    //     {
-    //       httpOnly: true,
-    //       secure: process.env.NODE_ENV === "production",
-    //       sameSite: "strict",
-    //       maxAge: 60 * 60 * 24 * 7, // 1 week
-    //     },
-    //   );
-    //   if (gearyoUser?.store_id) {
-    //     response.cookies.set("store_id", gearyoUser.store_id, {
-    //       httpOnly: true,
-    //       secure: process.env.NODE_ENV === "production",
-    //       sameSite: "strict",
-    //       maxAge: 60 * 60 * 24 * 7, // 1 week
-    //     });
-    //   }
-    // }
-
     return response;
   } catch (error) {
     console.error("Middleware error:", error);

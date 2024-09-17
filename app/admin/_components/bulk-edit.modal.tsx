@@ -22,10 +22,10 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import {
-  categoryMap,
   expertiseMap,
   genderMap,
   metadataOptions,
+  sportMap,
 } from "@/src/entities/models/product";
 import { GenderType, ProductMetadataType } from "@/src/entities/models/types";
 import { useState } from "react";
@@ -111,7 +111,7 @@ export function BulkEditModal({ productIds }: { productIds: string[] }) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <DropdownSelector
-            data={categoryMap}
+            data={sportMap}
             onValueChange={setProductCategory}
             value={productCategory}
           />

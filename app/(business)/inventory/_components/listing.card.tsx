@@ -6,16 +6,17 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { InventoryType } from "@/src/entities/models/types";
+import { formatPrice } from "@/lib/utils";
+import { ListingType } from "@/src/entities/models/types";
 
 import { useRouter } from "next/navigation";
 
 type Props = {
-  inventoryItem: InventoryType;
+  inventoryItem: ListingType;
   showStoreDetails?: boolean;
 };
 
-const InventoryItemCard = ({
+const ListingItemCard = ({
   inventoryItem,
   showStoreDetails = false,
 }: Props) => {
@@ -23,16 +24,16 @@ const InventoryItemCard = ({
   const router = useRouter();
   return (
     <Card
-      className="flex flex-col gap-2 hover:bg-card/10"
+      className="flex flex-col gap-2 hover:bg-card/10 h-fit"
       role="button"
       onClick={() => {
-        router.push(`/inventory/listings/${inventoryItem.inventory_id}`);
+        router.push(`/inventory/listings/${inventoryItem.listing_id}`);
       }}
     >
       <CardHeader>
         <div className="">
           {inventoryItem.product_title}{" "}
-          <p className="text-gray-400 text-xs">{inventoryItem.inventory_id}</p>
+          <p className="text-gray-400 text-xs">{inventoryItem.listing_id}</p>
         </div>
         {inventoryItem.category && (
           <Badge variant="outline" className="capitalize mr-auto">
@@ -60,8 +61,11 @@ const InventoryItemCard = ({
           className="font-bold text-primary
         "
         >
-          {inventoryItem.base_price} /{" "}
-          {inventoryItem.price_granularity === "daily" ? "day" : "hour"}
+          {formatPrice({
+            base_price: inventoryItem.base_price,
+            currency_code: inventoryItem.currency_code,
+          })}{" "}
+          / {inventoryItem.price_granularity === "daily" ? "day" : "hour"}
         </h2>
         {showStoreDetails && (
           <p className="text-muted text-xs">
@@ -76,4 +80,4 @@ const InventoryItemCard = ({
   );
 };
 
-export default InventoryItemCard;
+export default ListingItemCard;

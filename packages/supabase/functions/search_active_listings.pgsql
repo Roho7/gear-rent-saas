@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION search_active_listings(
     rent_period_to TIMESTAMP DEFAULT NULL,
     latitude_input NUMERIC DEFAULT NULL,
     longitude_input NUMERIC DEFAULT NULL,
-    radius NUMERIC DEFAULT 100
+    radius NUMERIC DEFAULT 10
 )
 RETURNS JSON AS $$
 DECLARE
@@ -22,17 +22,24 @@ BEGIN
                 ELSE NULL
             END AS distance,
             ST_Y(s.location::geometry) AS latitude,
-            i.store_id,
+            l.store_id,
+            l.listing_id,
             ST_X(s.location::geometry) AS longitude,
-            i.base_price::TEXT,
             p.product_id,
-            i.currency_code
+            l.base_price::TEXT,
+            l.currency_code,
+            l.price_granularity,
+            l.discount_1,
+            l.discount_2,
+            l.discount_3,
+            l.description,
+            l.product_metadata
         FROM 
             tbl_products p
-        LEFT JOIN 
-            tbl_inventory i ON p.product_id = i.product_id
-        LEFT JOIN 
-            tbl_stores s ON i.store_id = s.store_id
+        INNER JOIN 
+            tbl_listings l ON p.product_id = l.product_id
+        INNER JOIN 
+            tbl_stores s ON l.store_id = s.store_id
         WHERE 
             (sport IS NULL OR p.category = sport)
             AND (experience_input IS NULL OR experience_input = ANY(p.experience))

@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DialogClose, DialogTitle } from "@radix-ui/react-dialog";
-import { deleteStore } from "../listings/[inventory_id]/_actions/store.actions";
+import { deleteStore } from "../listings/[listing_id]/_actions/store.actions";
 
 const DeleteStoreModal = ({ children }: { children: React.ReactNode }) => {
   const { user, refreshUser } = useAuth();

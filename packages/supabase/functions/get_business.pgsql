@@ -35,7 +35,7 @@ BEGIN
             ),
             'inventory', (
                 SELECT json_agg(row_to_json(i.*))
-                FROM tbl_inventory i
+                FROM tbl_listings i
                 WHERE (store_id_input IS NULL OR i.store_id = store_id_input)
                   AND EXISTS (
                       SELECT 1 FROM tbl_users u

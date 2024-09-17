@@ -58,7 +58,7 @@ export type Database = {
           booking_id: string
           currency_code: string
           end_date: string
-          inventory_id: string
+          listing_id: string | null
           start_date: string
           status: Database["public"]["Enums"]["booking_status"]
           store_id: string
@@ -70,7 +70,7 @@ export type Database = {
           booking_id?: string
           currency_code: string
           end_date: string
-          inventory_id: string
+          listing_id?: string | null
           start_date: string
           status?: Database["public"]["Enums"]["booking_status"]
           store_id: string
@@ -82,7 +82,7 @@ export type Database = {
           booking_id?: string
           currency_code?: string
           end_date?: string
-          inventory_id?: string
+          listing_id?: string | null
           start_date?: string
           status?: Database["public"]["Enums"]["booking_status"]
           store_id?: string
@@ -91,11 +91,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "tbl_bookings_inventory_id_fkey"
-            columns: ["inventory_id"]
+            foreignKeyName: "tbl_bookings_listing_id_fkey"
+            columns: ["listing_id"]
             isOneToOne: false
-            referencedRelation: "tbl_inventory"
-            referencedColumns: ["inventory_id"]
+            referencedRelation: "tbl_listings"
+            referencedColumns: ["listing_id"]
           },
           {
             foreignKeyName: "tbl_bookings_store_id_fkey"
@@ -113,16 +113,16 @@ export type Database = {
           },
         ]
       }
-      tbl_inventory: {
+      tbl_listings: {
         Row: {
           available_units: number | null
-          base_price: string | null
+          base_price: number | null
           currency_code: string | null
           description: string | null
           discount_1: number | null
           discount_2: number | null
           discount_3: number | null
-          inventory_id: string
+          listing_id: string
           price_granularity:
             | Database["public"]["Enums"]["enum_price_granularity_type"]
             | null
@@ -133,13 +133,13 @@ export type Database = {
         }
         Insert: {
           available_units?: number | null
-          base_price?: string | null
+          base_price?: number | null
           currency_code?: string | null
           description?: string | null
           discount_1?: number | null
           discount_2?: number | null
           discount_3?: number | null
-          inventory_id?: string
+          listing_id?: string
           price_granularity?:
             | Database["public"]["Enums"]["enum_price_granularity_type"]
             | null
@@ -150,13 +150,13 @@ export type Database = {
         }
         Update: {
           available_units?: number | null
-          base_price?: string | null
+          base_price?: number | null
           currency_code?: string | null
           description?: string | null
           discount_1?: number | null
           discount_2?: number | null
           discount_3?: number | null
-          inventory_id?: string
+          listing_id?: string
           price_granularity?:
             | Database["public"]["Enums"]["enum_price_granularity_type"]
             | null
@@ -167,21 +167,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "tbl_inventory_product_id_fkey"
+            foreignKeyName: "tbl_listings_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "tbl_products"
             referencedColumns: ["product_id"]
           },
           {
-            foreignKeyName: "tbl_inventory_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "view_available_products"
-            referencedColumns: ["product_id"]
-          },
-          {
-            foreignKeyName: "tbl_inventory_store_id_fkey"
+            foreignKeyName: "tbl_listings_store_id_fkey"
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "tbl_stores"
@@ -384,29 +377,6 @@ export type Database = {
           type?: string | null
         }
         Relationships: []
-      }
-      view_available_products: {
-        Row: {
-          available_units: number | null
-          base_price: string | null
-          category: string | null
-          city: string | null
-          country: string | null
-          experience: string[] | null
-          location: unknown | null
-          product_id: string | null
-          product_title: string | null
-          store_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tbl_inventory_store_id_fkey"
-            columns: ["store_id"]
-            isOneToOne: false
-            referencedRelation: "tbl_stores"
-            referencedColumns: ["store_id"]
-          },
-        ]
       }
     }
     Functions: {
@@ -1527,15 +1497,7 @@ export type Database = {
           longitude_input?: number
           radius?: number
         }
-        Returns: {
-          product_id: string
-          store_id: string
-          base_price: number
-          currency_code: string
-          latitude: number
-          longitude: number
-          distance: number
-        }[]
+        Returns: Json
       }
       spheroid_in: {
         Args: {

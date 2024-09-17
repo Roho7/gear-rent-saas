@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 
 export const addInventoryItem = async (
   { inventory_data }: {
-    inventory_data?: TablesUpdate<"tbl_inventory">;
+    inventory_data?: TablesUpdate<"tbl_listings">;
   },
 ): Promise<GearyoServerActionResponse> => {
   const cookieStore = cookies();
@@ -18,7 +18,7 @@ export const addInventoryItem = async (
     throw new Error("Product ID or Store ID not provided");
   }
 
-  const { data, error } = await supabase.from("tbl_inventory").upsert(
+  const { data, error } = await supabase.from("tbl_listings").upsert(
     inventory_data,
   );
 

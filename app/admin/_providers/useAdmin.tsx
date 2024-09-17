@@ -1,6 +1,6 @@
 "use client";
 
-import { InventoryType } from "@/src/entities/models/types";
+import { ListingType } from "@/src/entities/models/types";
 import React, {
   createContext,
   useContext,
@@ -11,20 +11,20 @@ import React, {
 import { getInventory } from "../_actions/admin.actions";
 
 interface AdminContext {
-  allInventory: InventoryType[] | undefined;
+  allInventory: ListingType[] | undefined;
   isLoading: boolean;
 }
 
 const AdminContext = createContext<AdminContext | undefined>(undefined);
 
 export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
-  const [allInventory, setAllInventory] = useState<InventoryType[]>();
+  const [allInventory, setAllInventory] = useState<ListingType[]>();
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchAllInventory = async () => {
     setIsLoading(true);
     const res = await getInventory();
-    setAllInventory(res.data as InventoryType[]);
+    setAllInventory(res.data as ListingType[]);
     setIsLoading(false);
   };
 

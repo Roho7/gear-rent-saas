@@ -45,36 +45,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //                                 HELPERS                                    //
   // -------------------------------------------------------------------------- //
 
-  const fetchAndSetUser = useCallback(async (authUser: User | null) => {
-    if (authUser?.id) {
-      const cachedUser = getCachedUser();
-      if (cachedUser) {
-        setUser(cachedUser);
-        setIsLoading(false);
-        return;
-      }
+  const fetchAndSetUser = useCallback(
+    async (authUser: User | null, hardRefresh?: boolean) => {
+      if (authUser?.id && !hardRefresh) {
+        const cachedUser = getCachedUser();
+        if (cachedUser) {
+          setUser(cachedUser);
+          setIsLoading(false);
+          return;
+        }
 
-      try {
-        const userData = await fetchUser();
-        if (userData) {
-          setUser(userData);
-          cacheUser(userData);
-        } else {
-          console.error("Failed to fetch user data");
+        try {
+          const userData = await fetchUser();
+          if (userData) {
+            setUser(userData);
+            cacheUser(userData);
+          } else {
+            console.error("Failed to fetch user data");
+            setUser(null);
+            clearUserCache();
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
           setUser(null);
           clearUserCache();
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+      } else {
         setUser(null);
         clearUserCache();
       }
-    } else {
-      setUser(null);
-      clearUserCache();
-    }
-    setIsLoading(false);
-  }, []);
+      setIsLoading(false);
+    },
+    [],
+  );
 
   const refreshUser = useCallback(async () => {
     setIsLoading(true);
@@ -82,7 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const {
         data: { user: authUser },
       } = await supabase.auth.getUser();
-      await fetchAndSetUser(authUser);
+      await fetchAndSetUser(authUser, true);
       toast({ title: "User data refreshed" });
     } catch (error) {
       console.error("Error refreshing user data:", error);

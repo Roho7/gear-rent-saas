@@ -12,9 +12,10 @@ export const MainSearchFormSchema = z.object({
     })
     .optional() as z.ZodType<DateRange, any>,
   location: z.object({
-    name: z.string(),
-    lat: z.number(),
-    lng: z.number(),
+    id: z.string().optional(),
+    name: z.string().optional(),
+    lat: z.number().optional(),
+    lng: z.number().optional(),
     radius: z.number().optional(),
   }).optional() as z.ZodType<SearchLocationType, any>,
 });

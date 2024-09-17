@@ -25,6 +25,7 @@ import { useAuth } from "@/app/_providers/useAuth";
 import { createClientComponentClient } from "@/app/_utils/supabase";
 import { RegisterShopFormSchema } from "@/src/entities/models/store";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -33,6 +34,7 @@ import { useInventory } from "../../_providers/useInventory";
 const RegisterBusinessForm = () => {
   const { user, refreshUser } = useAuth();
   const { storeDetails } = useInventory();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterShopFormSchema>>({
     resolver: zodResolver(RegisterShopFormSchema),
@@ -48,10 +50,10 @@ const RegisterBusinessForm = () => {
       postcode: "",
     },
   });
-  const supabase = createClientComponentClient();
 
   async function onSubmit(data: z.infer<typeof RegisterShopFormSchema>) {
     try {
+      const supabase = createClientComponentClient();
       const formattedData = {
         ...data,
         user_id: user?.user_id,
@@ -64,11 +66,13 @@ const RegisterBusinessForm = () => {
         .insert(insertedData);
 
       toast({
-        title: "You submitted the following values:",
+        title: "Shop submitted for review",
+
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <p>
+            Your shop has been submitted for review. You will be notified once
+            your shop is approved.
+          </p>
         ),
       });
     } catch (error) {
@@ -79,6 +83,7 @@ const RegisterBusinessForm = () => {
       return;
     } finally {
       refreshUser();
+      router.push("/home");
     }
   }
 
