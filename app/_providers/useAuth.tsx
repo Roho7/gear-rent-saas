@@ -47,15 +47,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchAndSetUser = useCallback(
     async (authUser: User | null, hardRefresh?: boolean) => {
-      if (authUser?.id && !hardRefresh) {
+      if (authUser?.id) {
         const cachedUser = getCachedUser();
-        if (cachedUser) {
+        if (cachedUser && !hardRefresh) {
           setUser(cachedUser);
           setIsLoading(false);
           return;
         }
 
         try {
+          setIsLoading(true);
           const userData = await fetchUser();
           if (userData) {
             setUser(userData);
@@ -150,20 +151,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (error) throw error;
 
-        if (data.user?.confirmed_at) {
-          await fetchAndSetUser(data.user);
-          toast({
-            title: "Account Created",
-            description: "Your account has been successfully created",
-            variant: "default",
-          });
-        } else {
-          toast({
-            title: "Verification Required",
-            description: "Please check your email to verify your account",
-            variant: "default",
-          });
-        }
+        await fetchAndSetUser(data.user);
+        toast({
+          title: "Account Created",
+          description: "Your account has been successfully created",
+          variant: "default",
+        });
       } catch (error: any) {
         console.error(error);
         toast({
@@ -174,6 +167,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } finally {
         setIsLoading(false);
+        router.push("/");
       }
     },
     [fetchAndSetUser, supabase.auth],
@@ -228,6 +222,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           description: "You have been successfully logged out",
           variant: "default",
         });
+        router.push("/login");
       }
     } catch (error: any) {
       console.error(error);

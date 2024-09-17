@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_nearby_stores(lat numeric, lng numeric, radius numeric)
+CREATE OR REPLACE FUNCTION _func_get_nearby_stores(lat numeric, lng numeric, radius numeric)
 RETURNS uuid[] AS $$
 DECLARE
   store_ids uuid[];

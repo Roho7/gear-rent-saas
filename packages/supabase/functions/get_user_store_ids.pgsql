@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_user_store_ids()
+CREATE OR REPLACE FUNCTION _func_get_user_store_ids()
 RETURNS SETOF UUID AS $$
 DECLARE
   store_ids JSONB;

@@ -21,3 +21,23 @@ export const MainSearchFormSchema = z.object({
 });
 
 export type MainSearchFormOutputType = typeof MainSearchFormSchema["_output"];
+
+export const AddListingFormSchema = z.object({
+  product_id: z.string().min(1, { message: "Please select a product" }),
+  description: z.string().min(10, { message: "Please enter a description" }),
+  base_price: z.coerce.number().min(1, { message: "Please enter a price" }),
+  price_granularity: z.enum(["daily", "hourly"]).default("daily"),
+  currency_code: z.string().min(1, { message: "Please select a currency" }),
+  discount_1: z.number().min(0, { message: "Please enter a valid discount" }),
+  discount_2: z.number().min(0, { message: "Please enter a valid discount" }),
+  discount_3: z.number().min(0, { message: "Please enter a valid discount" }),
+  product_metadata: z
+    .object({
+      sizes: z.array(z.string()).nullable(),
+      colors: z.array(z.string()).nullable(),
+      lengths: z.array(z.string()).nullable(),
+      widths: z.array(z.string()).nullable(),
+    })
+    .passthrough(),
+  total_units: z.number().nullable(),
+});

@@ -226,7 +226,6 @@ const ListingPage = ({ params }: { params: { product_id: string } }) => {
                 (i) => i.store_id === store.store_id,
               );
 
-              console.log("llll", storeInventory);
               if (!storeInventory) return null;
 
               return (

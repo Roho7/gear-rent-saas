@@ -5,23 +5,12 @@ export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
 };
 export type GearyoUser = Tables<"tbl_users">;
 export type StoreType = Tables<"tbl_stores">;
-export type ListingType = {
-  listing_id: string;
-  product_id: string;
-  base_price: number;
-  store_id: string;
-  product_title: string;
-  category: string;
-  product_metadata: ProductMetadataType;
-  total_units: number;
-  available_units: number;
-  price_granularity: PriceGranularityType;
-  currency_code: string;
-  discount_1: number;
-  discount_2: number;
-  discount_3: number;
-  description: string;
-};
+export type ListingType =
+  & Omit<Tables<"tbl_listings">, "product_metadata" | "price_granularity">
+  & {
+    product_metadata: ProductMetadataType;
+    price_granularity: PriceGranularityType;
+  };
 
 export type CartItemType = {
   [product_id: string]: {

@@ -6,7 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatPrice(
-  { base_price, currency_code }: { base_price: number; currency_code: string },
+  { base_price, currency_code }: {
+    base_price: number;
+    currency_code: string | null;
+  },
 ) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",

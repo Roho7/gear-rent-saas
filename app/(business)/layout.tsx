@@ -3,12 +3,14 @@
 import { BusinessType } from "@/src/entities/models/types";
 import React, { useEffect, useState } from "react";
 import Spinner from "../_components/_shared/spinner";
+import { useAuth } from "../_providers/useAuth";
 import { getBusiness } from "./_actions/store.actions";
 import { InventoryProvider } from "./_providers/useInventory";
 
 const BusinessLayout = ({ children }: { children: React.ReactElement }) => {
+  const { user, isLoading } = useAuth();
   const [businessData, setBusinessData] = useState<BusinessType | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isBusinessLoading, setIsBusinessLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,13 +23,13 @@ const BusinessLayout = ({ children }: { children: React.ReactElement }) => {
         setBusinessData(null);
         throw new Error(error.message);
       } finally {
-        setIsLoading(false);
+        setIsBusinessLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [user?.store_id]);
 
-  if (isLoading) {
+  if (isBusinessLoading || isLoading) {
     return <Spinner />;
   }
 

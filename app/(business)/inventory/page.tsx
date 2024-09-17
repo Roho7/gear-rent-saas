@@ -15,11 +15,13 @@ import { IoImageOutline } from "react-icons/io5";
 import DeleteStoreModal from "./_components/confirm-delete.modal";
 import { EditStoreModal } from "./_components/edit-store.modal";
 
+import { useAuth } from "@/app/_providers/useAuth";
 import { useRef } from "react";
 import { useInventory } from "../_providers/useInventory";
 
 export default function BusinessDashboard() {
   const { storeDetails } = useInventory();
+  const { user } = useAuth();
   const imageUploadRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async () => {

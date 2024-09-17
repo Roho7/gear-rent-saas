@@ -15,7 +15,7 @@ export const getNearbyStores = async (
   const supabase = createServerActionClient({ cookies: cookieStore });
 
   const { data, error } = await supabase
-    .rpc("get_nearby_stores", {
+    .rpc("_func_get_nearby_stores", {
       lat: lat,
       lng: lng,
       radius: radiusInMeters,

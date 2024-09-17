@@ -1,5 +1,5 @@
 DROP FUNCTION IF EXISTS search_active_listings;
-CREATE OR REPLACE FUNCTION search_active_listings(
+CREATE OR REPLACE FUNCTION _func_search_active_listings(
     sport TEXT DEFAULT NULL,
     experience_input TEXT DEFAULT NULL,
     rent_period_from TIMESTAMP DEFAULT NULL,

@@ -30,6 +30,7 @@ import { toast } from "@/components/ui/use-toast";
 
 import { RegisterShopFormSchema } from "@/src/entities/models/store";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useInventory } from "../../_providers/useInventory";
@@ -39,17 +40,6 @@ export function EditStoreModal({ children }: { children: React.ReactNode }) {
   const { storeDetails } = useInventory();
   const form = useForm<z.infer<typeof RegisterShopFormSchema>>({
     resolver: zodResolver(RegisterShopFormSchema),
-    defaultValues: {
-      store_name: storeDetails?.store_name,
-      country_code: storeDetails?.business_number?.slice(0, 2),
-      business_number: storeDetails?.business_number?.slice(2),
-      business_email: storeDetails?.business_email || "",
-      address_line1: storeDetails?.address_line1 || "",
-      address_line2: storeDetails?.address_line2 || "",
-      city: storeDetails?.city || "",
-      country: storeDetails?.country || "",
-      postcode: storeDetails?.postcode || "",
-    },
   });
 
   async function onSubmit(data: z.infer<typeof RegisterShopFormSchema>) {
@@ -85,6 +75,20 @@ export function EditStoreModal({ children }: { children: React.ReactNode }) {
       refreshUser();
     }
   }
+
+  useEffect(() => {
+    form.reset({
+      store_name: storeDetails?.store_name,
+      country_code: storeDetails?.business_number?.slice(0, 2),
+      business_number: storeDetails?.business_number?.slice(2),
+      business_email: storeDetails?.business_email || "",
+      address_line1: storeDetails?.address_line1 || "",
+      address_line2: storeDetails?.address_line2 || "",
+      city: storeDetails?.city || "",
+      country: storeDetails?.country || "",
+      postcode: storeDetails?.postcode || "",
+    });
+  }, [storeDetails]);
 
   return (
     <Dialog>

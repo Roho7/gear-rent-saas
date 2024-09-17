@@ -1,19 +1,9 @@
-import { CircleUser } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import UserDropdown from "@/app/_components/_navbar/user.dropdown";
 import MobileInventorySidebar from "./mobile.inventory.sidebar";
 
 const InventoryHeader = () => {
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6 justify-between">
+    <header className="flex items-center gap-4 border-b bg-muted/40 px-4 py-2 lg:h-[60px] lg:px-6 justify-between">
       <MobileInventorySidebar />
       {/* <div className="w-full flex-1">
         <form>
@@ -27,26 +17,7 @@ const InventoryHeader = () => {
           </div>
         </form>
       </div> */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full ml-auto"
-          >
-            <CircleUser className="h-5 w-5" />
-            <span className="sr-only">Toggle user menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <UserDropdown />
     </header>
   );
 };

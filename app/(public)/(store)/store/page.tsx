@@ -50,7 +50,6 @@ const StorePage = () => {
       },
     });
 
-    console.log("searchData", searchData);
     fetchListings(searchData as MainSearchFormOutputType);
   }, [searchParams]);
 

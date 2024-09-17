@@ -58,7 +58,7 @@ export type Database = {
           booking_id: string
           currency_code: string
           end_date: string
-          listing_id: string | null
+          listing_id: string
           start_date: string
           status: Database["public"]["Enums"]["booking_status"]
           store_id: string
@@ -70,7 +70,7 @@ export type Database = {
           booking_id?: string
           currency_code: string
           end_date: string
-          listing_id?: string | null
+          listing_id: string
           start_date: string
           status?: Database["public"]["Enums"]["booking_status"]
           store_id: string
@@ -82,7 +82,7 @@ export type Database = {
           booking_id?: string
           currency_code?: string
           end_date?: string
-          listing_id?: string | null
+          listing_id?: string
           start_date?: string
           status?: Database["public"]["Enums"]["booking_status"]
           store_id?: string
@@ -380,6 +380,24 @@ export type Database = {
       }
     }
     Functions: {
+      _func_get_business: {
+        Args: {
+          store_id_input?: string
+        }
+        Returns: Json
+      }
+      _func_get_nearby_stores: {
+        Args: {
+          lat: number
+          lng: number
+          radius: number
+        }
+        Returns: string[]
+      }
+      _func_get_user_store_ids: {
+        Args: Record<PropertyKey, never>
+        Returns: string[]
+      }
       _postgis_deprecate: {
         Args: {
           oldname: string
@@ -1173,29 +1191,11 @@ export type Database = {
         }
         Returns: unknown
       }
-      get_business: {
-        Args: {
-          store_id_input?: string
-        }
-        Returns: Json
-      }
-      get_nearby_stores: {
-        Args: {
-          lat: number
-          lng: number
-          radius: number
-        }
-        Returns: string[]
-      }
       get_proj4_from_srid: {
         Args: {
           "": number
         }
         Returns: string
-      }
-      get_user_store_ids: {
-        Args: Record<PropertyKey, never>
-        Returns: string[]
       }
       gettransactionid: {
         Args: Record<PropertyKey, never>
