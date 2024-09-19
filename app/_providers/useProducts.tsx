@@ -215,12 +215,14 @@ export const ProductProvider = ({
     sport,
     rentPeriod,
     location,
+    storeId,
   }: MainSearchFormOutputType) => {
     const res = await searchListings({
       experience,
       sport,
       rentPeriod,
       location,
+      storeId,
     });
 
     setAvailableListings(res);

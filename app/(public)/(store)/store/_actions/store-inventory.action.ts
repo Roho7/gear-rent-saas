@@ -29,10 +29,10 @@ export const getNearbyStores = async (
   return data || [];
 };
 
-export const getInventoryForProduct = async (
+export const getSingleListingDetails = async (
   productId: string,
-  storeIds: string[],
-): Promise<ListingType[]> => {
+  listingId: string,
+): Promise<ListingType> => {
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
 
@@ -40,7 +40,7 @@ export const getInventoryForProduct = async (
     .from("tbl_listings")
     .select("*")
     .eq("product_id", productId)
-    .in("store_id", storeIds);
+    .eq("listing_id", listingId).single();
 
   if (error) {
     throw new DatabaseError(
@@ -49,5 +49,5 @@ export const getInventoryForProduct = async (
     );
   }
 
-  return data as ListingType[];
+  return data as ListingType;
 };

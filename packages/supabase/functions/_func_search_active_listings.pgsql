@@ -1,6 +1,8 @@
-DROP FUNCTION IF EXISTS search_active_listings;
+DROP FUNCTION IF EXISTS _func_search_active_listings;
+
 CREATE OR REPLACE FUNCTION _func_search_active_listings(
     sport TEXT DEFAULT NULL,
+    store_id_input UUID DEFAULT NULL,
     experience_input TEXT DEFAULT NULL,
     rent_period_from TIMESTAMP DEFAULT NULL,
     rent_period_to TIMESTAMP DEFAULT NULL,
@@ -41,6 +43,7 @@ BEGIN
         INNER JOIN 
             tbl_stores s ON l.store_id = s.store_id
         WHERE 
+        (store_id_input IS NULL OR l.store_id = store_id_input) AND
             (sport IS NULL OR p.category = sport)
             AND (experience_input IS NULL OR experience_input = ANY(p.experience))
             AND (
