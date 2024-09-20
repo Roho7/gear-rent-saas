@@ -14,19 +14,19 @@ export const getNearbyStores = async (
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
 
-  const { data, error } = await supabase
-    .rpc("_func_get_nearby_stores", {
-      lat: lat,
-      lng: lng,
-      radius: radiusInMeters,
-    }).returns<string[]>();
+  // const { data, error } = await supabase
+  // .rpc("_func_get_nearby_stores", {
+  //   lat: lat,
+  //   lng: lng,
+  //   radius: radiusInMeters,
+  // }).returns<string[]>();
 
-  if (error) {
-    console.error("Error fetching nearby stores:", error);
-    return [];
-  }
+  // if (error) {
+  //   console.error("Error fetching nearby stores:", error);
+  //   return [];
+  // }
 
-  return data || [];
+  return [];
 };
 
 export const getSingleListingDetails = async (

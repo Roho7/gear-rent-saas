@@ -126,7 +126,7 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
                 {Object.entries(listing?.product_metadata || []).map(
                   ([key, value]) => {
                     return (
-                      <div className="flex gap-1 items-center">
+                      <div className="flex gap-1 items-center" key={key}>
                         <span className="text-xs text-muted capitalize">
                           {key}
                         </span>

@@ -123,7 +123,7 @@ const StoreListingRow = ({
         <div className="grid grid-cols-2 gap-2">
           {Object.entries(listing?.product_metadata).map(([key, value]) => {
             return (
-              <div className="">
+              <div className="" key={key}>
                 <p className="text-xs text-muted capitalize">{key}</p>
                 {value.map((p) => (
                   <Badge key={key + p} className="mr-1" variant={"outline"}>
