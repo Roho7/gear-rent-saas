@@ -7,24 +7,26 @@ import { cookies } from "next/headers";
 import { createServerActionClient } from "../_utils/supabase";
 
 export async function searchListings(
-  { location, rentPeriod, experience, sport }: MainSearchFormOutputType,
+  { location, rentPeriod, experience, sport, storeId }:
+    MainSearchFormOutputType,
 ): Promise<AvailableListingsType[]> {
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
-  const { data, error } = await supabase.rpc("search_active_listings", {
-    latitude_input: location.lat,
-    longitude_input: location.lng,
+  const { data, error } = await supabase.rpc("_func_search_active_listings", {
+    latitude_input: location?.lat,
+    longitude_input: location?.lng,
     rent_period_from: rentPeriod?.from?.toISOString(),
     rent_period_to: rentPeriod?.to?.toISOString(),
-    radius: location.radius,
+    radius: location?.radius,
     experience_input: experience,
     sport,
+    store_id_input: storeId,
   }).returns<AvailableListingsType[]>();
 
   if (error) {
     throw new DatabaseError(
-      "Error in fetching available products",
-      error.message,
+      error.message ?? "Error in fetching available products",
+      "searchListings",
     );
   }
 

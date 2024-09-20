@@ -22,6 +22,10 @@ const ListingItemCard = ({
 }: Props) => {
   const { allProducts, allStores } = useProducts();
   const router = useRouter();
+
+  const productDetails = allProducts.find(
+    (p) => p.product_id === inventoryItem.product_id,
+  );
   return (
     <Card
       className="flex flex-col gap-2 hover:bg-card/10 h-fit"
@@ -32,12 +36,12 @@ const ListingItemCard = ({
     >
       <CardHeader>
         <div className="">
-          {inventoryItem.product_title}{" "}
+          {productDetails?.product_title}
           <p className="text-gray-400 text-xs">{inventoryItem.listing_id}</p>
         </div>
-        {inventoryItem.category && (
+        {productDetails?.category && (
           <Badge variant="outline" className="capitalize mr-auto">
-            {inventoryItem.category}
+            {productDetails?.category}
           </Badge>
         )}
       </CardHeader>
@@ -62,7 +66,7 @@ const ListingItemCard = ({
         "
         >
           {formatPrice({
-            base_price: inventoryItem.base_price,
+            base_price: inventoryItem.base_price || 0,
             currency_code: inventoryItem.currency_code,
           })}{" "}
           / {inventoryItem.price_granularity === "daily" ? "day" : "hour"}

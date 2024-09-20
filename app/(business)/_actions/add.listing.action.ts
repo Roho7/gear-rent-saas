@@ -1,14 +1,14 @@
 "use server";
 import { createServerActionClient } from "@/app/_utils/supabase";
-import { TablesUpdate } from "@/packages/supabase.types";
 
 import { DatabaseError } from "@/src/entities/models/errors";
+import { AddListingFormSchema } from "@/src/entities/models/formSchemas";
 import { GearyoServerActionResponse } from "@/src/entities/models/types";
 import { cookies } from "next/headers";
 
 export const addInventoryItem = async (
   { inventory_data }: {
-    inventory_data?: TablesUpdate<"tbl_listings">;
+    inventory_data?: typeof AddListingFormSchema["_output"];
   },
 ): Promise<GearyoServerActionResponse> => {
   const cookieStore = cookies();

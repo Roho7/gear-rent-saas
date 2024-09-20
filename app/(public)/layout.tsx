@@ -1,5 +1,6 @@
 "use client";
 
+import { APIProvider } from "@vis.gl/react-google-maps";
 import Navbar from "../_components/_navbar/navbar";
 import Spinner from "../_components/_shared/spinner";
 import Footer from "../_components/footer";
@@ -16,10 +17,12 @@ export default function PublicLayout({
     return <Spinner />;
   }
   return (
-    <section className={"overflow-x-hidden min-h-screen relative"}>
-      <Navbar />
-      <main className="flex-grow px-8 py-4 mt-28">{children}</main>
-      <Footer />
-    </section>
+    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!}>
+      <section className={"overflow-x-hidden min-h-screen relative"}>
+        <Navbar />
+        <main className="flex-grow px-8 py-4 mt-28">{children}</main>
+        <Footer />
+      </section>
+    </APIProvider>
   );
 }

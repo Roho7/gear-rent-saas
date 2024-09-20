@@ -5,8 +5,10 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: "https://f4966e386e70586359b7f30600edc413@o4507903895797760.ingest.de.sentry.io/4507903897698384",
-
+  dsn:
+    "https://f4966e386e70586359b7f30600edc413@o4507903895797760.ingest.de.sentry.io/4507903897698384",
+  environment: process.env.NEXT_PUBLIC_VERCEL_ENV,
+  enabled: process.env.NEXT_PUBLIC_VERCEL_ENV !== "local",
   // Add optional integrations for additional features
   integrations: [
     Sentry.replayIntegration(),

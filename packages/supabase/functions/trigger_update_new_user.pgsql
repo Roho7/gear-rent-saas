@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE FUNCTION public.tigger_update_new_user()
+CREATE OR REPLACE FUNCTION _func_trigger_update_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.tbl_users (user_id, email, name, phone, created_at)
@@ -17,4 +17,4 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- -- Now, let's create the trigger
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.tigger_update_new_user();
+  FOR EACH ROW EXECUTE FUNCTION public._func_trigger_update_new_user();

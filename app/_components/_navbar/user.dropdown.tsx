@@ -17,14 +17,14 @@ const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full ml-auto">
+        <Button variant="outline" size="icon" className="rounded-full ml-auto">
           <BiUser className="h-4 w-4" />
           <span className="sr-only">Toggle user menu</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => router.push("/account")}>
-          My Account
+          {user ? "My Account" : "Login or Sign Up"}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/inventory")}>

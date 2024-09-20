@@ -77,8 +77,9 @@ const CollapsedSearchBar = ({
       </span>
       <span className={collapsedItemsClassName}>
         <MdCalendarMonth />
-        {dayjs(from).format("D MMM")} -{" "}
-        {dayjs(to).format("D MMM") ?? "Flexible"}
+        {from
+          ? `${dayjs(from).format("D MMM")} - ${dayjs(to).format("D MMM")}`
+          : "Anytime"}
       </span>
       <span className={collapsedItemsClassName}>
         <FaSkiing />
@@ -116,11 +117,11 @@ const MainSearchbar = ({
     if (data.experience) searchParams.append("experience", data.experience);
     if (data.rentPeriod?.from)
       searchParams.append(
-        "checkin",
+        "rentFrom",
         format(data.rentPeriod.from, "yyyy-MM-dd"),
       );
     if (data.rentPeriod?.to)
-      searchParams.append("checkout", format(data.rentPeriod.to, "yyyy-MM-dd"));
+      searchParams.append("rentTill", format(data.rentPeriod.to, "yyyy-MM-dd"));
     if (data.location) {
       searchParams.append("locationId", data.location.id);
       searchParams.append("lat", data.location.lat.toString());
@@ -136,8 +137,8 @@ const MainSearchbar = ({
   useEffect(() => {
     const sport = searchParams.get("sport");
     const experience = searchParams.get("experience");
-    const checkin = searchParams.get("checkin");
-    const checkout = searchParams.get("checkout");
+    const rentFrom = searchParams.get("rentFrom");
+    const rentTill = searchParams.get("rentTill");
     const locationId = searchParams.get("locationId");
     const lat = searchParams.get("lat");
     const lng = searchParams.get("lng");
@@ -146,10 +147,10 @@ const MainSearchbar = ({
     if (sport) form.setValue("sport", sport);
     if (experience) form.setValue("experience", experience);
 
-    if (checkin && checkout) {
+    if (rentFrom && rentTill) {
       form.setValue("rentPeriod", {
-        from: new Date(checkin),
-        to: new Date(checkout),
+        from: new Date(rentFrom),
+        to: new Date(rentTill),
       });
     }
 

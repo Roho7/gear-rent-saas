@@ -37,7 +37,7 @@ export async function getBusiness(
   let retries = 0;
   while (retries < 3) {
     res = await supabase
-      .rpc("get_business", { store_id_input: store_id })
+      .rpc("_func_get_business", { store_id_input: store_id })
       .returns<BusinessType>();
 
     if (

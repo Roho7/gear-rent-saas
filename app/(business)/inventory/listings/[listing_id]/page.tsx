@@ -27,35 +27,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FiChevronLeft, FiExternalLink } from "react-icons/fi";
+import { FiExternalLink } from "react-icons/fi";
 import { z } from "zod";
 
-import { addInventoryItem } from "@/app/(business)/_actions/inventory.actions";
+import { addInventoryItem } from "@/app/(business)/_actions/add.listing.action";
+import BackButton from "@/app/_components/_shared/back-button";
+import { AddListingFormSchema } from "@/src/entities/models/formSchemas";
 import { ProductMetadataType, ProductType } from "@/src/entities/models/types";
 import CurrencyCombobox from "../../_components/currency.combobox";
 import DiscountCombobox from "../../_components/discount.combobox";
 import GranularityCombobox from "../../_components/granularity.combobox";
 import ProductCombobox from "../../_components/product.combobox";
 import { deleteListing, getInventoryItem } from "./_actions/inventory.actions";
-
-const addListingForm = z.object({
-  product_id: z.string().min(1, { message: "Please select a product" }),
-  description: z.string().min(10, { message: "Please enter a description" }),
-  base_price: z.coerce.number().min(1, { message: "Please enter a price" }),
-  price_granularity: z.enum(["daily", "hourly"]).default("daily"),
-  currency_code: z.string().min(1, { message: "Please select a currency" }),
-  discount_1: z.number().min(0, { message: "Please enter a valid discount" }),
-  discount_2: z.number().min(0, { message: "Please enter a valid discount" }),
-  discount_3: z.number().min(0, { message: "Please enter a valid discount" }),
-  product_metadata: z
-    .object({
-      sizes: z.array(z.string()).nullable(),
-      colors: z.array(z.string()).nullable(),
-      lengths: z.array(z.string()).nullable(),
-      widths: z.array(z.string()).nullable(),
-    })
-    .passthrough(),
-});
 
 const AddListingPage = () => {
   /**
@@ -82,8 +65,8 @@ const AddListingPage = () => {
   >();
   const [productMetadata, setProductMetadata] =
     useState<ProductMetadataType | null>(null);
-  const form = useForm<z.infer<typeof addListingForm>>({
-    resolver: zodResolver(addListingForm),
+  const form = useForm<z.infer<typeof AddListingFormSchema>>({
+    resolver: zodResolver(AddListingFormSchema),
     defaultValues: {
       product_id: "",
       description: "",
@@ -106,7 +89,7 @@ const AddListingPage = () => {
    * * - Functions
    */
 
-  async function onSubmit(data: z.infer<typeof addListingForm>) {
+  async function onSubmit(data: z.infer<typeof AddListingFormSchema>) {
     try {
       if (!user) throw new Error("User not found");
       const formattedData = {
@@ -229,14 +212,7 @@ const AddListingPage = () => {
 
   return (
     <main className="p-4 overflow-y-auto overflow-x-hidden h-full flex flex-col max-w-full gap-2">
-      <Button
-        variant={"outline"}
-        onClick={() => router.back()}
-        size="sm"
-        className="bg-white max-w-fit"
-      >
-        <FiChevronLeft /> Back
-      </Button>
+      <BackButton />
       <div className="flex flex-col lg:flex-row flex-1 gap-2">
         <Card className="lg:w-2/3">
           <CardHeader>

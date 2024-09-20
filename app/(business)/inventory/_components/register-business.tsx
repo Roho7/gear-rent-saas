@@ -1,6 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -21,19 +27,17 @@ import {
 import { toast } from "@/components/ui/use-toast";
 
 import CountryCombobox from "@/app/(business)/inventory/_components/country.combobox";
+import BackButton from "@/app/_components/_shared/back-button";
 import { useAuth } from "@/app/_providers/useAuth";
 import { createClientComponentClient } from "@/app/_utils/supabase";
 import { RegisterShopFormSchema } from "@/src/entities/models/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useInventory } from "../../_providers/useInventory";
 
 const RegisterBusinessForm = () => {
   const { user, refreshUser } = useAuth();
-  const { storeDetails } = useInventory();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterShopFormSchema>>({
@@ -41,8 +45,8 @@ const RegisterBusinessForm = () => {
     defaultValues: {
       store_name: "",
       country_code: "",
-      business_number: "",
-      business_email: "",
+      business_number: user?.phone || "",
+      business_email: user?.email || "",
       address_line1: "",
       address_line2: "",
       city: "",
@@ -64,6 +68,7 @@ const RegisterBusinessForm = () => {
       const { data: insertData, error } = await supabase
         .from("tbl_stores")
         .insert(insertedData);
+      1;
 
       toast({
         title: "Shop submitted for review",
@@ -83,204 +88,196 @@ const RegisterBusinessForm = () => {
       return;
     } finally {
       refreshUser();
-      router.push("/home");
+      router.refresh();
     }
   }
 
-  const getExistingStoreDetails = () => {
-    form.reset({
-      store_name: storeDetails?.store_name,
-      country_code: storeDetails?.business_number?.slice(0, 2) || "",
-      business_number: storeDetails?.business_number || "",
-      business_email: storeDetails?.business_email || "",
-      address_line1: storeDetails?.address_line1 || "",
-      address_line2: storeDetails?.address_line2 || "",
-      city: storeDetails?.city || "",
-      country: storeDetails?.country || "",
-      postcode: storeDetails?.postcode || "",
-    });
-  };
-
-  useEffect(() => {
-    getExistingStoreDetails();
-  }, [storeDetails]);
-
   return (
-    <section className="flex flex-col items-center gap-4 text-gray-700">
-      <h1 className="text-xl p-4 ">Register your store</h1>
+    <section className="flex flex-col items-center gap-4 text-gray-700 my-8">
       <Card className="p-4">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 min-w-[60vw]"
-          >
-            <FormField
-              control={form.control}
-              name="store_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Business Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter business name" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
-                  <FormMessage className="text-red-700" />
-                </FormItem>
-              )}
-            />
-            <div className="flex gap-2">
-              <FormField
-                control={form.control}
-                name="country_code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">
-                      Country Code
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="44">UK +44</SelectItem>
-                          <SelectItem value="33">AU +33</SelectItem>
-                          <SelectItem value="91">IN +91</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormDescription>e.g., +91, +44, +33.</FormDescription>
-                    <FormMessage className="text-red-700" />
-                  </FormItem>
-                )}
-              />
+        <CardHeader>
+          <BackButton />
 
+          <CardTitle className="text-2xl">Register Your Store</CardTitle>
+          <CardDescription>
+            Register your store to start selling on Gearyo.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6 min-w-[60vw]"
+            >
               <FormField
                 control={form.control}
-                name="business_number"
+                name="store_name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700">
-                      Business Phone Number
+                      Business Name
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter phone number" {...field} />
+                      <Input placeholder="Enter business name" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Your business contact number.
+                      This is your public display name.
                     </FormDescription>
                     <FormMessage className="text-red-700" />
                   </FormItem>
                 )}
               />
-            </div>
-            <FormField
-              control={form.control}
-              name="business_email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">
-                    Business Email
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter business email" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Your business email address.
-                  </FormDescription>
-                  <FormMessage className="text-red-700" />
-                </FormItem>
-              )}
-            />
+              <div className="flex gap-2">
+                <FormField
+                  control={form.control}
+                  name="country_code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700">
+                        Country Code
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="44">UK +44</SelectItem>
+                            <SelectItem value="33">AU +33</SelectItem>
+                            <SelectItem value="91">IN +91</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription>e.g., +91, +44, +33.</FormDescription>
+                      <FormMessage className="text-red-700" />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel className="text-gray-700">Country</FormLabel>
-                  <FormControl>
-                    <CountryCombobox
-                      country={field.value}
-                      setCountry={form.setValue.bind(null, "country")}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-700" />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="business_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700">
+                        Business Phone Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter phone number" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Your business contact number.
+                      </FormDescription>
+                      <FormMessage className="text-red-700" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="business_email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700">
+                      Business Email
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter business email" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Your business email address.
+                    </FormDescription>
+                    <FormMessage className="text-red-700" />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="address_line1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">
-                    Address Line 1
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="Street Address" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Your business&apos;s physical address.
-                  </FormDescription>
-                  <FormMessage className="text-red-700" />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col w-full">
+                    <FormLabel className="text-gray-700">Country</FormLabel>
+                    <FormControl>
+                      <CountryCombobox
+                        country={field.value}
+                        setCountry={form.setValue.bind(null, "country")}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-700" />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="address_line2"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">
-                    Address Line 2
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Street No., building no. etc"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-700" />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="address_line1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700">
+                      Address Line 1
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Street Address" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Your business&apos;s physical address.
+                    </FormDescription>
+                    <FormMessage className="text-red-700" />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">City/Town</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your city/town" {...field} />
-                  </FormControl>
-                  <FormMessage className="text-red-700" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="postcode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Postcode</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your postcode" {...field} />
-                  </FormControl>
-                  <FormMessage className="text-red-700" />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="address_line2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700">
+                      Address Line 2
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Street No., building no. etc"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-700" />
+                  </FormItem>
+                )}
+              />
 
-            {/* <FormField
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700">City/Town</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your city/town" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-red-700" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="postcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700">Postcode</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your postcode" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-red-700" />
+                  </FormItem>
+                )}
+              />
+
+              {/* <FormField
           control={form.control}
           name="business_description"
           render={({ field }) => (
@@ -301,9 +298,12 @@ const RegisterBusinessForm = () => {
           )}
         /> */}
 
-            <Button type="submit">Submit</Button>
-          </form>
-        </Form>
+              <Button type="submit" size={"sm"} className="w-full">
+                Create your store
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
       </Card>
     </section>
   );

@@ -22,7 +22,7 @@ import {
   useState,
 } from "react";
 import { getAllProducts } from "../_actions/all-products.actions";
-import { searchListings } from "../_actions/listings.actions";
+import { searchListings } from "../_actions/search.listing.action";
 import { createClientComponentClient } from "../_utils/supabase";
 import { updateProductMetadata } from "../admin/products/_actions/product.actions";
 
@@ -215,12 +215,14 @@ export const ProductProvider = ({
     sport,
     rentPeriod,
     location,
+    storeId,
   }: MainSearchFormOutputType) => {
     const res = await searchListings({
       experience,
       sport,
       rentPeriod,
       location,
+      storeId,
     });
 
     setAvailableListings(res);

@@ -38,11 +38,10 @@ export const InventoryProvider = ({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Business data:", business);
     setStoreDetails(business?.store);
     setInventory(business?.inventory);
     setBusinessUser(business?.user);
-  }, []);
+  }, [business]);
 
   const value: InventoryContextValue = useMemo(
     () => ({
@@ -51,7 +50,7 @@ export const InventoryProvider = ({
       businessUser,
       isLoading,
     }),
-    [inventory, storeDetails, isLoading],
+    [inventory, storeDetails, isLoading, business],
   );
   return (
     <InventoryContext.Provider value={value}>

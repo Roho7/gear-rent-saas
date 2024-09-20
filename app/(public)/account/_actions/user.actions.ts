@@ -21,8 +21,6 @@ export const fetchUser = async (): Promise<Tables<"tbl_users"> | null> => {
     .returns<Tables<"tbl_users">>()
     .maybeSingle();
 
-  console.log("user data fetched");
-
   if (userError) {
     throw new DatabaseError(
       "Failed to fetch user data",

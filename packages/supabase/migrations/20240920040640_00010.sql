@@ -1,14 +1,15 @@
-DROP FUNCTION IF EXISTS search_active_listings;
-CREATE OR REPLACE FUNCTION search_active_listings(
-    sport TEXT DEFAULT NULL,
-    experience_input TEXT DEFAULT NULL,
-    rent_period_from TIMESTAMP DEFAULT NULL,
-    rent_period_to TIMESTAMP DEFAULT NULL,
-    latitude_input NUMERIC DEFAULT NULL,
-    longitude_input NUMERIC DEFAULT NULL,
-    radius NUMERIC DEFAULT 10
-)
-RETURNS JSON AS $$
+drop function if exists "public"."_func_get_nearby_stores"(lat numeric, lng numeric, radius numeric);
+
+drop function if exists "public"."search_active_listings"(sport text, experience_input text, rent_period_from timestamp without time zone, rent_period_to timestamp without time zone, latitude_input numeric, longitude_input numeric, radius numeric);
+
+alter table "public"."tbl_stores" add column "categories" text[];
+
+set check_function_bodies = off;
+
+CREATE OR REPLACE FUNCTION public._func_search_active_listings(sport text DEFAULT NULL::text, store_id_input uuid DEFAULT NULL::uuid, experience_input text DEFAULT NULL::text, rent_period_from timestamp without time zone DEFAULT NULL::timestamp without time zone, rent_period_to timestamp without time zone DEFAULT NULL::timestamp without time zone, latitude_input numeric DEFAULT NULL::numeric, longitude_input numeric DEFAULT NULL::numeric, radius numeric DEFAULT 10)
+ RETURNS json
+ LANGUAGE plpgsql
+AS $function$
 DECLARE
     result JSON;
 BEGIN
@@ -41,6 +42,7 @@ BEGIN
         INNER JOIN 
             tbl_stores s ON l.store_id = s.store_id
         WHERE 
+        (store_id_input IS NULL OR l.store_id = store_id_input) AND
             (sport IS NULL OR p.category = sport)
             AND (experience_input IS NULL OR experience_input = ANY(p.experience))
             AND (
@@ -62,4 +64,30 @@ BEGIN
 
     RETURN result;
 END;
-$$ LANGUAGE plpgsql;
+$function$
+;
+
+CREATE OR REPLACE FUNCTION public._func_search_stores(lat numeric, lng numeric, radius numeric)
+ RETURNS json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    result JSON;
+BEGIN
+  SELECT json_agg(store_results)
+  INTO result
+  FROM (
+    SELECT 
+      * 
+      FROM tbl_stores s
+      WHERE ST_DWithin(s.location, ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography, radius)
+  ) as store_results;
+
+  RETURN result;
+
+
+END;
+$function$
+;
+
+
