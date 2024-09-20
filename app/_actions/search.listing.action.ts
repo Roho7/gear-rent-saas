@@ -23,8 +23,6 @@ export async function searchListings(
     store_id_input: storeId,
   }).returns<AvailableListingsType[]>();
 
-  console.log("data", storeId, data);
-
   if (error) {
     throw new DatabaseError(
       error.message ?? "Error in fetching available products",

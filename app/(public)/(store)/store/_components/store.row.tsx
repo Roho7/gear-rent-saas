@@ -1,4 +1,3 @@
-import { useProducts } from "@/app/_providers/useProducts";
 import {
   Card,
   CardContent,
@@ -9,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StoreType } from "@/src/entities/models/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FaLocationPin } from "react-icons/fa6";
 
 const StoreRow = ({
   store,
@@ -21,7 +21,6 @@ const StoreRow = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { allProducts, allStores } = useProducts();
   const [locationString, setLocationString] = useState<string>("Loading...");
 
   const handleClick = () => {
@@ -65,23 +64,24 @@ const StoreRow = ({
     <ListingsCardSkeleton />
   ) : (
     <Card
-      className="w-full flex gap-2 min-h-64"
+      className="w-full flex gap-2 min-h-32"
       role="button"
       onClick={handleClick}
     >
       <CardHeader>
-        <div className="w-40 h-40">
+        <div className="w-40 h-full">
           <img
-            src={store.store_img || ""}
-            alt="img"
-            className=" object-cover rounded-md"
+            src={store.store_img || "/store_placeholder_img.png"}
+            alt={store.store_img || "sfsf"}
+            className="h-full w-full object-cover rounded-md"
           />
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 w-full p-4">
         <h3 className="font-bold">{store?.store_name}</h3>
-        <div className="text-muted text-xs bg-muted/10 p-2 min-w-40 w-fit rounded-md">
-          <p>{locationString}</p>
+        <div className="text-muted flex items-center gap-1 text-xs bg-muted/10 p-2 min-w-40 w-fit rounded-md">
+          <FaLocationPin />
+          {locationString}
         </div>
       </CardContent>
       {showFooter && (

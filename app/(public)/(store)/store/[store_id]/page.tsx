@@ -24,8 +24,6 @@ const StorePage = ({ params }: { params: { store_id: string } }) => {
     // const experience = searchParams.get("experience");
     const storeId = params.store_id;
 
-    console.log("searchParams", storeId);
-
     const searchData = {
       sport,
       // experience,
@@ -47,7 +45,7 @@ const StorePage = ({ params }: { params: { store_id: string } }) => {
 
   return (
     <main className="flex flex-col gap-2 h-screen">
-      <h2 className="text-3xl capitalize my-4">
+      <h2 className="text-md capitalize my-4">
         {searchResults.sport} Gear from {storeDetails?.store_name}
       </h2>
       <section className="flex gap-4 w-full relative">
