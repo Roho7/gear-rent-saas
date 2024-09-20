@@ -12,11 +12,11 @@ drop function if exists "public"."get_user_store_ids"();
 
 drop function if exists "public"."remove_user_store_id"();
 
-drop function if exists "public"."tigger_update_new_user"();
+drop function if exists "public"."tigger_update_new_user"() cascade;
 
-drop function if exists "public"."update_user_confirmation"();
+drop function if exists "public"."update_user_confirmation"() cascade;
 
-drop function if exists "public"."update_user_store_ids"();
+drop function if exists "public"."update_user_store_ids"() cascade;
 
 set check_function_bodies = off;
 
