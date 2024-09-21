@@ -76,7 +76,7 @@ const StorePage = () => {
       </h2>
       <section className="flex gap-4 w-full relative">
         <Map
-          style={{ width: "100vw", height: "55vh" }}
+          style={{ width: "100vw", height: "70vh" }}
           defaultCenter={{
             lat: searchResults.location.lat,
             lng: searchResults.location.lng,
@@ -98,7 +98,7 @@ const StorePage = () => {
             );
           })}
         </Map>
-        <div className="flex flex-col gap-2 w-full h-[400px] overflow-y-scroll">
+        <div className="flex flex-col gap-2 w-full h-[70vh] overflow-y-scroll">
           {searchedStores?.map((store) => {
             return (
               <StoreRow
