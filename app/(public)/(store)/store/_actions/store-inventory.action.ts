@@ -30,7 +30,6 @@ export const getNearbyStores = async (
 };
 
 export const getSingleListingDetails = async (
-  productId: string,
   listingId: string,
 ): Promise<ListingType> => {
   const cookieStore = cookies();
@@ -39,7 +38,6 @@ export const getSingleListingDetails = async (
   const { data, error } = await supabase
     .from("tbl_listings")
     .select("*")
-    .eq("product_id", productId)
     .eq("listing_id", listingId).single();
 
   if (error) {

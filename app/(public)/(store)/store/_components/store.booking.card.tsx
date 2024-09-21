@@ -1,4 +1,5 @@
 import DateRangeSelector from "@/app/_components/_shared/date-range-selector";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,7 +11,8 @@ import {
 import { formatPrice, formatPriceGranularity } from "@/lib/utils";
 import { ListingType } from "@/src/entities/models/types";
 import { differenceInDays } from "date-fns";
-import { useSearchParams } from "next/navigation";
+import dayjs from "dayjs";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { DateRange } from "react-day-picker";
 import QuantityCounter from "./quantity-counter";
@@ -21,17 +23,46 @@ type StoreBookingCardPropsType = {
 
 const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
   const searchParams = useSearchParams();
-  const [rentPeriod, setRentPeriod] = useState<DateRange | undefined>({
-    from: new Date(searchParams.get("rentFrom") || ""),
-    to: new Date(searchParams.get("rentTill") || ""),
+  const router = useRouter();
+  const [rentPeriod, setRentPeriod] = useState<DateRange | undefined>(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of day
+
+    const fromParam = searchParams.get("rentFrom");
+    const tillParam = searchParams.get("rentTill");
+
+    const from = fromParam ? new Date(fromParam) : today;
+    const to = tillParam ? new Date(tillParam) : today;
+
+    // Check if the dates are valid
+    const isValidFrom = !isNaN(from.getTime());
+    const isValidTo = !isNaN(to.getTime());
+
+    return {
+      from: isValidFrom ? from : today,
+      to: isValidTo ? to : today,
+    };
   });
   const [quantity, setQuantity] = useState(1);
+
+  const handleBookingBtnClick = () => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    const from = dayjs(rentPeriod?.from).format("YYYY-MM-DD");
+    const to = dayjs(rentPeriod?.to).format("YYYY-MM-DD");
+
+    // Construct the new URL
+    const newUrl = `/checkout?listing_id=${listing.listing_id}&product_id=${
+      listing.product_id
+    }&quantity=${quantity}&rentFrom=${from}&rentTill=${to}&duration=${duration}&${currentParams.toString()}`;
+
+    router.push(newUrl);
+  };
 
   const lat = searchParams.get("lat");
   const lng = searchParams.get("lng");
 
   const duration = useMemo(() => {
-    return differenceInDays(rentPeriod?.to || "", rentPeriod?.from || "");
+    return differenceInDays(rentPeriod?.to || "", rentPeriod?.from || "") + 1;
   }, [rentPeriod?.from, rentPeriod?.to]);
 
   const granularPrice = useMemo(() => {
@@ -64,7 +95,7 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
   ]);
 
   return (
-    <Card>
+    <Card className="max-w-fit h-fit mx-auto shadow-2xl">
       <CardHeader>
         <CardTitle className="text-2xl">
           {formatPrice({
@@ -91,15 +122,24 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
         <div className="flex justify-between w-full">
           <span>Total:</span>
           <span>
-            {formatPrice({
-              base_price: granularPrice * duration * quantity,
-              currency_code: listing.currency_code,
-            })}
+            {!duration || !granularPrice || !quantity
+              ? "-"
+              : formatPrice({
+                  base_price: granularPrice * duration * quantity,
+                  currency_code: listing.currency_code,
+                })}
           </span>
         </div>
         <span className="text-right text-sm text-muted">
           For {duration} days
         </span>
+        <Button
+          className="w-full my-2"
+          disabled={!quantity || !duration || !granularPrice}
+          onClick={handleBookingBtnClick}
+        >
+          Book Now
+        </Button>
       </CardFooter>
     </Card>
   );

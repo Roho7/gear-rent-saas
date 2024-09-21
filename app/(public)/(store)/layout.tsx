@@ -6,7 +6,7 @@ type Props = {
 };
 
 const StoreLayout = ({ children }: Props) => {
-  return <div className="">{children}</div>;
+  return <div className="min-h-screen">{children}</div>;
 };
 
 export default StoreLayout;

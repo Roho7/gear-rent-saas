@@ -11,17 +11,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { ListingType, ProductMetadataKeys } from "@/src/entities/models/types";
+import { Map, Marker, useMarkerRef } from "@vis.gl/react-google-maps";
 import { useEffect, useMemo, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
-import { formatPrice, formatPriceGranularity } from "@/lib/utils";
 import { getSingleListingDetails } from "../../_actions/store-inventory.action";
-import AddToCartButton from "../../_components/add-to-cart.button";
 import StoreBookingCard from "../../_components/store.booking.card";
 
 const MetadataMap: Record<ProductMetadataKeys, any> = {
@@ -44,9 +42,10 @@ const MetadataMap: Record<ProductMetadataKeys, any> = {
 
 const ListingPage = ({ params }: { params: { listing_id: string } }) => {
   const { allProducts, allStores } = useProducts();
+  const [markerRef, marker] = useMarkerRef();
+
   const searchParams = useSearchParams();
   const product_id = searchParams.get("product_id");
-  const { cartItems } = useProducts();
   const [listing, setListing] = useState<ListingType>();
   const [loading, setLoading] = useState(false);
 
@@ -58,15 +57,10 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
     return allStores.find((s) => s.store_id === listing?.store_id);
   }, [allStores, listing?.store_id]);
 
-  const addedToCart = useMemo(() => {
-    if (!productDetails || !cartItems) return false;
-    return cartItems[productDetails?.product_id || ""]?.quantity > 0 || false;
-  }, [cartItems, productDetails]);
-
   useEffect(() => {
     if (product_id) {
       setLoading(true);
-      getSingleListingDetails(product_id, params.listing_id)
+      getSingleListingDetails(params.listing_id)
         .then((data) => {
           setListing(data);
           setLoading(false);
@@ -144,16 +138,6 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
                   },
                 )}
               </div>
-
-              <div className="flex items-center">
-                <span>
-                  {formatPrice({
-                    base_price: listing?.base_price,
-                    currency_code: listing?.currency_code,
-                  })}{" "}
-                  {formatPriceGranularity(listing?.price_granularity || null)}
-                </span>
-              </div>
               {productDetails.product_link && (
                 <div className="flex items-center">
                   <a
@@ -169,33 +153,60 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
             </div>
           </CardContent>
 
-          <CardFooter>
-            <AddToCartButton
-              addedToCart={addedToCart}
-              product={productDetails}
-            />
-          </CardFooter>
+          <CardFooter></CardFooter>
         </Card>
       </section>
-      <section className="flex gap-2 w-full">
-        <div className="flex-1">
-          <span className="text-2xl font-semibold">About the store</span>
-          <p className="text-xs text-muted">{storeDetails?.description}</p>
-
-          {loading && (
-            <div className="flex gap-2">
-              <Skeleton className="h-48 w-72" />
-              <Skeleton className="h-48 w-72" />
-              <Skeleton className="h-48 w-72" />
-            </div>
-          )}
+      <section className="grid grid-cols-2 gap-2 w-full">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-2xl font-semibold">About the store</h2>
+          <Map
+            style={{ width: "100%", height: "200px", borderRadius: "8px" }}
+            center={{
+              lat: storeDetails?.latitude || 0,
+              lng: storeDetails?.longitude || 0,
+            }}
+            defaultZoom={12}
+            gestureHandling={"greedy"}
+            disableDefaultUI={true}
+            disableDoubleClickZoom={true}
+          >
+            <Marker
+              ref={markerRef}
+              // key={store.store_id}
+              position={{
+                lat: storeDetails?.latitude || 0,
+                lng: storeDetails?.longitude || 0,
+              }}
+            />
+          </Map>
+          <div className="p-2 text-xs bg-muted/10 text-muted rounded-md">
+            <h3 className="text-md font-bold">Address:</h3>
+            <p>
+              {storeDetails?.address_line1}, {storeDetails?.address_line2}
+            </p>
+            <p>{storeDetails?.city}</p>
+            <p>{storeDetails?.country}</p>
+            <p>{storeDetails?.postcode}</p>
+          </div>
+          <p className="text-xs text-muted line-clamp-3">
+            {storeDetails?.description}
+          </p>
+          <h2 className="text-2xl font-semibold mt-2">
+            More from {storeDetails?.store_name}
+          </h2>
         </div>
         {listing && <StoreBookingCard listing={listing} />}
       </section>
-
       <section className="mt-12">
         <ProductRibbon />
       </section>
+      {loading && (
+        <div className="flex gap-2">
+          <Skeleton className="h-48 w-72" />
+          <Skeleton className="h-48 w-72" />
+          <Skeleton className="h-48 w-72" />
+        </div>
+      )}
     </main>
   );
 };

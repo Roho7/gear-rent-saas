@@ -16,6 +16,7 @@ type Props = {
 };
 
 const DateRangeSelector = ({ rentPeriod, setRentPeriod }: Props) => {
+  console.log("rentPeriod", rentPeriod);
   const formatDate = (date: Date | undefined) => {
     return date ? format(date, "LLL dd, y") : "";
   };
