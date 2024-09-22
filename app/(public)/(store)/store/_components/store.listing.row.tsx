@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatPrice } from "@/lib/utils";
 import {
   AvailableListingsType,
-  ProductType,
+  ProductGroupType,
 } from "@/src/entities/models/types";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -28,7 +28,7 @@ const StoreListingRow = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { allProducts, allStores } = useProducts();
+  const { allProducts, allStores, productGroups } = useProducts();
   const [locationString, setLocationString] = useState<string>("Loading...");
 
   const handleClick = () => {
@@ -37,7 +37,7 @@ const StoreListingRow = ({
     // Construct the new URL
     const newUrl = `/store/${storeDetails?.store_id}/${
       listing.listing_id
-    }?product_id=${listing.product_id}&${currentParams.toString()}`;
+    }?product_id=${listing.product_group_id}&${currentParams.toString()}`;
 
     router.push(newUrl);
   };
@@ -77,8 +77,10 @@ const StoreListingRow = ({
     fetchLocationString();
   }, [listing.latitude, listing.longitude]);
 
-  const productDetails: ProductType | undefined = useMemo(() => {
-    const prod = allProducts.find((p) => p.product_id === listing.product_id);
+  const productDetails: ProductGroupType | undefined = useMemo(() => {
+    const prod = productGroups.find(
+      (p) => p.product_group_id === listing.product_group_id,
+    );
     return prod;
   }, [listing]);
 
@@ -90,7 +92,7 @@ const StoreListingRow = ({
     <ListingsCardSkeleton />
   ) : (
     <Card
-      className="w-full flex gap-2 min-h-64"
+      className="w-full flex gap-2 min-h-64 hover:bg-background/10 cursor-pointer"
       role="button"
       onClick={handleClick}
     >
@@ -104,7 +106,10 @@ const StoreListingRow = ({
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 w-full p-4">
-        <h3 className="font-bold">{productDetails?.product_title}</h3>
+        <h3 className="font-bold capitalize">
+          {productDetails?.sport} {productDetails?.product_group_name}{" "}
+          {listing?.gender} {listing?.size}cm
+        </h3>
         <div className="text-muted text-xs bg-muted/10 p-2 min-w-40 w-fit rounded-md">
           <div className="flex justify-between items-center mb-1">
             <p>Rent from</p>
@@ -121,18 +126,20 @@ const StoreListingRow = ({
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          {Object.entries(listing?.product_metadata).map(([key, value]) => {
-            return (
-              <div className="" key={key}>
-                <p className="text-xs text-muted capitalize">{key}</p>
-                {value.map((p) => (
-                  <Badge key={key + p} className="mr-1" variant={"outline"}>
-                    {p}
-                  </Badge>
-                ))}
-              </div>
-            );
-          })}
+          {Object.entries(listing?.product_metadata || {}).map(
+            ([key, value]) => {
+              return (
+                <div className="" key={key}>
+                  <p className="text-xs text-muted capitalize">{key}</p>
+                  {value.map((p) => (
+                    <Badge key={key + p} className="mr-1" variant={"outline"}>
+                      {p}
+                    </Badge>
+                  ))}
+                </div>
+              );
+            },
+          )}
         </div>
       </CardContent>
       {showFooter && (

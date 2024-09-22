@@ -18,14 +18,14 @@ import clsx from "clsx";
 type Props = {
   discount: number;
   setDiscount: (value: number) => void;
-  reccomendedDiscount?: number;
+  recommendedDiscount?: number;
   onChange: () => void;
 };
 
 const DiscountCombobox = ({
   discount,
   setDiscount,
-  reccomendedDiscount,
+  recommendedDiscount,
   onChange,
 }: Props) => {
   const discounts = [0, 5, 10, 15, 20, 30];
@@ -64,12 +64,12 @@ const DiscountCombobox = ({
                   className="flex justify-between"
                 >
                   {curr}%
-                  {curr === reccomendedDiscount && (
+                  {curr === recommendedDiscount && (
                     <Badge
                       variant="secondary"
                       className="font-normal pointer-events-none"
                     >
-                      Reccomended
+                      Recommended
                     </Badge>
                   )}
                 </CommandItem>

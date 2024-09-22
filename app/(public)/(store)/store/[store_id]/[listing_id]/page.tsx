@@ -41,7 +41,7 @@ const MetadataMap: Record<ProductMetadataKeys, any> = {
 };
 
 const ListingPage = ({ params }: { params: { listing_id: string } }) => {
-  const { allProducts, allStores } = useProducts();
+  const { allStores, productGroups } = useProducts();
   const [markerRef, marker] = useMarkerRef();
 
   const searchParams = useSearchParams();
@@ -50,8 +50,8 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
   const [loading, setLoading] = useState(false);
 
   const productDetails = useMemo(() => {
-    return allProducts.find((p) => p.product_id === product_id);
-  }, [params, allProducts]);
+    return productGroups.find((p) => p.product_group_id === product_id);
+  }, [params, productGroups]);
 
   const storeDetails = useMemo(() => {
     return allStores.find((s) => s.store_id === listing?.store_id);
@@ -87,7 +87,7 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
           <CardContent className="pt-4">
             <img
               src={productDetails.image_url || "/placeholder-image.jpg"}
-              alt={productDetails.product_title || ""}
+              alt={productDetails.product_group_name || ""}
               className="w-full h-[400px] object-contain"
             />
           </CardContent>
@@ -98,10 +98,10 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
             <div className="flex justify-between items-start">
               <div>
                 <CardTitle className="text-3xl font-bold mb-2">
-                  {productDetails.product_title}
+                  {productDetails.product_group_name}
                 </CardTitle>
                 <Badge variant="secondary" className="mb-4">
-                  {productDetails.category}
+                  {productDetails.sport}
                 </Badge>
               </div>
             </div>
@@ -109,36 +109,28 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
 
           <CardContent>
             <CardDescription className="text-lg mb-6">
-              {productDetails.description}
+              {productDetails.product_group_name}
             </CardDescription>
 
             <Separator className="my-6" />
 
             <div className="space-y-4">
               <div className="flex flex-col text-gray-500 text-sm gap-2">
-                <span>Product details:</span>
-                {Object.entries(listing?.product_metadata || []).map(
-                  ([key, value]) => {
-                    return (
-                      <div className="flex gap-1 items-center" key={key}>
-                        <span className="text-xs text-muted capitalize">
-                          {key}
-                        </span>
-                        {value.map((p) => (
-                          <Badge
-                            key={key + p}
-                            className="mr-1"
-                            variant={"outline"}
-                          >
-                            {p}
-                          </Badge>
-                        ))}
-                      </div>
-                    );
-                  },
-                )}
+                Available brands:
+                {listing?.brands?.map((value, key) => {
+                  return (
+                    <Badge
+                      key={key}
+                      className="mr-1 w-fit capitalize"
+                      variant={"outline"}
+                    >
+                      {value}
+                    </Badge>
+                  );
+                })}
+                Size: {listing?.size}cm
               </div>
-              {productDetails.product_link && (
+              {/* {productDetails.product_link && (
                 <div className="flex items-center">
                   <a
                     href={productDetails.product_link}
@@ -149,7 +141,7 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
                     More product details
                   </a>
                 </div>
-              )}
+              )} */}
             </div>
           </CardContent>
 

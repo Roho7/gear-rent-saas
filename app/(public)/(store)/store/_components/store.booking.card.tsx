@@ -10,6 +10,9 @@ import {
 } from "@/components/ui/card";
 import { formatPrice, formatPriceGranularity } from "@/lib/utils";
 import { ListingType } from "@/src/entities/models/types";
+
+import { Separator } from "@/components/ui/separator";
+import { PLATFORM_FEE } from "@/src/entities/models/constants";
 import { differenceInDays } from "date-fns";
 import dayjs from "dayjs";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -51,8 +54,10 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
     const to = dayjs(rentPeriod?.to).format("YYYY-MM-DD");
 
     // Construct the new URL
-    const newUrl = `/checkout?listing_id=${listing.listing_id}&product_id=${
-      listing.product_id
+    const newUrl = `/checkout?listing_id=${
+      listing.listing_id
+    }&product_group_id=${
+      listing.product_group_id
     }&quantity=${quantity}&rentFrom=${from}&rentTill=${to}&duration=${duration}&${currentParams.toString()}`;
 
     router.push(newUrl);
@@ -66,24 +71,24 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
   }, [rentPeriod?.from, rentPeriod?.to]);
 
   const granularPrice = useMemo(() => {
-    let totalPrice = 0;
+    let price = 0;
 
-    totalPrice = listing.base_price || 0;
+    price = listing.base_price || 0;
 
     // Apply discounts based on duration
     if (duration >= 7) {
       // Apply discount_3 for rentals of 7 days or more
-      totalPrice *= 1 - (listing.discount_3 || 0) / 100;
+      price *= 1 - (listing.discount_3 || 0) / 100;
     } else if (duration >= 3) {
       // Apply discount_2 for rentals of 3-6 days
-      totalPrice *= 1 - (listing.discount_2 || 0) / 100;
+      price *= 1 - (listing.discount_2 || 0) / 100;
     } else if (duration >= 2) {
       // Apply discount_1 for rentals of 2 days
-      totalPrice *= 1 - (listing.discount_1 || 0) / 100;
+      price *= 1 - (listing.discount_1 || 0) / 100;
     }
 
     // Round to two decimal places
-    return totalPrice;
+    return price;
   }, [
     rentPeriod?.from,
     rentPeriod?.to,
@@ -93,6 +98,14 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
     listing.discount_2,
     listing.discount_3,
   ]);
+
+  const totalPriceBeforePlatformFee = useMemo(() => {
+    return granularPrice * duration * quantity;
+  }, [granularPrice, duration, quantity]);
+
+  const totalPriceAfterPlatformFee = useMemo(() => {
+    return totalPriceBeforePlatformFee * (1 + PLATFORM_FEE);
+  }, [totalPriceBeforePlatformFee]);
 
   return (
     <Card className="max-w-fit h-fit mx-auto shadow-2xl">
@@ -119,20 +132,44 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
         />
       </CardContent>
       <CardFooter className="flex flex-col items-end">
-        <div className="flex justify-between w-full">
-          <span>Total:</span>
+        <div className="grid grid-cols-2 w-full text-muted text-xs">
           <span>
+            {formatPrice({
+              base_price: granularPrice * duration,
+              currency_code: listing.currency_code,
+            })}{" "}
+            x {quantity}
+          </span>
+          <span className="text-right text-primary text-sm">
             {!duration || !granularPrice || !quantity
               ? "-"
               : formatPrice({
-                  base_price: granularPrice * duration * quantity,
+                  base_price: totalPriceBeforePlatformFee,
                   currency_code: listing.currency_code,
                 })}
+            <p className="text-right text-xs text-muted">
+              For {duration} {duration > 1 ? "days" : "day"}
+            </p>
+          </span>
+          <span>Platform fee</span>
+          <span className="text-right text-primary text-sm">
+            {formatPrice({
+              base_price: totalPriceBeforePlatformFee * PLATFORM_FEE,
+              currency_code: listing.currency_code,
+            })}
           </span>
         </div>
-        <span className="text-right text-sm text-muted">
-          For {duration} days
-        </span>
+        <Separator className="my-2" />
+        <div className="grid grid-cols-2 w-full">
+          <span>Total</span>
+          <span className="text-right text-primary">
+            {formatPrice({
+              base_price: totalPriceAfterPlatformFee,
+              currency_code: listing.currency_code,
+            })}
+          </span>
+        </div>
+
         <Button
           className="w-full my-2"
           disabled={!quantity || !duration || !granularPrice}

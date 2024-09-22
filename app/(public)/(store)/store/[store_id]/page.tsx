@@ -44,14 +44,18 @@ const StorePage = ({ params }: { params: { store_id: string } }) => {
   }, [searchParams]);
 
   return (
-    <main className="flex flex-col gap-2 h-screen">
+    <main className="flex flex-col gap-2 min-h-screen">
       <h2 className="text-md capitalize my-4">
         {searchResults.sport} Gear from {storeDetails?.store_name}
       </h2>
       <section className="flex gap-4 w-full relative">
         <div className="flex flex-col gap-2 w-full">
           {availableListings?.map((d) => (
-            <StoreListingRow listing={d} key={d.product_id} loading={loading} />
+            <StoreListingRow
+              listing={d}
+              key={d.product_group_id}
+              loading={loading}
+            />
           ))}
         </div>
       </section>

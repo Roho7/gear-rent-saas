@@ -6,6 +6,7 @@ import {
   LineChart,
   ListChecksIcon,
   Package,
+  Package2,
   ShoppingCart,
   Users,
 } from "lucide-react";
@@ -70,6 +71,16 @@ const AdminSidebar = () => {
             >
               <Package className="h-4 w-4" />
               Products{" "}
+            </Link>
+            <Link
+              href="/admin/product-groups"
+              className={clsx(
+                pathname.includes("product-groups") && "bg-muted text-primary",
+                navItemClassName,
+              )}
+            >
+              <Package2 className="h-4 w-4" />
+              Product Groups
             </Link>
             <Link
               href="#"

@@ -16,13 +16,12 @@ import {
 import clsx from "clsx";
 
 type Props = {
-  currency: string;
-  setCurrency: (value: string) => void;
-  onChange: () => void;
+  allSizes: string[];
+  setSelectedSize: (value: string) => void;
+  selectedSize: string;
 };
 
-const CurrencyCombobox = ({ currency, setCurrency, onChange }: Props) => {
-  const currencies = ["USD", "GBP", "EUR"];
+const SizesCombobox = ({ allSizes, selectedSize, setSelectedSize }: Props) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -32,29 +31,28 @@ const CurrencyCombobox = ({ currency, setCurrency, onChange }: Props) => {
             role="combobox"
             className={clsx(
               "w-[200px] justify-between",
-              !currency && "text-muted-foreground",
+              !selectedSize && "text-muted-foreground",
             )}
           >
-            {currency
-              ? currencies.find((curr) => curr === currency)
-              : "Select currency"}
+            {selectedSize
+              ? allSizes.find((curr) => curr === selectedSize)
+              : "Select sizes"}
             {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
           </Button>
         </FormControl>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search currency..." />
+          <CommandInput placeholder="Search sizes..." />
           <CommandList>
-            <CommandEmpty>No currency found.</CommandEmpty>
+            <CommandEmpty>No sizes found.</CommandEmpty>
             <CommandGroup>
-              {currencies.map((curr) => (
+              {allSizes.map((curr) => (
                 <CommandItem
                   value={curr}
                   key={curr}
                   onSelect={() => {
-                    setCurrency(curr);
-                    onChange();
+                    setSelectedSize(curr);
                   }}
                 >
                   {curr}
@@ -68,4 +66,4 @@ const CurrencyCombobox = ({ currency, setCurrency, onChange }: Props) => {
   );
 };
 
-export default CurrencyCombobox;
+export default SizesCombobox;

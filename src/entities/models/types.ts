@@ -3,6 +3,7 @@ import { Tables } from "@/packages/supabase.types";
 export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
   product_metadata: ProductMetadataType;
 };
+export type ProductGroupType = Tables<"tbl_product_groups">;
 export type GearyoUser = Tables<"tbl_users">;
 export type StoreType = Tables<"tbl_stores">;
 export type ListingType =
@@ -19,7 +20,7 @@ export type CartItemType = {
 };
 
 export type PriceGranularityType = "daily" | "hourly";
-export type GenderType = "male" | "female";
+export type GenderType = "male" | "female" | "unisex";
 
 export type ProductMetadataKeys =
   | "sizes"
@@ -57,7 +58,7 @@ export type SearchLocationType = {
 };
 
 export type AvailableListingsType = {
-  product_id: string;
+  product_group_id: string;
   listing_id: string;
   store_id: string;
   base_price: number;
@@ -73,4 +74,7 @@ export type AvailableListingsType = {
   discount_2: number;
   discount_3: number;
   product_metadata: ProductMetadataType;
+  size: string;
+  brands: string[];
+  gender: GenderType;
 };

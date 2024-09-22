@@ -14,7 +14,7 @@ export const addInventoryItem = async (
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
 
-  if (!inventory_data?.product_id) {
+  if (!inventory_data?.product_group_id) {
     throw new Error("Product ID or Store ID not provided");
   }
 

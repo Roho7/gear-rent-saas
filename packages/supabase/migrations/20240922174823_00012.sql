@@ -1,15 +1,13 @@
-DROP FUNCTION IF EXISTS _func_search_active_listings;
+drop function if exists "public"."_func_search_active_listings"(sport_input text, store_id_input uuid, experience_input text, rent_period_from timestamp without time zone, rent_period_to timestamp without time zone, latitude_input numeric, longitude_input numeric, radius numeric);
 
-CREATE OR REPLACE FUNCTION _func_search_active_listings(
-    sport_input TEXT DEFAULT NULL,
-    store_id_input UUID DEFAULT NULL,
-    rent_period_from TIMESTAMP DEFAULT NULL,
-    rent_period_to TIMESTAMP DEFAULT NULL,
-    latitude_input NUMERIC DEFAULT NULL,
-    longitude_input NUMERIC DEFAULT NULL,
-    radius NUMERIC DEFAULT 10
-)
-RETURNS JSON AS $$
+alter table "public"."tbl_product_groups" add column "brands" text[];
+
+set check_function_bodies = off;
+
+CREATE OR REPLACE FUNCTION public._func_search_active_listings(sport_input text DEFAULT NULL::text, store_id_input uuid DEFAULT NULL::uuid, rent_period_from timestamp without time zone DEFAULT NULL::timestamp without time zone, rent_period_to timestamp without time zone DEFAULT NULL::timestamp without time zone, latitude_input numeric DEFAULT NULL::numeric, longitude_input numeric DEFAULT NULL::numeric, radius numeric DEFAULT 10)
+ RETURNS json
+ LANGUAGE plpgsql
+AS $function$
 DECLARE
     result JSON;
 BEGIN
@@ -66,4 +64,7 @@ BEGIN
 
     RETURN result;
 END;
-$$ LANGUAGE plpgsql;
+$function$
+;
+
+

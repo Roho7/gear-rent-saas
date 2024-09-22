@@ -6,6 +6,7 @@ import { MainSearchFormOutputType } from "@/src/entities/models/formSchemas";
 import {
   AvailableListingsType,
   CartItemType,
+  ProductGroupType,
   ProductMetadataType,
   ProductType,
   SearchLocationType,
@@ -35,6 +36,10 @@ interface ProductDB extends DBSchema {
     key: string;
     value: StoreType;
   };
+  product_groups: {
+    key: string;
+    value: ProductGroupType;
+  };
 }
 
 type ProductContextType = {
@@ -60,6 +65,8 @@ type ProductContextType = {
   availableListings: AvailableListingsType[] | undefined;
   setAvailableListings: React.Dispatch<AvailableListingsType[] | undefined>;
   fetchListings: (data: MainSearchFormOutputType) => Promise<void>;
+  productGroups: ProductGroupType[];
+  fetchAndCacheProductGroups: (refresh: boolean) => Promise<void>;
 };
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
@@ -77,6 +84,7 @@ export const ProductProvider = ({
     return savedCart ? JSON.parse(savedCart) : [];
   });
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
+  const [productGroups, setProductGroups] = useState<ProductGroupType[]>([]);
   const [allStores, setAllStores] = useState<StoreType[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -101,9 +109,18 @@ export const ProductProvider = ({
 
   const dbPromise = useMemo(() => {
     return openDB<ProductDB>("ProductDatabase", 1, {
-      upgrade(db) {
-        db.createObjectStore("products", { keyPath: "product_id" });
-        db.createObjectStore("stores", { keyPath: "store_id" });
+      upgrade(db, oldVersion, newVersion, transaction) {
+        if (oldVersion < 1) {
+          // Create initial stores
+          db.createObjectStore("products", { keyPath: "product_id" });
+          db.createObjectStore("stores", { keyPath: "store_id" });
+        }
+        if (oldVersion < 2) {
+          // Add new product_groups store in version 2
+          db.createObjectStore("product_groups", {
+            keyPath: "product_group_id",
+          });
+        }
       },
     });
   }, []);
@@ -210,6 +227,49 @@ export const ProductProvider = ({
     setLoading(false);
   };
 
+  const fetchAndCacheProductGroups = async (refresh: boolean = false) => {
+    const db = await dbPromise;
+    const cachedData = await db?.getAll("product_groups");
+    setLoading(true);
+    const last_updated_at = localStorage.getItem(
+      "product_groups_last_updated_at",
+    );
+
+    if (
+      cachedData.length &&
+      !refresh &&
+      !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
+    ) {
+      console.log("Using cached product groups data");
+      setProductGroups(cachedData);
+    } else {
+      console.log("Fetching product groups from Supabase");
+      const { data, error } = await supabase
+        .from("tbl_product_groups")
+        .select("*");
+
+      localStorage.setItem(
+        "product_groups_last_updated_at",
+        new Date().toISOString(),
+      );
+      if (error) {
+        console.error("Error fetching product groups:", error);
+      } else {
+        const sortedData = data.sort((a, b) =>
+          a.product_group_id.localeCompare(b.product_group_id),
+        );
+        setProductGroups(sortedData);
+        const txn = db.transaction("product_groups", "readwrite");
+        await Promise.all(
+          sortedData.map((d: ProductGroupType) => {
+            return txn.store.put(d);
+          }),
+        );
+      }
+    }
+    setLoading(false);
+  };
+
   const fetchListings = async ({
     experience,
     sport,
@@ -231,6 +291,7 @@ export const ProductProvider = ({
   const fetchData = useCallback(async () => {
     await fetchAndCacheProducts();
     await fetchAndCacheStores();
+    await fetchAndCacheProductGroups();
   }, []);
 
   const handleProductMetadataUpdate = useCallback(
@@ -338,6 +399,8 @@ export const ProductProvider = ({
       availableListings,
       setAvailableListings,
       fetchListings,
+      productGroups,
+      fetchAndCacheProductGroups,
     }),
     [
       cartItems,
@@ -354,6 +417,7 @@ export const ProductProvider = ({
       searchLocation,
       availableListings,
       fetchListings,
+      productGroups,
     ],
   );
 

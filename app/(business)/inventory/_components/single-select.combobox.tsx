@@ -16,17 +16,22 @@ import {
 import clsx from "clsx";
 
 type Props = {
-  granularity: string;
-  setGranularity: (value: string) => void;
-  onChange: () => void;
+  data: string[];
+  value: string | undefined | null;
+  setValue: (value: string) => void;
+  onChange?: () => void;
+  hasSearch?: boolean;
+  emptyMessage?: string;
 };
 
-const GranularityCombobox = ({
-  granularity,
-  setGranularity,
+const SingleSelectCombobox = ({
+  data,
+  value,
+  setValue,
   onChange,
+  hasSearch,
+  emptyMessage,
 }: Props) => {
-  const granularities = ["daily", "hourly"];
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -35,30 +40,32 @@ const GranularityCombobox = ({
             variant="outline"
             role="combobox"
             className={clsx(
-              "w-[200px] justify-between",
-              !granularity && "text-muted-foreground",
+              "min-w-[200px] w-full justify-between",
+              !value && "text-muted-foreground",
             )}
           >
-            {granularity
-              ? granularities.find((curr) => curr === granularity)
-              : "Select granularity"}
+            {value
+              ? data.find((curr) => curr === value)
+              : emptyMessage
+              ? emptyMessage
+              : "Select..."}
             {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
           </Button>
         </FormControl>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search granularity..." />
+          {hasSearch && <CommandInput />}
           <CommandList>
-            <CommandEmpty>No granularity found.</CommandEmpty>
+            <CommandEmpty>Nothing found.</CommandEmpty>
             <CommandGroup>
-              {granularities.map((curr) => (
+              {data.map((curr) => (
                 <CommandItem
                   value={curr}
                   key={curr}
                   onSelect={() => {
-                    setGranularity(curr);
-                    onChange();
+                    setValue(curr);
+                    onChange && onChange();
                   }}
                 >
                   {curr}
@@ -72,4 +79,4 @@ const GranularityCombobox = ({
   );
 };
 
-export default GranularityCombobox;
+export default SingleSelectCombobox;
