@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import { useInventory } from "../../_providers/useInventory";
-import ListingItemCard from "../_components/listing.card";
+import { ListingTable } from "../_components/listing.table";
 
 const ListingsPage = () => {
   const router = useRouter();
@@ -17,9 +17,6 @@ const ListingsPage = () => {
           <Button onClick={() => router.push(`/inventory/listings/${"new"}`)}>
             Add Listing
           </Button>
-          {/* <Button onClick={() => fetchInventory()} variant={"outline"}>
-            <IoRefreshOutline />
-          </Button> */}
         </div>
       </div>
       {!inventory?.length ? (
@@ -45,10 +42,11 @@ const ListingsPage = () => {
       ) : (
         <>
           <Separator />
-          <div className="grid grid-cols-4 gap-2">
-            {inventory?.map((item) => (
+          <div className="">
+            {/* {inventory?.map((item) => (
               <ListingItemCard inventoryItem={item} key={item.listing_id} />
-            ))}
+            ))} */}
+            <ListingTable data={inventory} />
           </div>
         </>
       )}

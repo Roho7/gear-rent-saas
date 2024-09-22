@@ -20,11 +20,11 @@ const ListingItemCard = ({
   inventoryItem,
   showStoreDetails = false,
 }: Props) => {
-  const { allProducts, allStores } = useProducts();
+  const { productGroups, allStores } = useProducts();
   const router = useRouter();
 
-  const productDetails = allProducts.find(
-    (p) => p.product_id === inventoryItem.product_id,
+  const productDetails = productGroups.find(
+    (p) => p.product_group_id === inventoryItem.product_group_id,
   );
   return (
     <Card
@@ -36,12 +36,12 @@ const ListingItemCard = ({
     >
       <CardHeader>
         <div className="">
-          {productDetails?.product_title}
+          {productDetails?.product_group_name}
           <p className="text-gray-400 text-xs">{inventoryItem.listing_id}</p>
         </div>
-        {productDetails?.category && (
+        {productDetails?.sport && (
           <Badge variant="outline" className="capitalize mr-auto">
-            {productDetails?.category}
+            {productDetails?.sport}
           </Badge>
         )}
       </CardHeader>
@@ -49,8 +49,9 @@ const ListingItemCard = ({
         <div className="h-40 w-40 mx-auto">
           <img
             src={
-              allProducts.find((d) => d.product_id === inventoryItem.product_id)
-                ?.image_url || ""
+              productGroups.find(
+                (d) => d.product_group_id === inventoryItem.product_group_id,
+              )?.image_url || ""
             }
             alt=""
             className="h-full w-full object-contain"

@@ -90,7 +90,7 @@ const StoreListingRow = ({
     <ListingsCardSkeleton />
   ) : (
     <Card
-      className="w-full flex gap-2 min-h-64"
+      className="w-full flex gap-2 min-h-64 hover:bg-background/10 cursor-pointer"
       role="button"
       onClick={handleClick}
     >

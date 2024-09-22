@@ -1,11 +1,12 @@
 "use server";
 
 import { createServerActionClient } from "@/app/_utils/supabase";
+import { PLATFORM_FEE } from "@/src/entities/models/constants";
 import { cookies } from "next/headers";
 
 export async function validateAndReturnBookingPrice(
   listingId: string,
-  duration: string,
+  duration: number,
 ): Promise<number> {
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
@@ -26,20 +27,20 @@ export async function validateAndReturnBookingPrice(
       throw new Error("Listing price not found");
     }
 
-    const parsedDuration = parseInt(duration);
-    let price = listing.base_price * parsedDuration;
+    let price = listing.base_price * duration;
 
-    if (parsedDuration >= 7) {
+    if (duration >= 7) {
       // Apply discount_3 for rentals of 7 days or more
       price *= 1 - (listing.discount_3 || 0) / 100;
-    } else if (parsedDuration >= 3) {
+    } else if (duration >= 3) {
       // Apply discount_2 for rentals of 3-6 days
       price *= 1 - (listing.discount_2 || 0) / 100;
-    } else if (parsedDuration >= 2) {
+    } else if (duration >= 2) {
       // Apply discount_1 for rentals of 2 days
       price *= 1 - (listing.discount_1 || 0) / 100;
     }
 
+    price = price * (1 + PLATFORM_FEE);
     // Round to two decimal places
     price = Math.round(price);
     return price;
@@ -47,3 +48,10 @@ export async function validateAndReturnBookingPrice(
     throw error;
   }
 }
+
+// export async function createBooking() {
+//   const cookieStore = cookies();
+//   const supabase = createServerActionClient({ cookies: cookieStore });
+
+//   const { data, error } = await supabase.from("tbl_bookings").insert({});
+// }

@@ -1,7 +1,7 @@
 DROP FUNCTION IF EXISTS _func_search_active_listings;
 
 CREATE OR REPLACE FUNCTION _func_search_active_listings(
-    sport TEXT DEFAULT NULL,
+    sport_input TEXT DEFAULT NULL,
     store_id_input UUID DEFAULT NULL,
     experience_input TEXT DEFAULT NULL,
     rent_period_from TIMESTAMP DEFAULT NULL,
@@ -27,7 +27,7 @@ BEGIN
             l.store_id,
             l.listing_id,
             ST_X(s.location::geometry) AS longitude,
-            p.product_id,
+            p.product_group_id,
             l.base_price::TEXT,
             l.currency_code,
             l.price_granularity,
@@ -37,14 +37,14 @@ BEGIN
             l.description,
             l.product_metadata
         FROM 
-            tbl_products p
+            tbl_product_groups p
         INNER JOIN 
-            tbl_listings l ON p.product_id = l.product_id
+            tbl_listings l ON p.product_group_id = l.product_group_id
         INNER JOIN 
             tbl_stores s ON l.store_id = s.store_id
         WHERE 
         (store_id_input IS NULL OR l.store_id = store_id_input) AND
-            (sport IS NULL OR p.category = sport)
+            (sport_input IS NULL OR p.sport = sport_input)
             AND (experience_input IS NULL OR experience_input = ANY(p.experience))
             AND (
                 latitude_input IS NULL 

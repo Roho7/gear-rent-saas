@@ -3,6 +3,7 @@ import { Tables } from "@/packages/supabase.types";
 export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
   product_metadata: ProductMetadataType;
 };
+export type ProductGroupType = Tables<"tbl_product_groups">;
 export type GearyoUser = Tables<"tbl_users">;
 export type StoreType = Tables<"tbl_stores">;
 export type ListingType =

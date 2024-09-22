@@ -1,7 +1,13 @@
 "use client";
 
 import { getStripe } from "@/app/_utils/stripe";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { toast } from "@/components/ui/use-toast";
 import { ListingType } from "@/src/entities/models/types";
 import { useSearchParams } from "next/navigation";
@@ -9,13 +15,17 @@ import { useSearchParams } from "next/navigation";
 export default function CheckoutButton({
   listing,
   price,
+  callback,
+  ...props
 }: {
   listing: ListingType | undefined;
   price: number;
-}) {
+  callback?: () => void;
+} & ButtonProps) {
   const searchParams = useSearchParams();
   const initiateCheckout = async () => {
     try {
+      callback && callback();
       if (!listing) {
         console.error("Listing not provided");
         return;
@@ -27,7 +37,7 @@ export default function CheckoutButton({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          productId: listing.product_id,
+          productId: listing.product_group_id,
           listingId: listing.listing_id,
           price: price,
           storeId: listing.store_id,
@@ -36,7 +46,6 @@ export default function CheckoutButton({
       });
 
       const { sessionId } = await response.json();
-      console.log(sessionId);
       const stripe = await getStripe();
       const { error } = await stripe!.redirectToCheckout({ sessionId });
     } catch (error: any) {
@@ -51,8 +60,17 @@ export default function CheckoutButton({
   };
 
   return (
-    <Button className="w-full" onClick={initiateCheckout}>
-      Book Now
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger className="w-full">
+          <Button className="w-full mt-2" onClick={initiateCheckout} {...props}>
+            Book Now
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent className="bg-background" hidden={!props.disabled}>
+          <p className="text-foreground">Fill in the details to book</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

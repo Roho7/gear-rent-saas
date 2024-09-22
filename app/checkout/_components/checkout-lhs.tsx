@@ -1,6 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -8,26 +15,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CheckoutUserFormSchema } from "@/src/entities/models/formSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
-type UserCheckoutDetailsType = {
-  name: string;
-  gender: string;
-  age: string;
-  height: string;
-  weight: string;
-  shoeSize: string;
-};
-
-const CheckoutUserDetails = () => {
+const CheckoutUserDetails = ({
+  onSubmit,
+  formRef,
+  onValidityChange,
+}: {
+  onSubmit: (data: z.infer<typeof CheckoutUserFormSchema>) => void;
+  formRef: React.RefObject<HTMLFormElement>;
+  onValidityChange: (isValid: boolean) => void;
+}) => {
   const searchParams = useSearchParams();
   const quantity = parseInt(searchParams.get("quantity") || "1", 10);
-  const [users, setUsers] = useState<UserCheckoutDetailsType[]>([]);
 
-  useEffect(() => {
-    setUsers(
-      Array(quantity).fill({
+  const form = useForm<z.infer<typeof CheckoutUserFormSchema>>({
+    resolver: zodResolver(CheckoutUserFormSchema),
+    defaultValues: {
+      users: Array(quantity).fill({
         name: "",
         gender: "",
         age: "",
@@ -35,112 +45,173 @@ const CheckoutUserDetails = () => {
         weight: "",
         shoeSize: "",
       }),
-    );
-  }, [quantity]);
+    },
+    mode: "onChange",
+  });
 
-  const handleInputChange = (
-    index: number,
-    field: keyof UserCheckoutDetailsType,
-    value: string,
-  ) => {
-    const newUsers = [...users];
-    newUsers[index] = { ...newUsers[index], [field]: value };
-    setUsers(newUsers);
-  };
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "users",
+  });
+
+  useEffect(() => {
+    // Adjust the number of user forms based on the quantity
+    const currentLength = fields.length;
+    if (quantity > currentLength) {
+      for (let i = currentLength; i < quantity; i++) {
+        append({
+          name: "",
+          gender: "",
+          age: "",
+          height: "",
+          weight: "",
+          shoeSize: "",
+        });
+      }
+    } else if (quantity < currentLength) {
+      for (let i = currentLength - 1; i >= quantity; i--) {
+        remove(i);
+      }
+    }
+  }, [quantity, fields.length, append, remove]);
+
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      onValidityChange(form.formState.isValid);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onValidityChange]);
 
   return (
     <div className="col-span-3 space-y-6">
       <h2 className="text-2xl">Request to book</h2>
-      {users.map((user, index) => (
-        <Card key={index}>
-          <CardHeader>
-            <CardTitle>Person {index + 1} Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`name-${index}`}>Name</Label>
-                <Input
-                  id={`name-${index}`}
-                  value={user.name}
-                  onChange={(e) =>
-                    handleInputChange(index, "name", e.target.value)
-                  }
-                  placeholder="Enter name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`gender-${index}`}>Gender</Label>
-                <Select
-                  value={user.gender}
-                  onValueChange={(value) =>
-                    handleInputChange(index, "gender", value)
-                  }
-                >
-                  <SelectTrigger id={`gender-${index}`}>
-                    <SelectValue placeholder="Select gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`age-${index}`}>Age</Label>
-                <Input
-                  id={`age-${index}`}
-                  type="number"
-                  value={user.age}
-                  onChange={(e) =>
-                    handleInputChange(index, "age", e.target.value)
-                  }
-                  placeholder="Enter age"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`height-${index}`}>Height (cm)</Label>
-                <Input
-                  id={`height-${index}`}
-                  type="number"
-                  value={user.height}
-                  onChange={(e) =>
-                    handleInputChange(index, "height", e.target.value)
-                  }
-                  placeholder="Enter height"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`weight-${index}`}>Weight (kg)</Label>
-                <Input
-                  id={`weight-${index}`}
-                  type="number"
-                  value={user.weight}
-                  onChange={(e) =>
-                    handleInputChange(index, "weight", e.target.value)
-                  }
-                  placeholder="Enter weight"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`shoeSize-${index}`}>Shoe Size</Label>
-                <Input
-                  id={`shoeSize-${index}`}
-                  type="number"
-                  value={user.shoeSize}
-                  onChange={(e) =>
-                    handleInputChange(index, "shoeSize", e.target.value)
-                  }
-                  placeholder="Enter shoe size"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      <Form {...form}>
+        <form
+          ref={formRef}
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+        >
+          {fields.map((field, index) => (
+            <Card key={field.id}>
+              <CardHeader>
+                <CardTitle>Person {index + 1} Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name={`users.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Enter name" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`users.${index}.gender`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Gender</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name={`users.${index}.age`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Age</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            placeholder="Enter age"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`users.${index}.height`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Height (cm)</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            placeholder="Enter height"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`users.${index}.weight`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Weight (kg)</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            placeholder="Enter weight"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`users.${index}.shoeSize`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Shoe Size</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            placeholder="Enter shoe size"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </form>
+      </Form>
     </div>
   );
 };

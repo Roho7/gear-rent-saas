@@ -3,6 +3,8 @@ import { FaBagShopping } from "react-icons/fa6";
 import { PiUsersFill } from "react-icons/pi";
 import { SearchLocationType } from "./types";
 
+export const PLATFORM_FEE = 0.1;
+
 export const popularLocations: SearchLocationType[] = [
   {
     id: "chamonix",
@@ -101,3 +103,33 @@ export const servicesList = [
     description: "Gear you trust, from sellers you trust – anytime, anywhere.",
   },
 ];
+
+// export const productGroups: Record<
+//   string,
+//   Record<string, { name: string; sizes?: string[] }>
+// > = {
+//   "snowboarding": {
+//     "snowboards": { name: "Snowboards", sizes: ["125", "155", "166"] },
+//     "snowboard_boots": { name: "Boots" },
+//     "snowboard_bindings": { name: "Bindings" },
+//     "snowboard_jackets": { name: "Jackets" },
+//     "snowboard_pants": { name: "Pants" },
+//     "snowboard_gloves": { name: "Gloves" },
+//   },
+//   "skiing": {
+//     "skis": { name: "Skis" },
+//     "ski_boots": { name: "Boots" },
+//     "ski_bindings": { name: "Bindings" },
+//     "ski_jackets": { name: "Jackets" },
+//     "ski_pants": { name: "Pants" },
+//     "ski_gloves": { name: "Gloves" },
+//   },
+//   "surfing": {
+//     "surfboards": { name: "Surfboards" },
+//     "surfboard_leashes": { name: "Leashes" },
+//     "surfboard_wax": { name: "Wax" },
+//     "surfboard_bags": { name: "Bags" },
+//     "surfboard_racks": { name: "Racks" },
+//     "surfboard_gloves": { name: "Gloves" },
+//   },
+// };
