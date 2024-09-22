@@ -123,6 +123,7 @@ export type Database = {
           discount_1: number | null
           discount_2: number | null
           discount_3: number | null
+          gender: Database["public"]["Enums"]["enum_genders"] | null
           listing_id: string
           price_granularity:
             | Database["public"]["Enums"]["enum_price_granularity_type"]
@@ -142,6 +143,7 @@ export type Database = {
           discount_1?: number | null
           discount_2?: number | null
           discount_3?: number | null
+          gender?: Database["public"]["Enums"]["enum_genders"] | null
           listing_id?: string
           price_granularity?:
             | Database["public"]["Enums"]["enum_price_granularity_type"]
@@ -161,6 +163,7 @@ export type Database = {
           discount_1?: number | null
           discount_2?: number | null
           discount_3?: number | null
+          gender?: Database["public"]["Enums"]["enum_genders"] | null
           listing_id?: string
           price_granularity?:
             | Database["public"]["Enums"]["enum_price_granularity_type"]
@@ -190,6 +193,7 @@ export type Database = {
       }
       tbl_product_groups: {
         Row: {
+          brands: string[] | null
           image_url: string | null
           product_group_id: string
           product_group_name: string | null
@@ -197,6 +201,7 @@ export type Database = {
           sport: string
         }
         Insert: {
+          brands?: string[] | null
           image_url?: string | null
           product_group_id?: string
           product_group_name?: string | null
@@ -204,6 +209,7 @@ export type Database = {
           sport: string
         }
         Update: {
+          brands?: string[] | null
           image_url?: string | null
           product_group_id?: string
           product_group_name?: string | null
@@ -427,7 +433,6 @@ export type Database = {
         Args: {
           sport_input?: string
           store_id_input?: string
-          experience_input?: string
           rent_period_from?: string
           rent_period_to?: string
           latitude_input?: number

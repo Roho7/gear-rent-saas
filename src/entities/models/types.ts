@@ -58,7 +58,7 @@ export type SearchLocationType = {
 };
 
 export type AvailableListingsType = {
-  product_id: string;
+  product_group_id: string;
   listing_id: string;
   store_id: string;
   base_price: number;
@@ -74,4 +74,7 @@ export type AvailableListingsType = {
   discount_2: number;
   discount_3: number;
   product_metadata: ProductMetadataType;
+  size: string;
+  brands: string[];
+  gender: GenderType;
 };

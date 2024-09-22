@@ -18,8 +18,7 @@ export async function searchListings(
     rent_period_from: rentPeriod?.from?.toISOString(),
     rent_period_to: rentPeriod?.to?.toISOString(),
     radius: location?.radius,
-    experience_input: experience,
-    sport,
+    sport_input: sport,
     store_id_input: storeId,
   }).returns<AvailableListingsType[]>();
 

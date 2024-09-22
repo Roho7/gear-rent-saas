@@ -66,6 +66,7 @@ type ProductContextType = {
   setAvailableListings: React.Dispatch<AvailableListingsType[] | undefined>;
   fetchListings: (data: MainSearchFormOutputType) => Promise<void>;
   productGroups: ProductGroupType[];
+  fetchAndCacheProductGroups: (refresh: boolean) => Promise<void>;
 };
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
@@ -399,6 +400,7 @@ export const ProductProvider = ({
       setAvailableListings,
       fetchListings,
       productGroups,
+      fetchAndCacheProductGroups,
     }),
     [
       cartItems,

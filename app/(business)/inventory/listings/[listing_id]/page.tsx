@@ -32,11 +32,11 @@ import { useInventory } from "@/app/(business)/_providers/useInventory";
 import BackButton from "@/app/_components/_shared/back-button";
 import { useProducts } from "@/app/_providers/useProducts";
 import { AddListingFormSchema } from "@/src/entities/models/formSchemas";
-import CurrencyCombobox from "../../_components/currency.combobox";
+import { genderMap } from "@/src/entities/models/product";
 import DiscountCombobox from "../../_components/discount.combobox";
-import GranularityCombobox from "../../_components/granularity.combobox";
+import MultiSelectCombobox from "../../_components/multi-select.combobox";
 import ProductCombobox from "../../_components/product.combobox";
-import SizesCombobox from "../../_components/sizes.combobox";
+import SingleSelectCombobox from "../../_components/single-select.combobox";
 import { getInventoryItem } from "./_actions/inventory.actions";
 
 const AddListingPage = () => {
@@ -258,13 +258,11 @@ const AddListingPage = () => {
                         <FormLabel className="text-gray-700">
                           Currency
                         </FormLabel>
-                        <CurrencyCombobox
-                          currency={field.value}
-                          setCurrency={form.setValue.bind(
-                            null,
-                            "currency_code",
-                          )}
-                          onChange={updateDiscountedPrices}
+                        <SingleSelectCombobox
+                          data={["USD", "EUR", "GBP", "INR", "AED"]}
+                          value={field.value}
+                          setValue={form.setValue.bind(null, "currency_code")}
+                          emptyMessage="Select a currency"
                         />
                         <FormMessage className="text-red-700" />
                       </FormItem>
@@ -301,38 +299,65 @@ const AddListingPage = () => {
                         <FormLabel className="text-gray-700">
                           Granularity
                         </FormLabel>
-                        <GranularityCombobox
-                          granularity={field.value}
-                          setGranularity={form.setValue.bind(
+                        <SingleSelectCombobox
+                          data={["daily", "hourly"]}
+                          value={field.value}
+                          setValue={form.setValue.bind(
                             null,
                             "price_granularity",
                           )}
-                          onChange={updateDiscountedPrices}
+                          emptyMessage="Select a granularity"
+                          hasSearch={true}
                         />
+
                         <FormMessage className="text-red-700" />
                       </FormItem>
                     )}
                   />
                 </div>
+                <FormField
+                  control={form.control}
+                  name="total_units"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel className="text-gray-700">
+                        Total Units
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Type here"
+                          type="number"
+                          // {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        The number of units available for rent for this product
+                      </FormDescription>
+                      <FormMessage className="text-red-700" />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex gap-2">
                   <FormField
                     control={form.control}
-                    name="total_units"
+                    name="size"
                     render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel className="text-gray-700">
-                          Total Units
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Type here"
-                            type="number"
-                            // {...field}
-                          />
-                        </FormControl>
+                      <FormItem className="flex flex-col gap-2.5">
+                        <FormLabel className="text-gray-700">Size</FormLabel>
+                        <SingleSelectCombobox
+                          data={
+                            productGroups.find(
+                              (p) =>
+                                p.product_group_id ===
+                                form.getValues("product_group_id"),
+                            )?.sizes || []
+                          }
+                          value={field.value}
+                          setValue={form.setValue.bind(null, "size")}
+                          emptyMessage="Select a size"
+                        />
                         <FormDescription>
-                          The number of units available for rent for this
-                          product
+                          The size or length of the product in centimeters
                         </FormDescription>
                         <FormMessage className="text-red-700" />
                       </FormItem>
@@ -340,28 +365,47 @@ const AddListingPage = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="size"
+                    name="gender"
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2.5">
-                        <FormLabel className="text-gray-700">
-                          Currency
-                        </FormLabel>
-                        <SizesCombobox
-                          selectedSize={field.value}
-                          setSelectedSize={form.setValue.bind(null, "size")}
-                          allSizes={
-                            productGroups.find(
-                              (p) =>
-                                p.product_group_id ===
-                                form.getValues("product_group_id"),
-                            )?.sizes || []
-                          }
+                        <FormLabel className="text-gray-700">Gender</FormLabel>
+                        <SingleSelectCombobox
+                          data={genderMap}
+                          value={field.value}
+                          setValue={form.setValue.bind(null, "gender")}
+                          emptyMessage="Select a gender"
                         />
                         <FormMessage className="text-red-700" />
                       </FormItem>
                     )}
                   />
                 </div>
+                <FormField
+                  control={form.control}
+                  name="brands"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2.5">
+                      <FormLabel className="text-gray-700">Brands</FormLabel>
+                      <MultiSelectCombobox
+                        data={
+                          productGroups.find(
+                            (p) =>
+                              p.product_group_id ===
+                              form.getValues("product_group_id"),
+                          )?.brands || []
+                        }
+                        value={field.value || []}
+                        setValue={form.setValue.bind(null, "brands")}
+                        placeholder="Select brands"
+                        emptyMessage="No brands available"
+                      />
+                      <FormDescription>
+                        Select one or more brands for this listing
+                      </FormDescription>
+                      <FormMessage className="text-red-700" />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex flex-wrap gap-2 flex-1">
                   <FormField
                     control={form.control}

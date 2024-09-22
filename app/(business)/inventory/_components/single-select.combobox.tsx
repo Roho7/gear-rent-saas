@@ -16,13 +16,22 @@ import {
 import clsx from "clsx";
 
 type Props = {
-  currency: string;
-  setCurrency: (value: string) => void;
-  onChange: () => void;
+  data: string[];
+  value: string | undefined | null;
+  setValue: (value: string) => void;
+  onChange?: () => void;
+  hasSearch?: boolean;
+  emptyMessage?: string;
 };
 
-const CurrencyCombobox = ({ currency, setCurrency, onChange }: Props) => {
-  const currencies = ["USD", "GBP", "EUR"];
+const SingleSelectCombobox = ({
+  data,
+  value,
+  setValue,
+  onChange,
+  hasSearch,
+  emptyMessage,
+}: Props) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -31,30 +40,32 @@ const CurrencyCombobox = ({ currency, setCurrency, onChange }: Props) => {
             variant="outline"
             role="combobox"
             className={clsx(
-              "w-[200px] justify-between",
-              !currency && "text-muted-foreground",
+              "min-w-[200px] w-full justify-between",
+              !value && "text-muted-foreground",
             )}
           >
-            {currency
-              ? currencies.find((curr) => curr === currency)
-              : "Select currency"}
+            {value
+              ? data.find((curr) => curr === value)
+              : emptyMessage
+              ? emptyMessage
+              : "Select..."}
             {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
           </Button>
         </FormControl>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search currency..." />
+          {hasSearch && <CommandInput />}
           <CommandList>
-            <CommandEmpty>No currency found.</CommandEmpty>
+            <CommandEmpty>Nothing found.</CommandEmpty>
             <CommandGroup>
-              {currencies.map((curr) => (
+              {data.map((curr) => (
                 <CommandItem
                   value={curr}
                   key={curr}
                   onSelect={() => {
-                    setCurrency(curr);
-                    onChange();
+                    setValue(curr);
+                    onChange && onChange();
                   }}
                 >
                   {curr}
@@ -68,4 +79,4 @@ const CurrencyCombobox = ({ currency, setCurrency, onChange }: Props) => {
   );
 };
 
-export default CurrencyCombobox;
+export default SingleSelectCombobox;

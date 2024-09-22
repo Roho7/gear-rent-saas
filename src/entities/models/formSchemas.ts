@@ -35,6 +35,7 @@ export const AddListingFormSchema = z.object({
   total_units: z.number().nullable(),
   size: z.string().min(1, { message: "Please enter a size" }),
   brands: z.array(z.string()).optional(),
+  gender: z.string().optional(),
 });
 
 const CheckoutUserSchema = z.object({
