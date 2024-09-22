@@ -20,7 +20,7 @@ export type CartItemType = {
 };
 
 export type PriceGranularityType = "daily" | "hourly";
-export type GenderType = "male" | "female";
+export type GenderType = "male" | "female" | "unisex";
 
 export type ProductMetadataKeys =
   | "sizes"
