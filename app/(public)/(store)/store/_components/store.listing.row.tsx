@@ -7,7 +7,11 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatPrice } from "@/lib/utils";
+import {
+  formatPrice,
+  formatPriceGranularity,
+  formatProductName,
+} from "@/lib/utils";
 import {
   AvailableListingsType,
   ProductGroupType,
@@ -28,7 +32,7 @@ const StoreListingRow = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { allProducts, allStores, productGroups } = useProducts();
+  const { allStores, productGroups } = useProducts();
   const [locationString, setLocationString] = useState<string>("Loading...");
 
   const handleClick = () => {
@@ -99,16 +103,20 @@ const StoreListingRow = ({
       <CardHeader>
         <div className="w-40 h-40">
           <img
-            src={productDetails?.image_url || ""}
-            alt="img"
+            src={productDetails?.image_url || "/placeholder_image.png"}
+            alt="product"
             className=" object-cover rounded-md"
           />
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 w-full p-4">
-        <h3 className="font-bold capitalize">
-          {productDetails?.sport} {productDetails?.product_group_name}{" "}
-          {listing?.gender} {listing?.size}cm
+        <h3 className="font-bold capitalize text-2xl">
+          {formatProductName({
+            product_group_name: productDetails?.product_group_name,
+            sport: productDetails?.sport,
+            size: listing?.size,
+            gender: listing.gender,
+          })}
         </h3>
         <div className="text-muted text-xs bg-muted/10 p-2 min-w-40 w-fit rounded-md">
           <div className="flex justify-between items-center mb-1">
@@ -145,8 +153,8 @@ const StoreListingRow = ({
       {showFooter && (
         <CardFooter className="flex flex-col items-start gap-1 mt-auto">
           <span className="text-xs text-muted">From</span>
-          <span className="text-xl font-bold text-primary">
-            {formattedPrice}/{listing.price_granularity}
+          <span className="text-xl font-bold text-primary whitespace-nowrap">
+            {formattedPrice} {formatPriceGranularity(listing.price_granularity)}
           </span>
         </CardFooter>
       )}

@@ -24,7 +24,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { popularLocations } from "@/src/entities/models/constants";
 import { MainSearchFormSchema } from "@/src/entities/models/formSchemas";
-import { expertiseMap, sportMap } from "@/src/entities/models/product";
+import { sportMap } from "@/src/entities/models/product";
 import { SearchLocationType } from "@/src/entities/models/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "@radix-ui/react-icons";
@@ -32,10 +32,10 @@ import clsx from "clsx";
 import { format } from "date-fns";
 import dayjs from "dayjs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SetStateAction, useEffect } from "react";
+import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiSearch } from "react-icons/bi";
-import { FaSkiing, FaTrophy } from "react-icons/fa";
+import { FaDice } from "react-icons/fa";
 import { MdCalendarMonth, MdLocationPin } from "react-icons/md";
 import { date, z } from "zod";
 import LocationPicker from "./location.dropdown";
@@ -44,20 +44,18 @@ type CollapsedSearchBarProps = {
   location?: string;
   from?: Date;
   to?: Date;
-  experience?: string;
   sport?: string;
   collapsed: boolean;
-  setCollapsed: React.Dispatch<SetStateAction<boolean>>;
+  onClick: () => void;
 };
 
 const CollapsedSearchBar = ({
   location,
   from,
   to,
-  experience,
   sport,
   collapsed,
-  setCollapsed,
+  onClick,
 }: CollapsedSearchBarProps) => {
   const collapsedItemsClassName = "flex items-center gap-1 capitalize";
   return (
@@ -69,7 +67,7 @@ const CollapsedSearchBar = ({
           : "translate-y-10 opacity-100 scale-100",
       )}
       role="button"
-      onClick={() => setCollapsed(false)}
+      onClick={onClick}
     >
       <span className={collapsedItemsClassName}>
         <MdLocationPin />
@@ -82,12 +80,8 @@ const CollapsedSearchBar = ({
           : "Anytime"}
       </span>
       <span className={collapsedItemsClassName}>
-        <FaSkiing />
+        {sport ? sportMap[sport].icon(<div />) : <FaDice />}
         {sport ?? "Any Sport"}
-      </span>
-      <span className={collapsedItemsClassName}>
-        <FaTrophy />
-        {experience ?? "Any Experience"}
       </span>
     </div>
   );
@@ -104,9 +98,19 @@ const MainSearchbar = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locationSelectorRef = useRef<HTMLButtonElement>(null);
+  const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
 
   const form = useForm<z.infer<typeof MainSearchFormSchema>>({
     resolver: zodResolver(MainSearchFormSchema),
+    defaultValues: {
+      location: null,
+      rentPeriod: {
+        from: undefined,
+        to: undefined,
+      },
+      sport: undefined,
+    },
   });
 
   const handleSearch = async (data: z.infer<typeof MainSearchFormSchema>) => {
@@ -114,7 +118,6 @@ const MainSearchbar = ({
     const searchParams = new URLSearchParams();
 
     if (data.sport) searchParams.append("sport", data.sport);
-    if (data.experience) searchParams.append("experience", data.experience);
     if (data.rentPeriod?.from)
       searchParams.append(
         "rentFrom",
@@ -135,8 +138,33 @@ const MainSearchbar = ({
   };
 
   useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      if (name === "location" && type === "change" && value.location) {
+        setIsDatePopoverOpen(true);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  useEffect(() => {
+    if (collapsed) {
+      if (isDatePopoverOpen) {
+        setIsDatePopoverOpen(false);
+      }
+      const currentValues = form.getValues();
+      const sport = searchParams.get("sport");
+      const rentFrom = searchParams.get("rentFrom");
+      const rentTill = searchParams.get("rentTill");
+      const locationId = searchParams.get("locationId");
+
+      if (!sport) form.resetField("sport");
+      if (!rentFrom || !rentTill) form.resetField("rentPeriod");
+      if (!locationId) form.resetField("location");
+    }
+  }, [collapsed, searchParams]);
+
+  useEffect(() => {
     const sport = searchParams.get("sport");
-    const experience = searchParams.get("experience");
     const rentFrom = searchParams.get("rentFrom");
     const rentTill = searchParams.get("rentTill");
     const locationId = searchParams.get("locationId");
@@ -145,7 +173,6 @@ const MainSearchbar = ({
     const radius = searchParams.get("radius");
 
     if (sport) form.setValue("sport", sport);
-    if (experience) form.setValue("experience", experience);
 
     if (rentFrom && rentTill) {
       form.setValue("rentPeriod", {
@@ -172,15 +199,21 @@ const MainSearchbar = ({
         location={form.getValues().location?.name}
         from={form.getValues().rentPeriod?.from}
         to={form.getValues().rentPeriod?.to}
-        experience={form.getValues()?.experience}
         sport={form.getValues()?.sport}
         collapsed={collapsed}
-        setCollapsed={setCollapsed}
+        onClick={() => {
+          setCollapsed(false);
+          if (locationSelectorRef.current) {
+            locationSelectorRef.current.click();
+          }
+        }}
       />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSearch)}
-          onClick={() => setIsSearchActive(true)}
+          onClick={() => {
+            setIsSearchActive(true);
+          }}
           className={clsx(
             " rounded-md text-black flex animate-in items-center p-2 transition-all delay-75 ease-out",
             collapsed
@@ -197,6 +230,7 @@ const MainSearchbar = ({
                   Location
                 </FormLabel>
                 <LocationPicker
+                  triggerRef={locationSelectorRef}
                   setSearchLocation={field.onChange}
                   searchLocation={field.value}
                   isForm={true}
@@ -212,12 +246,16 @@ const MainSearchbar = ({
                 <FormLabel className="text-gray-400 pt-1 text-xs">
                   Rent period
                 </FormLabel>
-                <Popover>
+                <Popover
+                  open={isDatePopoverOpen}
+                  onOpenChange={setIsDatePopoverOpen}
+                >
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
                         id="date"
                         variant={"outline"}
+                        onClick={() => setIsDatePopoverOpen(!isDatePopoverOpen)}
                         className={clsx(
                           "w-full justify-start text-left font-normal",
                           !date && "text-muted-foreground",
@@ -267,56 +305,18 @@ const MainSearchbar = ({
                   <FormControl>
                     <SelectTrigger id="sport" className="py-4 capitalize">
                       <SelectValue
-                        placeholder={field.value ?? "Select Sport"}
+                        placeholder={"Select Sport"}
                         className="outline-none"
                       />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent position="popper">
-                    {sportMap.map((category) => (
-                      <SelectItem
-                        key={category}
-                        value={category}
-                        className="capitalize"
-                      >
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="experience"
-            render={({ field }) => (
-              <FormItem className="w-48 px-2 border-r border-gray-100 flex flex-col gap-0.5">
-                <FormLabel className="text-gray-400 text-xs">
-                  Experience
-                </FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger id="experience" className="py-4 capitalize">
-                      <SelectValue
-                        placeholder={field.value ?? "Select Experience"}
-                        className="outline-none"
-                      />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent position="popper">
-                    {expertiseMap.map((experience) => (
-                      <SelectItem
-                        key={experience}
-                        value={experience}
-                        className="capitalize"
-                        onSelect={() => field.onChange(experience)}
-                      >
-                        {experience}
+                    {Object.entries(sportMap).map(([category, value]) => (
+                      <SelectItem key={category} value={category}>
+                        <div className="flex items-center gap-2">
+                          <value.icon className="text-muted" />
+                          {value.name}
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>

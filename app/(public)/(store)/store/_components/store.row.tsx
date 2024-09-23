@@ -12,11 +12,9 @@ import { FaLocationPin } from "react-icons/fa6";
 
 const StoreRow = ({
   store,
-  loading,
   showFooter = true,
 }: {
   store: StoreType;
-  loading: boolean;
   showFooter?: boolean;
 }) => {
   const router = useRouter();
@@ -60,11 +58,9 @@ const StoreRow = ({
     fetchLocationString();
   }, [store.latitude, store.longitude]);
 
-  return loading ? (
-    <ListingsCardSkeleton />
-  ) : (
+  return (
     <Card
-      className="w-full flex gap-2 min-h-32"
+      className="w-full flex gap-2 min-h-32 hover:bg-background/10"
       role="button"
       onClick={handleClick}
     >
@@ -72,7 +68,7 @@ const StoreRow = ({
         <div className="w-40 h-full">
           <img
             src={store.store_img || "/store_placeholder_img.png"}
-            alt={store.store_img || "sfsf"}
+            alt={store.store_img || "store"}
             className="h-full w-full object-cover rounded-md"
           />
         </div>

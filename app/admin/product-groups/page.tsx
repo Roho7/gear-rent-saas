@@ -1,5 +1,6 @@
 "use client";
 import { useProducts } from "@/app/_providers/useProducts";
+import { createClientComponentClient } from "@/app/_utils/supabase";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,29 +35,26 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { updateProductGroup } from "../_actions/product-group.admin.actions";
 
-const formSchema = z.object({
+const EditProductGroupFormSchema = z.object({
   sport: z.string().min(1, { message: "Sport is required." }),
   product_group_name: z
     .string()
     .min(1, { message: "Product group name is required." }),
   sizes: z.string(),
   brands: z.string(),
-  image_url: z
-    .string()
-    .url({ message: "Must be a valid URL." })
-    .nullable()
-    .or(z.literal("")),
+  image: z.instanceof(File).optional().or(z.literal("")),
+  types: z.string().optional(),
 });
 
 const ProductGroupsPage = () => {
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(EditProductGroupFormSchema),
     defaultValues: {
       sport: "",
       product_group_name: "",
       sizes: "",
       brands: "",
-      image_url: "",
+      image: undefined,
     },
   });
   const { productGroups, fetchAndCacheProductGroups } = useProducts();
@@ -72,28 +70,70 @@ const ProductGroupsPage = () => {
       product_group_name: group.product_group_name || "",
       sizes: group.sizes?.join(", ") || "",
       brands: group.brands?.join(", ") || "",
-      image_url: group.image_url || "",
+      image: undefined,
     });
     setIsDialogOpen(true);
   };
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const uploadImage = async (
+    file: File,
+    sport: string,
+    productGroupId: string,
+  ): Promise<string | null> => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${sport}/${productGroupId}.${fileExt}`;
+    const supabase = createClientComponentClient();
+    const { data, error } = await supabase.storage
+      .from("product_thumbnails")
+      .upload(fileName, file);
+    console.log(data);
+    if (error) {
+      throw new Error(error.message);
+    }
+    console.log(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public${data.fullPath}`,
+    );
+    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`;
+  };
+
+  const onSubmit = async (data: z.infer<typeof EditProductGroupFormSchema>) => {
     try {
       if (!selectedGroup?.product_group_id) {
         throw new Error("No product group selected");
       }
+      let imageUrl = "";
+      if (data.image instanceof File) {
+        const uploadedUrl = await uploadImage(
+          data.image,
+          data.sport,
+          selectedGroup.product_group_id,
+        );
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+        } else {
+          throw new Error("Failed to upload image");
+        }
+      }
       const updatedData = {
         ...data,
+        image: undefined,
+        image_url: imageUrl,
         product_group_id: selectedGroup.product_group_id,
         sizes: data.sizes.split(",").map((size) => size.trim()),
         brands: data.brands.split(",").map((brand) => brand.trim()),
+        types: data.types?.split(",").map((type) => type.trim()) || [],
       };
+      console.log(updatedData);
       await updateProductGroup(updatedData);
       setIsDialogOpen(false);
       toast({ title: "Product group updated successfully" });
       fetchAndCacheProductGroups(true); // Refresh the list
-    } catch (error) {
-      toast({ title: "Error updating product group", variant: "destructive" });
+    } catch (error: any) {
+      toast({
+        title: "Error updating product group",
+        description: error.message ?? "",
+        variant: "destructive",
+      });
     }
   };
 
@@ -213,12 +253,22 @@ const ProductGroupsPage = () => {
               />
               <FormField
                 control={form.control}
-                name="image_url"
-                render={({ field }) => (
+                name="image"
+                render={({ field: { value, onChange, ...field } }) => (
                   <FormItem>
-                    <FormLabel>Image URL</FormLabel>
+                    <FormLabel>Image</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter image URL" {...field} />
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            onChange(file);
+                          }
+                        }}
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription>
                       The URL of the image for this product group.

@@ -178,7 +178,7 @@ const ProductRow = ({
               </SelectTrigger>
               <SelectContent position="popper">
                 <SelectGroup>
-                  {sportMap.map((category) => (
+                  {Object.entries(sportMap).map(([category, values]) => (
                     <SelectItem key={category} value={category}>
                       {category}
                     </SelectItem>

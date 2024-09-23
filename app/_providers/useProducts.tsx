@@ -227,58 +227,31 @@ export const ProductProvider = ({
     setLoading(false);
   };
 
-  const fetchAndCacheProductGroups = async (refresh: boolean = false) => {
-    const db = await dbPromise;
-    const cachedData = await db?.getAll("product_groups");
-    setLoading(true);
-    const last_updated_at = localStorage.getItem(
-      "product_groups_last_updated_at",
-    );
+  const fetchProductGroups = async () => {
+    console.log("Fetching product groups from Supabase");
+    const { data, error } = await supabase
+      .from("tbl_product_groups")
+      .select("*");
 
-    if (
-      cachedData.length &&
-      !refresh &&
-      !dayjs(last_updated_at).isBefore(dayjs().subtract(15, "minutes"))
-    ) {
-      console.log("Using cached product groups data");
-      setProductGroups(cachedData);
+    if (error) {
+      console.error("Error fetching product groups:", error);
     } else {
-      console.log("Fetching product groups from Supabase");
-      const { data, error } = await supabase
-        .from("tbl_product_groups")
-        .select("*");
-
-      localStorage.setItem(
-        "product_groups_last_updated_at",
-        new Date().toISOString(),
+      const sortedData = data.sort((a, b) =>
+        a.product_group_id.localeCompare(b.product_group_id),
       );
-      if (error) {
-        console.error("Error fetching product groups:", error);
-      } else {
-        const sortedData = data.sort((a, b) =>
-          a.product_group_id.localeCompare(b.product_group_id),
-        );
-        setProductGroups(sortedData);
-        const txn = db.transaction("product_groups", "readwrite");
-        await Promise.all(
-          sortedData.map((d: ProductGroupType) => {
-            return txn.store.put(d);
-          }),
-        );
-      }
+      setProductGroups(sortedData);
     }
+
     setLoading(false);
   };
 
   const fetchListings = async ({
-    experience,
     sport,
     rentPeriod,
     location,
     storeId,
   }: MainSearchFormOutputType) => {
     const res = await searchListings({
-      experience,
       sport,
       rentPeriod,
       location,
@@ -291,7 +264,7 @@ export const ProductProvider = ({
   const fetchData = useCallback(async () => {
     await fetchAndCacheProducts();
     await fetchAndCacheStores();
-    await fetchAndCacheProductGroups();
+    await fetchProductGroups();
   }, []);
 
   const handleProductMetadataUpdate = useCallback(
@@ -400,7 +373,7 @@ export const ProductProvider = ({
       setAvailableListings,
       fetchListings,
       productGroups,
-      fetchAndCacheProductGroups,
+      fetchAndCacheProductGroups: fetchProductGroups,
     }),
     [
       cartItems,

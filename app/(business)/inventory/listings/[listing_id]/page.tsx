@@ -23,7 +23,7 @@ import { toast } from "@/components/ui/use-toast";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -31,6 +31,7 @@ import { addInventoryItem } from "@/app/(business)/_actions/add.listing.action";
 import { useInventory } from "@/app/(business)/_providers/useInventory";
 import BackButton from "@/app/_components/_shared/back-button";
 import { useProducts } from "@/app/_providers/useProducts";
+import { formatProductName } from "@/lib/utils";
 import { AddListingFormSchema } from "@/src/entities/models/formSchemas";
 import { genderMap } from "@/src/entities/models/product";
 import DiscountCombobox from "../../_components/discount.combobox";
@@ -78,6 +79,28 @@ const AddListingPage = () => {
   /**
    * * - Functions
    */
+  const fetchInventoryItem = async (inventoryId: string) => {
+    const item = await getInventoryItem(inventoryId);
+
+    if (!item) {
+      console.error("No inventory item found while fetching data");
+      return;
+    }
+    // Update form values with fetched data
+    form.reset({
+      product_group_id: item?.product_group_id || "",
+      description: item?.description || "",
+      currency_code: item?.currency_code || "USD",
+      base_price: item?.base_price || 0,
+      price_granularity: item.price_granularity || "daily",
+      discount_1: item?.discount_1 || 0,
+      discount_2: item?.discount_2 || 0,
+      discount_3: item?.discount_3 || 0,
+      size: item?.size || "",
+      brands: item?.brands || [],
+      type: item?.type || "",
+    });
+  };
 
   async function onSubmit(data: z.infer<typeof AddListingFormSchema>) {
     try {
@@ -128,6 +151,24 @@ const AddListingPage = () => {
    * * - Effects
    */
 
+  const productTitle = useMemo(() => {
+    const productGroupDetails = productGroups.find(
+      (p) => p.product_group_id === form.getValues("product_group_id"),
+    );
+    return formatProductName({
+      product_group_name: productGroupDetails?.product_group_name || "",
+      size: form.getValues("size"),
+      type: form.getValues("type"),
+      gender: form.getValues("gender"),
+      sport: productGroupDetails?.sport || "",
+    });
+  }, [
+    form.watch("product_group_id"),
+    form.watch("size"),
+    form.watch("type"),
+    form.watch("gender"),
+  ]);
+
   useEffect(() => {
     updateDiscountedPrices();
   }, [
@@ -139,28 +180,6 @@ const AddListingPage = () => {
     form.watch("currency_code"),
     form.watch("price_granularity"),
   ]);
-
-  const fetchInventoryItem = async (inventoryId: string) => {
-    const item = await getInventoryItem(inventoryId);
-
-    if (!item) {
-      console.error("No inventory item found while fetching data");
-      return;
-    }
-    // Update form values with fetched data
-    form.reset({
-      product_group_id: item?.product_group_id || "",
-      description: item?.description || "",
-      currency_code: item?.currency_code || "USD",
-      base_price: item?.base_price || 0,
-      price_granularity: item.price_granularity || "daily",
-      discount_1: item?.discount_1 || 0,
-      discount_2: item?.discount_2 || 0,
-      discount_3: item?.discount_3 || 0,
-      size: item?.size || "",
-      brands: item?.brands || [],
-    });
-  };
 
   useEffect(() => {
     if (params.listing_id && params.listing_id !== "new") {
@@ -379,6 +398,34 @@ const AddListingPage = () => {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel className="text-gray-700">Type</FormLabel>
+                        <FormControl>
+                          <SingleSelectCombobox
+                            data={
+                              productGroups.find(
+                                (p) =>
+                                  p.product_group_id ===
+                                  form.getValues("product_group_id"),
+                              )?.types || []
+                            }
+                            value={field.value}
+                            setValue={form.setValue.bind(null, "type")}
+                            emptyMessage="Select a type"
+                            hasSearch={true}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          The type that describes the product
+                        </FormDescription>
+                        <FormMessage className="text-red-700" />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <FormField
                   control={form.control}
@@ -483,10 +530,12 @@ const AddListingPage = () => {
             </Form>
           </CardContent>
         </Card>
-        <Card className="w-1/3">
+        <Card className="w-1/3 sticky top-1/2 -translate-y-1/2 h-fit">
           <CardHeader className="flex gap-2">
             <CardTitle>Preview</CardTitle>
-            <CardDescription></CardDescription>
+            <CardDescription className="capitalize">
+              {productTitle}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ul>

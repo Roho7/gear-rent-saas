@@ -7,7 +7,6 @@ import { Separator } from "@/components/ui/separator";
 import {
   expertiseMap,
   genderMap,
-  sportMap,
   styleMap,
 } from "@/src/entities/models/product";
 
@@ -35,7 +34,7 @@ const StoreSidebar = () => {
         <h2 className="text-gray-400 flex items-center gap-2 my-2">
           <BiFilterAlt className="" /> Filters
         </h2>
-        {sportMap.map((d) => (
+        {/* {sportMap.map((d) => (
           <div className="flex gap-1 text-sm items-center" key={d}>
             <Checkbox
               checked={productFilters.category.includes(d)}
@@ -53,7 +52,7 @@ const StoreSidebar = () => {
               {d}
             </Label>
           </div>
-        ))}
+        ))} */}
         <Separator className="my-2" />
         {genderMap.map((d) => (
           <div className="flex gap-1 text-sm items-center" key={d}>

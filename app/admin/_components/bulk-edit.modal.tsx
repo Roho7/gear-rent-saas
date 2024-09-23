@@ -1,4 +1,3 @@
-import DropdownSelector from "@/app/_components/_shared/dropdown-selector";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -25,7 +24,6 @@ import {
   expertiseMap,
   genderMap,
   metadataOptions,
-  sportMap,
 } from "@/src/entities/models/product";
 import { GenderType, ProductMetadataType } from "@/src/entities/models/types";
 import { useState } from "react";
@@ -110,11 +108,11 @@ export function BulkEditModal({ productIds }: { productIds: string[] }) {
           <DialogTitle>Edit Metadata</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <DropdownSelector
+          {/* <DropdownSelector
             data={sportMap}
             onValueChange={setProductCategory}
             value={productCategory}
-          />
+          /> */}
           <div>
             <Label htmlFor="market_price">Market Price</Label>
             <Input
