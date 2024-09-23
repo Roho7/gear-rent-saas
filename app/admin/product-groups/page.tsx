@@ -55,6 +55,7 @@ const ProductGroupsPage = () => {
       sizes: "",
       brands: "",
       image: undefined,
+      types: "",
     },
   });
   const { productGroups, fetchAndCacheProductGroups } = useProducts();
@@ -70,6 +71,7 @@ const ProductGroupsPage = () => {
       product_group_name: group.product_group_name || "",
       sizes: group.sizes?.join(", ") || "",
       brands: group.brands?.join(", ") || "",
+      types: group.types?.join(", ") || "",
       image: undefined,
     });
     setIsDialogOpen(true);
@@ -90,9 +92,6 @@ const ProductGroupsPage = () => {
     if (error) {
       throw new Error(error.message);
     }
-    console.log(
-      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public${data.fullPath}`,
-    );
     return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data.fullPath}`;
   };
 
@@ -123,7 +122,6 @@ const ProductGroupsPage = () => {
         brands: data.brands.split(",").map((brand) => brand.trim()),
         types: data.types?.split(",").map((type) => type.trim()) || [],
       };
-      console.log(updatedData);
       await updateProductGroup(updatedData);
       setIsDialogOpen(false);
       toast({ title: "Product group updated successfully" });
@@ -143,20 +141,32 @@ const ProductGroupsPage = () => {
       <Table containerClassName="max-h-[82vh] overflow-y-scroll">
         <TableHeader className="sticky w-full top-0 h-10 border-b-2 border-border bg-background">
           <TableRow>
+            <TableHead></TableHead>
             <TableHead>Sport</TableHead>
             <TableHead>Product Group Name</TableHead>
             <TableHead>Sizes</TableHead>
             <TableHead>Brands</TableHead>
+            <TableHead>Types</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="overflow-y-auto h-[500px] w-full">
           {productGroups.map((group) => (
             <TableRow key={group.product_group_id}>
+              <TableCell>
+                <div className="h-10 w-10">
+                  <img
+                    src={group.image_url || "/placeholder_image.png"}
+                    className="w-full object-cover"
+                    alt="pic"
+                  />
+                </div>
+              </TableCell>
               <TableCell>{group.sport}</TableCell>
               <TableCell>{group.product_group_name}</TableCell>
               <TableCell>{group?.sizes?.join(", ")}</TableCell>
               <TableCell>{group?.brands?.join(", ")}</TableCell>
+              <TableCell>{group?.types?.join(", ")}</TableCell>
               <TableCell>
                 <Button
                   size="sm"
@@ -171,13 +181,16 @@ const ProductGroupsPage = () => {
         </TableBody>
       </Table>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} modal={true}>
+        <DialogContent className="min-w-[70vw] ">
           <DialogHeader>
             <DialogTitle>Edit Product Group</DialogTitle>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8 max-h-[80vh] overflow-y-scroll px-2"
+            >
               <FormField
                 control={form.control}
                 name="sport"
@@ -251,6 +264,28 @@ const ProductGroupsPage = () => {
                   </FormItem>
                 )}
               />
+              <div className="flex gap-2 w-full">
+                <FormField
+                  control={form.control}
+                  name="types"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Types</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="e.g. Freestyle, Racing, etc."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Available types for this product group
+                        (comma-separated).
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="image"
@@ -270,9 +305,6 @@ const ProductGroupsPage = () => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      The URL of the image for this product group.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
