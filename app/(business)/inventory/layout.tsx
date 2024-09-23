@@ -10,9 +10,9 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
   return user?.store_id ? (
     <div className="grid h-screen overflow-hiddenmd:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] max-w-screen">
       <InventorySidebar />
-      <div className="flex flex-col overflow-y-auto overflow-x-hidden">
+      <div className="flex flex-col overflow-hidden max-h-screen">
         <InventoryHeader />
-        {children}
+        <main className="h-full overflow-y-scroll">{children}</main>
       </div>
     </div>
   ) : (

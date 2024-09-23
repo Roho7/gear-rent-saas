@@ -18,7 +18,7 @@ const QuantityCounter = ({ quantity, setQuantity, availableUnits }: Props) => {
         <Button
           size={"xs"}
           className="rounded-full"
-          onClick={() => setQuantity((prev) => (prev > 0 ? quantity - 1 : 0))}
+          onClick={() => setQuantity((prev) => (prev > 1 ? quantity - 1 : 1))}
         >
           <BiMinus />
         </Button>

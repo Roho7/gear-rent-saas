@@ -54,6 +54,7 @@ export function ListingTable({ data }: { data: ListingType[] }) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
+  const [globalFilter, setGlobalFilter] = React.useState("");
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -278,6 +279,7 @@ export function ListingTable({ data }: { data: ListingType[] }) {
       columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter,
     },
   });
 
@@ -285,17 +287,9 @@ export function ListingTable({ data }: { data: ListingType[] }) {
     <div className="w-full ">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter listings..."
-          value={
-            (table
-              .getColumn("product_group_name")
-              ?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table
-              .getColumn("product_group_name")
-              ?.setFilterValue(event.target.value)
-          }
+          placeholder="Search all columns..."
+          value={globalFilter ?? ""}
+          onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
