@@ -10,6 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -23,6 +24,7 @@ interface InventoryContextValue {
   businessUser: GearyoUser | undefined;
   isLoading: boolean;
   handleDeleteListing: (listing_id: string) => void;
+  refreshBusinessData: () => Promise<void>;
 }
 
 const InventoryContext = createContext<InventoryContextValue | undefined>(
@@ -32,9 +34,11 @@ const InventoryContext = createContext<InventoryContextValue | undefined>(
 export const InventoryProvider = ({
   business,
   children,
+  refreshBusiness,
 }: {
   business: BusinessType | null;
   children: React.ReactNode;
+  refreshBusiness: () => Promise<void>;
 }) => {
   const [storeDetails, setStoreDetails] = useState<StoreType>();
   const [inventory, setInventory] = useState<ListingType[]>();
@@ -49,7 +53,8 @@ export const InventoryProvider = ({
         toast({
           title: message,
         });
-        router.back();
+        refreshBusinessData();
+        router.push("/inventory/listings");
       }
     } catch (error: any) {
       toast({
@@ -59,6 +64,15 @@ export const InventoryProvider = ({
       });
     }
   };
+
+  const refreshBusinessData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      await refreshBusiness();
+    } finally {
+      setIsLoading(false);
+    }
+  }, [refreshBusiness]);
 
   useEffect(() => {
     setStoreDetails(business?.store);
@@ -73,8 +87,9 @@ export const InventoryProvider = ({
       businessUser,
       isLoading,
       handleDeleteListing,
+      refreshBusinessData,
     }),
-    [inventory, storeDetails, isLoading, business],
+    [inventory, storeDetails, isLoading, business, refreshBusinessData],
   );
   return (
     <InventoryContext.Provider value={value}>

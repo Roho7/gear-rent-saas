@@ -47,7 +47,7 @@ const AddListingPage = () => {
 
   const { user } = useAuth();
   const { productGroups } = useProducts();
-  const { handleDeleteListing } = useInventory();
+  const { handleDeleteListing, refreshBusinessData } = useInventory();
   const params = useParams<{ listing_id: string }>();
   const router = useRouter();
 
@@ -96,6 +96,7 @@ const AddListingPage = () => {
       discount_1: item?.discount_1 || 0,
       discount_2: item?.discount_2 || 0,
       discount_3: item?.discount_3 || 0,
+      total_units: item?.total_units || 1,
       size: item?.size || "",
       brands: item?.brands || [],
       type: item?.type || "",
@@ -120,6 +121,7 @@ const AddListingPage = () => {
               ? "Listing updated successfully"
               : "Listing added successfully",
         });
+        refreshBusinessData();
         router.back();
       }
     } catch (error: any) {
@@ -346,7 +348,11 @@ const AddListingPage = () => {
                         <Input
                           placeholder="Type here"
                           type="number"
-                          // {...field}
+                          min={1}
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(e.target.valueAsNumber)
+                          }
                         />
                       </FormControl>
                       <FormDescription>

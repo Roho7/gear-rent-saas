@@ -31,7 +31,7 @@ export const AddListingFormSchema = z.object({
   discount_1: z.number().min(0, { message: "Please enter a valid discount" }),
   discount_2: z.number().min(0, { message: "Please enter a valid discount" }),
   discount_3: z.number().min(0, { message: "Please enter a valid discount" }),
-  total_units: z.number().nullable(),
+  total_units: z.number().int().nonnegative(),
   size: z.string().min(1, { message: "Please enter a size" }),
   brands: z.array(z.string()).optional(),
   gender: z.enum(["male", "female", "unisex"]).optional(),
