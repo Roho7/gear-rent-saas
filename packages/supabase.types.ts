@@ -133,6 +133,7 @@ export type Database = {
           size: string | null
           store_id: string | null
           total_units: number | null
+          type: string | null
         }
         Insert: {
           available_units?: number | null
@@ -153,6 +154,7 @@ export type Database = {
           size?: string | null
           store_id?: string | null
           total_units?: number | null
+          type?: string | null
         }
         Update: {
           available_units?: number | null
@@ -173,6 +175,7 @@ export type Database = {
           size?: string | null
           store_id?: string | null
           total_units?: number | null
+          type?: string | null
         }
         Relationships: [
           {
@@ -199,6 +202,7 @@ export type Database = {
           product_group_name: string | null
           sizes: string[] | null
           sport: string
+          types: string[] | null
         }
         Insert: {
           brands?: string[] | null
@@ -207,6 +211,7 @@ export type Database = {
           product_group_name?: string | null
           sizes?: string[] | null
           sport: string
+          types?: string[] | null
         }
         Update: {
           brands?: string[] | null
@@ -215,6 +220,7 @@ export type Database = {
           product_group_name?: string | null
           sizes?: string[] | null
           sport?: string
+          types?: string[] | null
         }
         Relationships: []
       }

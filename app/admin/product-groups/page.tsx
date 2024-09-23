@@ -46,6 +46,7 @@ const formSchema = z.object({
     .url({ message: "Must be a valid URL." })
     .nullable()
     .or(z.literal("")),
+  types: z.string().optional(),
 });
 
 const ProductGroupsPage = () => {
@@ -87,6 +88,7 @@ const ProductGroupsPage = () => {
         product_group_id: selectedGroup.product_group_id,
         sizes: data.sizes.split(",").map((size) => size.trim()),
         brands: data.brands.split(",").map((brand) => brand.trim()),
+        types: data.types?.split(",").map((type) => type.trim()) || [],
       };
       await updateProductGroup(updatedData);
       setIsDialogOpen(false);

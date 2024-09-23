@@ -36,6 +36,7 @@ export const AddListingFormSchema = z.object({
   size: z.string().min(1, { message: "Please enter a size" }),
   brands: z.array(z.string()).optional(),
   gender: z.enum(["male", "female", "unisex"]).optional(),
+  type: z.string().optional(),
 });
 
 const CheckoutUserSchema = z.object({

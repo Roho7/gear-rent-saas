@@ -1,4 +1,4 @@
-import { PriceGranularityType } from "@/src/entities/models/types";
+import { GenderType, PriceGranularityType } from "@/src/entities/models/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -28,4 +28,20 @@ export function formatPriceGranularity(
     return null;
   }
   return priceGranularity === "daily" ? "/ day" : "/ hour";
+}
+
+export function formatProductName(
+  { product_group_name, sport, gender, size, type }: {
+    product_group_name?: string | null;
+    sport?: string | null;
+    gender?: GenderType;
+    size: string | null;
+    type?: string | null;
+  },
+) {
+  return !product_group_name
+    ? "-"
+    : `${product_group_name} - ${type ? type : ""} ${gender ? gender : ""}${
+      size ? ` ${size} | ` : ""
+    } ${sport ? `${sport}` : ""}`;
 }

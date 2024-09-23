@@ -11,20 +11,20 @@ import React, {
 import { getInventory } from "../_actions/admin.actions";
 
 interface AdminContext {
-  allInventory: ListingType[] | undefined;
+  allListings: ListingType[] | undefined;
   isLoading: boolean;
 }
 
 const AdminContext = createContext<AdminContext | undefined>(undefined);
 
 export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
-  const [allInventory, setAllInventory] = useState<ListingType[]>();
+  const [allListings, setAllListings] = useState<ListingType[]>();
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchAllInventory = async () => {
     setIsLoading(true);
     const res = await getInventory();
-    setAllInventory(res.data as ListingType[]);
+    setAllListings(res.data as ListingType[]);
     setIsLoading(false);
   };
 
@@ -34,10 +34,10 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
   const value: AdminContext = useMemo(
     () => ({
-      allInventory,
+      allListings,
       isLoading,
     }),
-    [allInventory, isLoading],
+    [allListings, isLoading],
   );
   return (
     <AdminContext.Provider value={value}>{children}</AdminContext.Provider>
