@@ -7,8 +7,7 @@ import { cookies } from "next/headers";
 import { createServerActionClient } from "../_utils/supabase";
 
 export async function searchListings(
-  { location, rentPeriod, experience, sport, storeId }:
-    MainSearchFormOutputType,
+  { location, rentPeriod, sport, storeId }: MainSearchFormOutputType,
 ): Promise<AvailableListingsType[]> {
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
