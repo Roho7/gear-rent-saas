@@ -246,14 +246,12 @@ export const ProductProvider = ({
   };
 
   const fetchListings = async ({
-    experience,
     sport,
     rentPeriod,
     location,
     storeId,
   }: MainSearchFormOutputType) => {
     const res = await searchListings({
-      experience,
       sport,
       rentPeriod,
       location,

@@ -32,7 +32,7 @@ const StoreListingRow = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { allProducts, allStores, productGroups } = useProducts();
+  const { allStores, productGroups } = useProducts();
   const [locationString, setLocationString] = useState<string>("Loading...");
 
   const handleClick = () => {
@@ -103,8 +103,8 @@ const StoreListingRow = ({
       <CardHeader>
         <div className="w-40 h-40">
           <img
-            src={productDetails?.image_url || ""}
-            alt="img"
+            src={productDetails?.image_url || "/placeholder_image.png"}
+            alt="product"
             className=" object-cover rounded-md"
           />
         </div>

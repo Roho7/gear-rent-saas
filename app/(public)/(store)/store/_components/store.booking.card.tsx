@@ -8,11 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formatPrice, formatPriceGranularity } from "@/lib/utils";
-import { ListingType } from "@/src/entities/models/types";
-
 import { Separator } from "@/components/ui/separator";
-import { PLATFORM_FEE } from "@/src/entities/models/constants";
+import {
+  formatPrice,
+  formatPriceGranularity,
+  getTotalPriceWithPlatformFee,
+} from "@/lib/utils";
+import { ListingType } from "@/src/entities/models/types";
 import { differenceInDays } from "date-fns";
 import dayjs from "dayjs";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -103,8 +105,8 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
     return granularPrice * duration * quantity;
   }, [granularPrice, duration, quantity]);
 
-  const totalPriceAfterPlatformFee = useMemo(() => {
-    return totalPriceBeforePlatformFee * (1 + PLATFORM_FEE);
+  const totalPriceWithPlatformFee = useMemo(() => {
+    return getTotalPriceWithPlatformFee(totalPriceBeforePlatformFee);
   }, [totalPriceBeforePlatformFee]);
 
   return (
@@ -154,7 +156,7 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
           <span>Platform fee</span>
           <span className="text-right text-primary text-sm">
             {formatPrice({
-              base_price: totalPriceBeforePlatformFee * PLATFORM_FEE,
+              base_price: totalPriceWithPlatformFee.platformFee,
               currency_code: listing.currency_code,
             })}
           </span>
@@ -164,7 +166,7 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
           <span>Total</span>
           <span className="text-right text-primary">
             {formatPrice({
-              base_price: totalPriceAfterPlatformFee,
+              base_price: totalPriceWithPlatformFee.total,
               currency_code: listing.currency_code,
             })}
           </span>

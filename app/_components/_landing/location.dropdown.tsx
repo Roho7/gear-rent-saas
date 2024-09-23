@@ -20,12 +20,14 @@ import { CommandList } from "cmdk";
 import { BiSearch } from "react-icons/bi";
 
 type Props = {
+  triggerRef?: React.RefObject<HTMLButtonElement>;
   isForm?: boolean;
   searchLocation: SearchLocationType | null;
   setSearchLocation: (location: SearchLocationType | null) => void;
 };
 
 const LocationPicker = ({
+  triggerRef,
   isForm = false,
   searchLocation,
   setSearchLocation,
@@ -39,6 +41,7 @@ const LocationPicker = ({
               variant="outline"
               role="combobox"
               className="justify-between"
+              ref={triggerRef}
             >
               {searchLocation?.name
                 ? searchLocation?.name
@@ -47,7 +50,12 @@ const LocationPicker = ({
             </Button>
           </FormControl>
         ) : (
-          <Button variant="outline" role="combobox" className="justify-between">
+          <Button
+            variant="outline"
+            role="combobox"
+            className="justify-between"
+            ref={triggerRef}
+          >
             {searchLocation?.name
               ? searchLocation?.name
               : "Search locations..."}

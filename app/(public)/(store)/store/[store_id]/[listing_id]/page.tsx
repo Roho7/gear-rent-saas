@@ -1,5 +1,4 @@
 "use client";
-import ProductRibbon from "@/app/_components/product-ribbon";
 import { useProducts } from "@/app/_providers/useProducts";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,12 +12,17 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
-import { ListingType, ProductMetadataKeys } from "@/src/entities/models/types";
+import {
+  GenderType,
+  ListingType,
+  ProductMetadataKeys,
+} from "@/src/entities/models/types";
 import { Map, Marker, useMarkerRef } from "@vis.gl/react-google-maps";
 import { useEffect, useMemo, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
+import { formatProductName } from "@/lib/utils";
 import { getSingleListingDetails } from "../../_actions/store-inventory.action";
 import StoreBookingCard from "../../_components/store.booking.card";
 
@@ -86,7 +90,7 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
         <Card className="flex-1 overflow-hidden">
           <CardContent className="pt-4">
             <img
-              src={productDetails.image_url || "/placeholder-image.jpg"}
+              src={productDetails?.image_url || "/placeholder_image.png"}
               alt={productDetails.product_group_name || ""}
               className="w-full h-[400px] object-contain"
             />
@@ -97,8 +101,13 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
           <CardHeader>
             <div className="flex justify-between items-start">
               <div>
-                <CardTitle className="text-3xl font-bold mb-2">
-                  {productDetails.product_group_name}
+                <CardTitle className="text-3xl font-bold mb-2 capitalize">
+                  {formatProductName({
+                    product_group_name: productDetails.product_group_name,
+                    gender: listing?.gender as GenderType,
+                    size: listing?.size,
+                    sport: productDetails.sport,
+                  })}
                 </CardTitle>
                 <Badge variant="secondary" className="mb-4">
                   {productDetails.sport}
@@ -130,18 +139,6 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
                 })}
                 Size: {listing?.size}cm
               </div>
-              {/* {productDetails.product_link && (
-                <div className="flex items-center">
-                  <a
-                    href={productDetails.product_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    More product details
-                  </a>
-                </div>
-              )} */}
             </div>
           </CardContent>
 
@@ -189,9 +186,7 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
         </div>
         {listing && <StoreBookingCard listing={listing} />}
       </section>
-      <section className="mt-12">
-        <ProductRibbon />
-      </section>
+
       {loading && (
         <div className="flex gap-2">
           <Skeleton className="h-48 w-72" />

@@ -10,7 +10,7 @@ type Props = {};
 
 const AdminDashboardPage = (props: Props) => {
   const { allProducts, allStores } = useProducts();
-  const { allInventory, isLoading } = useAdmin();
+  const { allListings, isLoading } = useAdmin();
 
   if (isLoading) {
     return <Spinner />;
@@ -33,7 +33,7 @@ const AdminDashboardPage = (props: Props) => {
           icon={<BiBox />}
         />
         <DashboardStat
-          value={allInventory?.length.toString() || "0"}
+          value={allListings?.length.toString() || "0"}
           title="Total Listings"
           description="Total number of products listed"
           icon={<BiListCheck />}

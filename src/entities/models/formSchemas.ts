@@ -4,7 +4,6 @@ import { SearchLocationType } from "./types";
 
 export const MainSearchFormSchema = z.object({
   sport: z.string().optional(),
-  experience: z.string().optional(),
   storeId: z.string().optional(),
   rentPeriod: z
     .object({
