@@ -54,38 +54,50 @@ export type Database = {
       }
       tbl_bookings: {
         Row: {
+          booking_customer_details: Json | null
           booking_date: string
           booking_id: string
+          booking_user_details: Json | null
           currency_code: string
           end_date: string
           listing_id: string
+          quantity: number | null
           start_date: string
-          status: Database["public"]["Enums"]["booking_status"]
+          status: Database["public"]["Enums"]["enum_booking_status"]
           store_id: string
+          stripe_invoice_id: string | null
           total_price: number
           user_id: string
         }
         Insert: {
+          booking_customer_details?: Json | null
           booking_date?: string
           booking_id?: string
+          booking_user_details?: Json | null
           currency_code: string
           end_date: string
           listing_id: string
+          quantity?: number | null
           start_date: string
-          status?: Database["public"]["Enums"]["booking_status"]
+          status: Database["public"]["Enums"]["enum_booking_status"]
           store_id: string
+          stripe_invoice_id?: string | null
           total_price: number
           user_id: string
         }
         Update: {
+          booking_customer_details?: Json | null
           booking_date?: string
           booking_id?: string
+          booking_user_details?: Json | null
           currency_code?: string
           end_date?: string
           listing_id?: string
+          quantity?: number | null
           start_date?: string
-          status?: Database["public"]["Enums"]["booking_status"]
+          status?: Database["public"]["Enums"]["enum_booking_status"]
           store_id?: string
+          stripe_invoice_id?: string | null
           total_price?: number
           user_id?: string
         }
@@ -3483,7 +3495,13 @@ export type Database = {
       }
     }
     Enums: {
-      booking_status: "pending" | "confirmed" | "completed" | "cancelled"
+      enum_booking_status:
+        | "payment_pending"
+        | "payment_failed"
+        | "payment_successful"
+        | "confirmed"
+        | "fulfilled"
+        | "cancelled"
       enum_genders: "male" | "female" | "unisex"
       enum_price_granularity_type: "daily" | "hourly"
     }

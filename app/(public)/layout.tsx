@@ -18,9 +18,11 @@ export default function PublicLayout({
   }
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!}>
-      <section className={"overflow-x-hidden min-h-screen relative"}>
+      <section
+        className={"overflow-x-hidden min-h-screen relative flex flex-col"}
+      >
         <Navbar />
-        <main className="px-8 py-4 mt-28">{children}</main>
+        <main className="px-8 py-4 mt-28 h-full flex-1">{children}</main>
         <Footer />
       </section>
     </APIProvider>

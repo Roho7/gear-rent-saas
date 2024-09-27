@@ -1,17 +1,18 @@
+import { stripe } from "@/app/_utils/stripe";
 import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
-const DOMAIN = "http://localhost:3000";
+const DOMAIN = process.env.NEXT_PUBLIC_VERCEL_ENV === "local"
+  ? "http://localhost:3000"
+  : process.env.NEXT_PUBLIC_GEARYO_DOMAIN;
 
 export async function POST(
   req: Request,
   res: NextApiResponse,
 ) {
   try {
-    const { productId, listingId, price, storeId, quantity } = await req.json();
+    const { productId, listingId, price, storeId, quantity, bookingId } =
+      await req.json();
 
     if (!productId) {
       return NextResponse.json(
@@ -48,6 +49,13 @@ export async function POST(
       );
     }
 
+    if (!bookingId) {
+      return NextResponse.json(
+        { error: "Missing required field: bookingId" },
+        { status: 400 },
+      );
+    }
+
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -64,12 +72,14 @@ export async function POST(
         },
       ],
       mode: "payment",
-      success_url: `${DOMAIN}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${DOMAIN}/cancel`,
+      success_url:
+        `${DOMAIN}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${DOMAIN}/checkout/failure`,
       metadata: {
         productId,
         storeId,
         listingId,
+        bookingId,
       },
     });
 

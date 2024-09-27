@@ -30,7 +30,9 @@ const UserDropdown = () => {
         <DropdownMenuItem onClick={() => router.push("/inventory")}>
           {user?.store_id ? "My store" : "Rent my gear"}
         </DropdownMenuItem>
-        <DropdownMenuItem>Support</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push("/support")}>
+          Support
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {

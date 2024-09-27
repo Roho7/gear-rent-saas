@@ -1,4 +1,6 @@
 import { Tables } from "@/packages/supabase.types";
+import { z } from "zod";
+import { GenderSchema, PriceGranularitySchema } from "./formSchemas";
 
 export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
   product_metadata: ProductMetadataType;
@@ -19,8 +21,8 @@ export type CartItemType = {
   };
 };
 
-export type PriceGranularityType = "daily" | "hourly";
-export type GenderType = "male" | "female" | "unisex";
+export type PriceGranularityType = z.infer<typeof PriceGranularitySchema>;
+export type GenderType = z.infer<typeof GenderSchema>;
 
 export type ProductMetadataKeys =
   | "sizes"

@@ -174,10 +174,12 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
 
         <Button
           className="w-full my-2"
-          disabled={!quantity || !duration || !granularPrice}
+          disabled={
+            !quantity || !duration || !granularPrice || !listing.available_units
+          }
           onClick={handleBookingBtnClick}
         >
-          Book Now
+          {!listing.available_units ? "Sold Out" : "Book Now"}
         </Button>
       </CardFooter>
     </Card>

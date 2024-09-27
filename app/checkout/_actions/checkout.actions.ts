@@ -1,6 +1,8 @@
 "use server";
 
 import { createServerActionClient } from "@/app/_utils/supabase";
+import { createServerResponse } from "@/lib/serverResponse";
+import { TablesInsert } from "@/packages/supabase.types";
 import { PLATFORM_FEE } from "@/src/entities/models/constants";
 import { cookies } from "next/headers";
 
@@ -49,9 +51,22 @@ export async function validateAndReturnBookingPrice(
   }
 }
 
-// export async function createBooking() {
-//   const cookieStore = cookies();
-//   const supabase = createServerActionClient({ cookies: cookieStore });
+export async function createBooking(
+  { data }: { data: TablesInsert<"tbl_bookings"> },
+) {
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: cookieStore });
 
-//   const { data, error } = await supabase.from("tbl_bookings").insert({});
-// }
+  const { data: bookings_data, error } = await supabase.from("tbl_bookings")
+    .insert(data).select().single();
+
+  if (error) {
+    throw error;
+  }
+
+  return createServerResponse({
+    success: true,
+    message: "Booking created",
+    data: bookings_data,
+  });
+}

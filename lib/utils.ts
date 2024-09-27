@@ -43,9 +43,11 @@ export function formatProductName(
 ) {
   return !product_group_name
     ? "-"
-    : `${product_group_name} - ${type ? type : ""} ${gender ? gender : ""}${
-      size ? ` ${size} | ` : ""
-    } ${sport ? `${sport}` : ""}`;
+    : `${product_group_name} - ${
+      type ? type.charAt(0).toUpperCase() + type.slice(1) : ""
+    } ${gender ? gender.charAt(0).toUpperCase() + gender.slice(1) : ""}${
+      size ? ` ${size.charAt(0).toUpperCase() + size.slice(1)} | ` : ""
+    } ${sport ? `${sport.charAt(0).toUpperCase() + sport.slice(1)}` : ""}`;
 }
 
 export function getTotalPriceWithPlatformFee(
@@ -53,9 +55,9 @@ export function getTotalPriceWithPlatformFee(
 ): { total: number; platformFee: number } {
   let returnedPrice = price;
   let totalPlatformFee = price * PLATFORM_FEE_PERCENT;
-  if (totalPlatformFee > PLATFORM_FEE_CAP) {
-    totalPlatformFee = PLATFORM_FEE_CAP;
-  }
+  // if (totalPlatformFee > PLATFORM_FEE_CAP) {
+  //   totalPlatformFee = PLATFORM_FEE_CAP;
+  // }
   returnedPrice = price + totalPlatformFee;
   return { total: returnedPrice, platformFee: totalPlatformFee };
 }

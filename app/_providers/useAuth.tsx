@@ -120,7 +120,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             description: "Logged in with Google successfully",
             variant: "default",
           });
-          router.push("/");
+          window.history.state && window.history.state.idx > 0
+            ? router.back()
+            : router.push("/");
         }
       } catch (error: any) {
         console.error(error);
@@ -167,7 +169,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } finally {
         setIsLoading(false);
-        router.push("/");
+        window.history.state && window.history.state.idx > 0
+          ? router.back()
+          : router.push("/");
       }
     },
     [fetchAndSetUser, supabase.auth],
@@ -193,7 +197,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             description: "You have successfully logged in",
             variant: "default",
           });
-          router.push("/");
+
+          window.history.state && window.history.state.idx > 0
+            ? router.back()
+            : router.push("/");
         }
       } catch (error: any) {
         console.error(error);

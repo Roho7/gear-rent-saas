@@ -100,14 +100,12 @@ const StoreListingRow = ({
       role="button"
       onClick={handleClick}
     >
-      <CardHeader>
-        <div className="w-40 h-40">
-          <img
-            src={productDetails?.image_url || "/placeholder_image.png"}
-            alt="product"
-            className=" object-cover rounded-md"
-          />
-        </div>
+      <CardHeader className="h-[300px] w-[500px]">
+        <img
+          src={productDetails?.image_url || "/placeholder_image.png"}
+          alt="product"
+          className="object-cover rounded-md w-full h-full"
+        />
       </CardHeader>
       <CardContent className="flex flex-col gap-2 w-full p-4">
         <h3 className="font-bold capitalize text-2xl">
