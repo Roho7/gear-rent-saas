@@ -31,7 +31,7 @@ const ListingItemCard = ({
       className="flex flex-col gap-2 hover:bg-card/10 h-fit"
       role="button"
       onClick={() => {
-        router.push(`/inventory/listings/${inventoryItem.listing_id}`);
+        router.push(`/business/listings/${inventoryItem.listing_id}`);
       }}
     >
       <CardHeader>

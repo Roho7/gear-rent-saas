@@ -86,7 +86,7 @@ const AdminSidebar = () => {
               href="#"
               className={clsx(
                 navItemClassName,
-                pathname === "/inventory/customers" && "bg-muted text-primary",
+                pathname === "/business/customers" && "bg-muted text-primary",
               )}
             >
               <Users className="h-4 w-4" />
@@ -96,7 +96,7 @@ const AdminSidebar = () => {
               href="#"
               className={clsx(
                 navItemClassName,
-                pathname === "/inventory/analytics" && "bg-muted text-primary",
+                pathname === "/business/analytics" && "bg-muted text-primary",
               )}
             >
               <LineChart className="h-4 w-4" />

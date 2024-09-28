@@ -8,8 +8,8 @@ import { toast } from "@/components/ui/use-toast";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { useAuth } from "../../_providers/useAuth";
-import { createClientComponentClient } from "../../_utils/supabase";
+import { useAuth } from "../_providers/useAuth";
+import { createClientComponentClient } from "../_utils/supabase";
 
 type Props = {};
 
@@ -30,7 +30,7 @@ const UserPage = (props: Props) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col gap-2 flex-1 px-4">
+    <div className="min-h-screen flex flex-col gap-2 flex-1">
       <BackButton />
       <Card>
         <CardHeader>
@@ -74,7 +74,7 @@ const UserPage = (props: Props) => {
             <span className="text-muted">Store Id:</span>{" "}
             <Badge variant="outline">{user?.store_id}</Badge>
             <p>
-              <Link href="/inventory" className="hover:underline text-muted">
+              <Link href="/business" className="hover:underline text-muted">
                 Go to store
               </Link>
             </p>

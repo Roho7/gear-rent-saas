@@ -10,7 +10,7 @@ const Footer = (props: Props) => {
           <Link href="/store">Shop</Link>
         </li>
         <li>
-          <Link href="/inventory">Business</Link>
+          <Link href="/business">Business</Link>
         </li>
         <li>
           <Link href="/seller">All Sellers</Link>

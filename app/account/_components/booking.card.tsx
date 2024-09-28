@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import MiniStoreCard from "../../(store)/store/_components/mini-store.card";
+import MiniStoreCard from "../../(public)/(store)/store/_components/mini-store.card";
 import BookingStatusBadge from "./booking-status.badge";
 
 type Props = {
@@ -66,7 +66,7 @@ const BookingCard = ({ bookingItem }: Props) => {
             src={
               productGroups.find(
                 (d) => d.product_group_id === bookingItem.product_group_id,
-              )?.image_url || ""
+              )?.image_url || "/placeholder_image.png"
             }
             alt=""
             className="h-full w-full object-contain rounded-md"

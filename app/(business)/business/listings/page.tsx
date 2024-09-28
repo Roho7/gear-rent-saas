@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
-import { useInventory } from "../../_providers/useInventory";
+import { useInventory } from "../../_providers/useBusiness";
 import { ListingTable } from "../_components/listing.table";
 
 const ListingsPage = () => {
@@ -14,7 +14,7 @@ const ListingsPage = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-lg font-semibold md:text-2xl">Your Listings</h1>
         <div className="flex gap-2">
-          <Button onClick={() => router.push(`/inventory/listings/${"new"}`)}>
+          <Button onClick={() => router.push(`/business/listings/${"new"}`)}>
             Add Listing
           </Button>
         </div>
@@ -32,7 +32,7 @@ const ListingsPage = () => {
               You can start selling as soon as you add a product.
             </p>
             <Button
-              onClick={() => router.push(`/inventory/listings/${"new"}`)}
+              onClick={() => router.push(`/business/listings/${"new"}`)}
               className="mt-4"
             >
               Add Listing

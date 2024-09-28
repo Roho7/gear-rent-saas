@@ -13,8 +13,8 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { fetchUser } from "../(public)/account/_actions/user.actions";
 import { createClientComponentClient } from "../_utils/supabase";
+import { fetchUser } from "../account/_actions/user.actions";
 
 interface AuthContextValue {
   handleSignUpWithEmail: (email: string, password: string) => Promise<void>;

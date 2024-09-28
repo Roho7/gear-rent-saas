@@ -17,7 +17,7 @@ import { EditStoreModal } from "./_components/edit-store.modal";
 
 import { useAuth } from "@/app/_providers/useAuth";
 import { useRef } from "react";
-import { useInventory } from "../_providers/useInventory";
+import { useInventory } from "../_providers/useBusiness";
 
 export default function BusinessDashboard() {
   const { storeDetails } = useInventory();

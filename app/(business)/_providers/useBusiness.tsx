@@ -16,9 +16,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { deleteListing } from "../inventory/listings/[listing_id]/_actions/inventory.actions";
+import { deleteListing } from "../business/listings/[listing_id]/_actions/inventory.actions";
 
-interface InventoryContextValue {
+interface BusinessContextValue {
   inventory: ListingType[] | undefined;
   storeDetails: StoreType | undefined;
   businessUser: GearyoUser | undefined;
@@ -27,11 +27,11 @@ interface InventoryContextValue {
   refreshBusinessData: () => Promise<void>;
 }
 
-const InventoryContext = createContext<InventoryContextValue | undefined>(
+const BusinessContext = createContext<BusinessContextValue | undefined>(
   undefined,
 );
 
-export const InventoryProvider = ({
+export const BusinessProvider = ({
   business,
   children,
   refreshBusiness,
@@ -54,7 +54,7 @@ export const InventoryProvider = ({
           title: message,
         });
         refreshBusinessData();
-        router.push("/inventory/listings");
+        router.push("/business/listings");
       }
     } catch (error: any) {
       toast({
@@ -80,7 +80,7 @@ export const InventoryProvider = ({
     setBusinessUser(business?.user);
   }, [business]);
 
-  const value: InventoryContextValue = useMemo(
+  const value: BusinessContextValue = useMemo(
     () => ({
       inventory,
       storeDetails,
@@ -92,14 +92,14 @@ export const InventoryProvider = ({
     [inventory, storeDetails, isLoading, business, refreshBusinessData],
   );
   return (
-    <InventoryContext.Provider value={value}>
+    <BusinessContext.Provider value={value}>
       {children}
-    </InventoryContext.Provider>
+    </BusinessContext.Provider>
   );
 };
 
-export const useInventory = (): InventoryContextValue => {
-  const inventoryContext = useContext(InventoryContext);
+export const useInventory = (): BusinessContextValue => {
+  const inventoryContext = useContext(BusinessContext);
 
   if (!inventoryContext) {
     throw new Error("useInventory must be used within an InventoryProvider");

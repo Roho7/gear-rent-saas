@@ -28,7 +28,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { addInventoryItem } from "@/app/(business)/_actions/add.listing.action";
-import { useInventory } from "@/app/(business)/_providers/useInventory";
+import { useInventory } from "@/app/(business)/_providers/useBusiness";
 import BackButton from "@/app/_components/_shared/back-button";
 import { useProducts } from "@/app/_providers/useProducts";
 import { formatProductName } from "@/lib/utils";

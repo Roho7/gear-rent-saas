@@ -17,7 +17,7 @@ import { usePathname } from "next/navigation";
 const navItemClassName =
   "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
 
-const InventorySidebar = () => {
+const BusinessSidebar = () => {
   const pathname = usePathname();
   return (
     <div className="hidden border-r bg-muted/40 md:block">
@@ -34,10 +34,10 @@ const InventorySidebar = () => {
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
             <Link
-              href="/inventory"
+              href="/business"
               className={clsx(
                 navItemClassName,
-                pathname === "/inventory" && "bg-muted text-primary",
+                pathname === "/business" && "bg-muted text-primary",
               )}
             >
               <Home className="h-4 w-4" />
@@ -47,7 +47,7 @@ const InventorySidebar = () => {
               href="#"
               className={clsx(
                 navItemClassName,
-                pathname === "/inventory/orders" && "bg-muted text-primary",
+                pathname === "/business/orders" && "bg-muted text-primary",
               )}
             >
               <ShoppingCart className="h-4 w-4" />
@@ -57,7 +57,7 @@ const InventorySidebar = () => {
               </Badge>
             </Link>
             <Link
-              href="/inventory/listings"
+              href="/business/listings"
               className={clsx(
                 pathname.includes("listings") && "bg-muted text-primary",
                 navItemClassName,
@@ -80,7 +80,7 @@ const InventorySidebar = () => {
               href="#"
               className={clsx(
                 navItemClassName,
-                pathname === "/inventory/customers" && "bg-muted text-primary",
+                pathname === "/business/customers" && "bg-muted text-primary",
               )}
             >
               <Users className="h-4 w-4" />
@@ -90,7 +90,7 @@ const InventorySidebar = () => {
               href="#"
               className={clsx(
                 navItemClassName,
-                pathname === "/inventory/analytics" && "bg-muted text-primary",
+                pathname === "/business/analytics" && "bg-muted text-primary",
               )}
             >
               <LineChart className="h-4 w-4" />
@@ -119,4 +119,4 @@ const InventorySidebar = () => {
   );
 };
 
-export default InventorySidebar;
+export default BusinessSidebar;

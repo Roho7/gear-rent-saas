@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 
-import CountryCombobox from "@/app/(business)/inventory/_components/country.combobox";
+import CountryCombobox from "@/app/(business)/business/_components/country.combobox";
 import BackButton from "@/app/_components/_shared/back-button";
 import { useAuth } from "@/app/_providers/useAuth";
 import { createClientComponentClient } from "@/app/_utils/supabase";

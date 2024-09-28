@@ -45,7 +45,7 @@ import { ListingType } from "@/src/entities/models/types";
 import Link from "next/link";
 import { useMemo } from "react";
 import { BiTrash } from "react-icons/bi";
-import { useInventory } from "../../_providers/useInventory";
+import { useInventory } from "../../_providers/useBusiness";
 
 export function ListingTable({ data }: { data: ListingType[] }) {
   const { productGroups } = useProducts();
@@ -244,7 +244,7 @@ export function ListingTable({ data }: { data: ListingType[] }) {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Link href={`/inventory/listings/${listing.listing_id}`}>
+                  <Link href={`/business/listings/${listing.listing_id}`}>
                     Edit Listing
                   </Link>
                 </DropdownMenuItem>

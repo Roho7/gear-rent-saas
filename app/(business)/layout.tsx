@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Spinner from "../_components/_shared/spinner";
 import { useAuth } from "../_providers/useAuth";
 import { getBusiness } from "./_actions/store.actions";
-import { InventoryProvider } from "./_providers/useInventory";
+import { BusinessProvider } from "./_providers/useBusiness";
 
 const BusinessLayout = ({ children }: { children: React.ReactElement }) => {
   const { user, isLoading } = useAuth();
@@ -36,12 +36,12 @@ const BusinessLayout = ({ children }: { children: React.ReactElement }) => {
   }
 
   return (
-    <InventoryProvider
+    <BusinessProvider
       business={businessData}
       refreshBusiness={fetchBusinessData}
     >
       {children}
-    </InventoryProvider>
+    </BusinessProvider>
   );
 };
 

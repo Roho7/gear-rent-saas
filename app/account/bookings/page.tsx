@@ -29,7 +29,7 @@ const BookingsPage = () => {
   }, []);
 
   return (
-    <div className="h-full px-4 flex flex-col flex-1 gap-4">
+    <div className="h-full flex flex-col flex-1 gap-4">
       <h2 className="text-xl">Your Bookings</h2>
       <div className="flex flex-col gap-2 flex-1">
         {bookings.map((booking) => (

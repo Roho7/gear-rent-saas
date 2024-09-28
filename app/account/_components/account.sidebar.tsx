@@ -8,8 +8,14 @@ const navItemClassName =
 const AccountSidebar = () => {
   const pathname = usePathname();
   return (
-    <aside className="border-r max-w-[20vw] flex-1 sticky left-0 top-0">
-      <nav className="grid items-start px-2 text-sm font-medium lg:px-4 ">
+    <aside className="border-r w-[20vw] h-screen sticky top-0 left-0">
+      <a
+        href="/"
+        className="text-white font-bold py-4 lg:h-[60px] h-14 px-8 w-[150px] flex items-center"
+      >
+        <img src="/logo-black.svg" alt="" className="w-full h-full" />
+      </a>
+      <nav className="grid items-start px-2 text-sm font-medium lg:px-2 gap-1 py-4">
         <Link
           href="/account"
           className={clsx(

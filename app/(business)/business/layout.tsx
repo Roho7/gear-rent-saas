@@ -1,7 +1,7 @@
 "use client";
+import SecondaryNavbar from "@/app/_components/_shared/secondary-navbar";
 import { useAuth } from "@/app/_providers/useAuth";
-import InventoryHeader from "./_components/inventory.header";
-import InventorySidebar from "./_components/inventory.sidebar";
+import BusinessSidebar from "./_components/business.sidebar";
 import RegisterBusinessForm from "./_components/register-business";
 
 const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
@@ -9,9 +9,9 @@ const BusinessLayout = ({ children }: { children: React.ReactNode }) => {
 
   return user?.store_id ? (
     <div className="grid h-screen overflow-hiddenmd:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] max-w-screen">
-      <InventorySidebar />
+      <BusinessSidebar />
       <div className="flex flex-col overflow-hidden max-h-screen">
-        <InventoryHeader />
+        <SecondaryNavbar />
         <main className="h-full overflow-y-scroll">{children}</main>
       </div>
     </div>

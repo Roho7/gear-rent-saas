@@ -33,7 +33,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useInventory } from "../../_providers/useInventory";
+import { useInventory } from "../../_providers/useBusiness";
 
 export function EditStoreModal({ children }: { children: React.ReactNode }) {
   const { user, refreshUser } = useAuth();
