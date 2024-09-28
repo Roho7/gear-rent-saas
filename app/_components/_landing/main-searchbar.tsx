@@ -13,13 +13,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { Label } from "@/components/ui/label";
 import { popularLocations } from "@/src/entities/models/constants";
@@ -38,7 +31,8 @@ import { BiSearch } from "react-icons/bi";
 import { FaDice } from "react-icons/fa";
 import { MdCalendarMonth, MdLocationPin } from "react-icons/md";
 import { date, z } from "zod";
-import LocationPicker from "./location.dropdown";
+import LocationPicker from "./location-picker";
+import SportPicker from "./sport-picker";
 
 type CollapsedSearchBarProps = {
   location?: string;
@@ -99,6 +93,7 @@ const MainSearchbar = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const locationSelectorRef = useRef<HTMLButtonElement>(null);
+  const sportSelectorRef = useRef<HTMLButtonElement>(null);
   const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
 
   const form = useForm<z.infer<typeof MainSearchFormSchema>>({
@@ -137,6 +132,7 @@ const MainSearchbar = ({
     router.push(searchUrl);
   };
 
+  // EFFECT FOR OPENING DATE PICKER WHEN LOCATION IS SELECTED
   useEffect(() => {
     const subscription = form.watch((value, { name, type }) => {
       if (name === "location" && type === "change" && value.location) {
@@ -146,6 +142,7 @@ const MainSearchbar = ({
     return () => subscription.unsubscribe();
   }, [form]);
 
+  // EFFECT FOR RESETING FORM FIELDS WHEN SEARCH BAR IS COLLAPSED
   useEffect(() => {
     if (collapsed) {
       if (isDatePopoverOpen) {
@@ -163,6 +160,7 @@ const MainSearchbar = ({
     }
   }, [collapsed, searchParams]);
 
+  // EFFECT FOR POPULATING FORM FIELDS FROM URL SEARCH PARAMS
   useEffect(() => {
     const sport = searchParams.get("sport");
     const rentFrom = searchParams.get("rentFrom");
@@ -172,7 +170,11 @@ const MainSearchbar = ({
     const lng = searchParams.get("lng");
     const radius = searchParams.get("radius");
 
-    if (sport) form.setValue("sport", sport);
+    if (sport) {
+      form.setValue("sport", sport);
+    } else {
+      form.setValue("sport", undefined);
+    }
 
     if (rentFrom && rentTill) {
       form.setValue("rentPeriod", {
@@ -215,7 +217,7 @@ const MainSearchbar = ({
             setIsSearchActive(true);
           }}
           className={clsx(
-            " rounded-md text-black flex animate-in items-center p-2 transition-all delay-75 ease-out",
+            " rounded-md text-black flex gap-2 animate-in items-center p-2 transition-all delay-75 ease-out",
             collapsed
               ? "-translate-y-[100%] opacity-0"
               : "translate-y-[-20%] opacity-100",
@@ -225,7 +227,7 @@ const MainSearchbar = ({
             control={form.control}
             name="location"
             render={({ field }) => (
-              <FormItem className="w-48 px-2 border-r border-gray-100 flex flex-col">
+              <FormItem className="min-w-52 px-2 border-r border-gray-100 flex flex-col">
                 <FormLabel className="text-gray-400 text-xs pt-1">
                   Location
                 </FormLabel>
@@ -242,7 +244,7 @@ const MainSearchbar = ({
             control={form.control}
             name="rentPeriod"
             render={({ field }) => (
-              <FormItem className="w-full px-2 border-r border-gray-100 flex flex-col">
+              <FormItem className="min-w-60 px-2 border-r border-gray-100 flex flex-col">
                 <FormLabel className="text-gray-400 pt-1 text-xs">
                   Rent period
                 </FormLabel>
@@ -257,7 +259,7 @@ const MainSearchbar = ({
                         variant={"outline"}
                         onClick={() => setIsDatePopoverOpen(!isDatePopoverOpen)}
                         className={clsx(
-                          "w-full justify-start text-left font-normal",
+                          "min-w-48 w-full justify-start text-left font-normal",
                           !date && "text-muted-foreground",
                         )}
                       >
@@ -298,29 +300,12 @@ const MainSearchbar = ({
             render={({ field }) => (
               <FormItem className="w-48 px-2 border-r border-gray-100 flex-col flex gap-0.5">
                 <Label className="text-gray-400 text-xs mb-0">Sport</Label>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger id="sport" className="py-4 capitalize">
-                      <SelectValue
-                        placeholder={"Select Sport"}
-                        className="outline-none"
-                      />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent position="popper">
-                    {Object.entries(sportMap).map(([category, value]) => (
-                      <SelectItem key={category} value={category}>
-                        <div className="flex items-center gap-2">
-                          <value.icon className="text-muted" />
-                          {value.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SportPicker
+                  triggerRef={sportSelectorRef}
+                  isForm={true}
+                  sport={field.value}
+                  setSport={(value) => field.onChange(value)}
+                />
                 <FormMessage />
               </FormItem>
             )}

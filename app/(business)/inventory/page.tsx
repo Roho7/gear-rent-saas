@@ -79,7 +79,9 @@ export default function BusinessDashboard() {
       <Card className="flex gap-2 overflow-hidden relative h-1/3">
         <CardHeader className="flex-1 flex gap-2 flex-row items-start justify-between">
           <div>
-            <CardTitle>{storeDetails?.store_name}</CardTitle>{" "}
+            <CardTitle className="text-2xl">
+              {storeDetails?.store_name}
+            </CardTitle>{" "}
             <CardDescription className="flex flex-col">
               <span>{storeDetails?.address_line1}</span>
               <span>{storeDetails?.address_line2}</span>

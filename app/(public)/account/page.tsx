@@ -1,9 +1,12 @@
 "use client";
+import BackButton from "@/app/_components/_shared/back-button";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-
+import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "../../_providers/useAuth";
 import { createClientComponentClient } from "../../_utils/supabase";
@@ -27,21 +30,63 @@ const UserPage = (props: Props) => {
   };
 
   return (
-    <div className="h-screen">
+    <div className="min-h-screen flex flex-col gap-2 flex-1 px-4">
+      <BackButton />
       <Card>
         <CardHeader>
-          <h1>Account</h1>
+          <h2 className="text-2xl font-bold">Account</h2>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
-          <div>
-            <h2 className="font-semibold">Account information</h2>
-
-            <p>Email: {user?.email}</p>
-            <p>Name: {user?.name}</p>
-            <p>Store: {user?.store_id}</p>
+          <div className="flex justify-between">
+            <div>
+              <p>
+                <span className="text-muted">Email:</span> {user?.email}
+              </p>
+              <p>
+                <span className="text-muted">Name:</span> {user?.name}
+              </p>
+            </div>
+            <Image
+              src={`https://avatar.iran.liara.run/username?username=${
+                user?.name?.split(" ").join("+") || user?.email
+              }`}
+              height={100}
+              width={100}
+              alt={user?.email || ""}
+            />
           </div>
+
+          <Button
+            variant="destructive"
+            onClick={handleLogout}
+            className="w-fit"
+          >
+            Logout
+          </Button>
+        </CardContent>
+      </Card>
+      {user?.store_id?.length && (
+        <Card>
+          <CardHeader>
+            <h2 className="text-2xl font-bold">Your store</h2>
+          </CardHeader>
+          <CardContent>
+            <span className="text-muted">Store Id:</span>{" "}
+            <Badge variant="outline">{user?.store_id}</Badge>
+            <p>
+              <Link href="/inventory" className="hover:underline text-muted">
+                Go to store
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
+      )}
+      <Card>
+        <CardHeader>
+          <h2 className="text-2xl font-bold">Security</h2>
+        </CardHeader>
+        <CardContent>
           <div>
-            <h2 className="font-semibold">Reset Password</h2>
             <div className="flex gap-1">
               <div>
                 <Input
@@ -60,9 +105,6 @@ const UserPage = (props: Props) => {
               </Button>
             </div>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            Logout
-          </Button>
         </CardContent>
       </Card>
     </div>

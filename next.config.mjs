@@ -2,7 +2,11 @@ import { withSentryConfig } from "@sentry/nextjs";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["res.cloudinary.com", "https://dummyjson.com"],
+    domains: [
+      "res.cloudinary.com",
+      "https://dummyjson.com",
+      "avatar.iran.liara.run",
+    ],
   },
   redirects: async () => {
     return [

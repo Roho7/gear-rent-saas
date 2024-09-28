@@ -22,12 +22,10 @@ const StorePage = ({ params }: { params: { store_id: string } }) => {
     const sport = searchParams.get("sport") ?? null;
     const checkin = searchParams.get("checkin");
     const checkout = searchParams.get("checkout");
-    // const experience = searchParams.get("experience");
     const storeId = params.store_id;
 
     const searchData = {
       sport,
-      // experience,
       storeId,
       rentPeriod:
         checkin && checkout

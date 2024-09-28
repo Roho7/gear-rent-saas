@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -99,45 +98,42 @@ const ListingPage = ({ params }: { params: { listing_id: string } }) => {
 
         <Card className="flex-1">
           <CardHeader>
-            <div className="flex justify-between items-start">
-              <div>
-                <CardTitle className="text-3xl font-bold mb-2 capitalize">
-                  {formatProductName({
-                    product_group_name: productDetails.product_group_name,
-                    gender: listing?.gender as GenderType,
-                    size: listing?.size,
-                    sport: productDetails.sport,
-                  })}
-                </CardTitle>
-                <Badge variant="secondary" className="mb-4">
-                  {productDetails.sport}
-                </Badge>
-              </div>
+            <div>
+              <CardTitle className="text-3xl font-bold capitalize mb-2">
+                {formatProductName({
+                  product_group_name: productDetails.product_group_name,
+                  gender: listing?.gender as GenderType,
+                  size: listing?.size,
+                  sport: productDetails.sport,
+                })}
+              </CardTitle>
+              <Badge variant="secondary" className="">
+                {productDetails.sport}
+              </Badge>
             </div>
           </CardHeader>
 
           <CardContent>
-            <CardDescription className="text-lg mb-6">
-              {productDetails.product_group_name}
-            </CardDescription>
-
-            <Separator className="my-6" />
+            <Separator className="my-2" />
 
             <div className="space-y-4">
               <div className="flex flex-col text-gray-500 text-sm gap-2">
                 Available brands:
-                {listing?.brands?.map((value, key) => {
-                  return (
-                    <Badge
-                      key={key}
-                      className="mr-1 w-fit capitalize"
-                      variant={"outline"}
-                    >
-                      {value}
-                    </Badge>
-                  );
-                })}
-                Size: {listing?.size}cm
+                <div className="flex gap-1">
+                  {listing?.brands?.map((value, key) => {
+                    return (
+                      <Badge
+                        key={key}
+                        className="mr-1 w-fit capitalize"
+                        variant={"outline"}
+                      >
+                        {value}
+                      </Badge>
+                    );
+                  })}
+                </div>
+                Available Sizes: <div>{listing?.size}</div>
+                Description: <div>{listing?.description}</div>
               </div>
             </div>
           </CardContent>

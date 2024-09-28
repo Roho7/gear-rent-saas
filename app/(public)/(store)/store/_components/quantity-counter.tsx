@@ -18,14 +18,16 @@ const QuantityCounter = ({ quantity, setQuantity, availableUnits }: Props) => {
         <Button
           size={"xs"}
           className="rounded-full"
+          disabled={quantity === 1 || !availableUnits}
           onClick={() => setQuantity((prev) => (prev > 1 ? quantity - 1 : 1))}
         >
           <BiMinus />
         </Button>
-        <span>{quantity}</span>
+        <span>{availableUnits ? quantity : "-"}</span>
         <Button
           size={"xs"}
           className="rounded-full"
+          disabled={!availableUnits}
           onClick={() =>
             setQuantity((prev) => (prev < availableUnits ? quantity + 1 : prev))
           }

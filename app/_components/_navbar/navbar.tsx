@@ -1,7 +1,6 @@
 "use client";
 import clsx from "clsx";
 import { useState } from "react";
-import CartPopup from "../_cart/cart-popup";
 import MainSearchbar from "../_landing/main-searchbar";
 import UserDropdown from "./user.dropdown";
 
@@ -30,7 +29,6 @@ const Navbar: React.FC = () => {
           isSearchActive && "h-36",
         )}
       >
-        {/* <div className="flex items-center justify-between"> */}
         <a href="/" className="text-white font-bold">
           <img src="/logo-short.png" alt="" className="w-8" />
         </a>
@@ -42,10 +40,9 @@ const Navbar: React.FC = () => {
 
         <div className="flex gap-2 items-center">
           {/* <ModeSwitcher /> */}
-          <CartPopup />
+          {/* <CartPopup /> */}
           <UserDropdown />
         </div>
-        {/* </div> */}
       </nav>
       {isSearchActive && (
         <div

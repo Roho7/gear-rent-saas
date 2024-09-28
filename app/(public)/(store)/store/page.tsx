@@ -36,7 +36,7 @@ const StorePage = () => {
         const searchData = {
           lat: parseFloat(lat),
           lng: parseFloat(lng),
-          radius: radius ? parseFloat(radius) : 10,
+          radius: radius ? parseFloat(radius) : 10000,
         };
 
         const locationDetails = popularLocations.find(
@@ -82,7 +82,7 @@ const StorePage = () => {
             lat: searchResults.location.lat,
             lng: searchResults.location.lng,
           }}
-          defaultZoom={10}
+          defaultZoom={13}
           gestureHandling={"greedy"}
           disableDefaultUI={true}
         >
@@ -102,9 +102,15 @@ const StorePage = () => {
         <div className="flex flex-col gap-2 w-full h-[70vh] overflow-y-scroll">
           {loading ||
             (storeLoading && Array(6).map((_, i) => <Skeleton key={i} />))}
-          {searchedStores?.map((store) => {
-            return <StoreRow key={store.store_id} store={store} />;
-          })}
+          {searchedStores?.length ? (
+            searchedStores?.map((store) => {
+              return <StoreRow key={store.store_id} store={store} />;
+            })
+          ) : (
+            <div className="text-muted justify-center bg-muted/10 h-full flex items-center rounded-md">
+              Coming soon for this location
+            </div>
+          )}
         </div>
       </section>
     </main>

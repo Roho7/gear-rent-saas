@@ -34,7 +34,7 @@ const LocationPicker = ({
 }: Props) => {
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className="">
         {isForm ? (
           <FormControl>
             <Button
@@ -43,9 +43,7 @@ const LocationPicker = ({
               className="justify-between"
               ref={triggerRef}
             >
-              {searchLocation?.name
-                ? searchLocation?.name
-                : "Search locations..."}
+              {searchLocation?.name ? searchLocation?.name : "Anywhere"}
               <BiSearch className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </FormControl>

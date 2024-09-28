@@ -1,4 +1,6 @@
-import { Tables } from "@/packages/supabase.types";
+import { Database, Tables } from "@/packages/supabase.types";
+import { z } from "zod";
+import { GenderSchema, PriceGranularitySchema } from "./formSchemas";
 
 export type ProductType = Omit<Tables<"tbl_products">, "product_metadata"> & {
   product_metadata: ProductMetadataType;
@@ -13,14 +15,21 @@ export type ListingType =
     price_granularity: PriceGranularityType;
   };
 
+export type BookingsType = Tables<"tbl_bookings"> & {
+  product_group_id: string;
+};
+
+export type BookingStatusType =
+  Database["public"]["Enums"]["enum_booking_status"];
+
 export type CartItemType = {
   [product_id: string]: {
     quantity: number;
   };
 };
 
-export type PriceGranularityType = "daily" | "hourly";
-export type GenderType = "male" | "female" | "unisex";
+export type PriceGranularityType = z.infer<typeof PriceGranularitySchema>;
+export type GenderType = z.infer<typeof GenderSchema>;
 
 export type ProductMetadataKeys =
   | "sizes"
