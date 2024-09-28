@@ -22,7 +22,7 @@ export default function PublicLayout({
         className={"overflow-x-hidden min-h-screen relative flex flex-col"}
       >
         <Navbar />
-        <main className="px-8 py-4 mt-28 h-full flex-1">{children}</main>
+        <main className="py-4 mt-28 h-full flex-1">{children}</main>
         <Footer />
       </section>
     </APIProvider>

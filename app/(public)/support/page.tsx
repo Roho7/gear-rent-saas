@@ -17,7 +17,7 @@ const ContactUs = () => {
           Contact Us
         </CardTitle>
         <CardDescription className="text-center">
-          We're here to help with any questions or concerns.
+          We are here to help with any questions or concerns.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center">

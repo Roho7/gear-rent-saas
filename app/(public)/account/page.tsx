@@ -30,7 +30,7 @@ const UserPage = (props: Props) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col gap-2">
+    <div className="min-h-screen flex flex-col gap-2 flex-1 px-4">
       <BackButton />
       <Card>
         <CardHeader>

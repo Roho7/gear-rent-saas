@@ -73,8 +73,9 @@ export async function POST(
       ],
       mode: "payment",
       success_url:
-        `${DOMAIN}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${DOMAIN}/checkout/failure`,
+        `${DOMAIN}/checkout/status?booking_id=${bookingId}&payment_status=success`,
+      cancel_url:
+        `${DOMAIN}/checkout/status?booking_id=${bookingId}&payment_status=failure`,
       metadata: {
         productId,
         storeId,

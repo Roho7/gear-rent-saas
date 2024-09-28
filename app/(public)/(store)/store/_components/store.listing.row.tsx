@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  fetchLocationString,
   formatPrice,
   formatPriceGranularity,
   formatProductName,
@@ -16,10 +17,9 @@ import {
   AvailableListingsType,
   ProductGroupType,
 } from "@/src/entities/models/types";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { BiMapPin } from "react-icons/bi";
+import MiniStoreCard from "./mini-store.card";
 
 const StoreListingRow = ({
   listing,
@@ -54,31 +54,15 @@ const StoreListingRow = ({
   }, [listing.base_price, listing?.currency_code]);
 
   useEffect(() => {
-    async function fetchLocationString() {
-      if (listing.latitude && listing.longitude) {
-        try {
-          const res = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${listing.latitude},${listing.longitude}&key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}`,
-          );
-          const data = await res.json();
-          if (data.results && data.results[0]) {
-            const localityAddress = data.results.find((r: any) =>
-              r.types.includes("locality"),
-            );
-            setLocationString(localityAddress.formatted_address);
-          } else {
-            setLocationString("Location not available");
-          }
-        } catch (error) {
-          console.error("Error fetching location:", error);
-          setLocationString("Error fetching location");
-        }
-      } else {
-        setLocationString("Location data not available");
-      }
-    }
+    const fetchLocation = async () => {
+      const res = await fetchLocationString({
+        latitude: listing.latitude,
+        longitude: listing.longitude,
+      });
+      setLocationString(res);
+    };
 
-    fetchLocationString();
+    fetchLocation();
   }, [listing.latitude, listing.longitude]);
 
   const productDetails: ProductGroupType | undefined = useMemo(() => {
@@ -116,21 +100,11 @@ const StoreListingRow = ({
             gender: listing.gender,
           })}
         </h3>
-        <div className="text-muted text-xs bg-muted/10 p-2 min-w-40 w-fit rounded-md">
-          <div className="flex justify-between items-center mb-1">
-            <p>Rent from</p>
-          </div>
-          <Link
-            href="/sellers"
-            className="text-primary font-medium text-sm hover:underline"
-          >
-            {storeDetails?.store_name}{" "}
-          </Link>
-          <div className="flex items-center gap-2">
-            <BiMapPin />
-            <span>{locationString}</span>
-          </div>
-        </div>
+
+        <MiniStoreCard
+          store_name={storeDetails?.store_name || ""}
+          locationString={locationString}
+        />
         <div className="grid grid-cols-2 gap-2">
           {Object.entries(listing?.product_metadata || {}).map(
             ([key, value]) => {

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "@/components/ui/use-toast";
 import { ListingType } from "@/src/entities/models/types";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useFormContext } from "react-hook-form";
 import { createBooking } from "../_actions/checkout.actions";
 import { useCheckout } from "../_providers/useCheckout";
@@ -31,6 +31,7 @@ export default function CheckoutButton({
   } = useFormContext();
 
   const { user } = useAuth();
+  const router = useRouter();
   const { totalPriceAfterPlatformFee, rentFrom, rentTill, quantity } =
     useCheckout();
 
@@ -79,7 +80,7 @@ export default function CheckoutButton({
         });
         return;
       }
-
+      // router.push()
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: {
@@ -101,7 +102,9 @@ export default function CheckoutButton({
 
       const { sessionId } = await response.json();
       const stripe = await getStripe();
-      const { error } = await stripe!.redirectToCheckout({ sessionId });
+      const { error } = await stripe!.redirectToCheckout({
+        sessionId,
+      });
 
       if (error) {
         toast({

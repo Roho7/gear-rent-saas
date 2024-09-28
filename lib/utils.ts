@@ -61,3 +61,29 @@ export function getTotalPriceWithPlatformFee(
   returnedPrice = price + totalPlatformFee;
   return { total: returnedPrice, platformFee: totalPlatformFee };
 }
+
+export async function fetchLocationString(
+  { latitude, longitude }: { latitude: number; longitude: number },
+): Promise<string> {
+  if (latitude && longitude) {
+    try {
+      const res = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}`,
+      );
+      const data = await res.json();
+      if (data.results && data.results[0]) {
+        const localityAddress = data.results.find((r: any) =>
+          r.types.includes("locality")
+        );
+        return localityAddress.formatted_address;
+      } else {
+        return "Location not available";
+      }
+    } catch (error) {
+      console.error("Error fetching location:", error);
+      return "Error fetching location";
+    }
+  } else {
+    return "Location data not available";
+  }
+}

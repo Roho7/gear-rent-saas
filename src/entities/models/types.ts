@@ -1,4 +1,4 @@
-import { Tables } from "@/packages/supabase.types";
+import { Database, Tables } from "@/packages/supabase.types";
 import { z } from "zod";
 import { GenderSchema, PriceGranularitySchema } from "./formSchemas";
 
@@ -14,6 +14,13 @@ export type ListingType =
     product_metadata: ProductMetadataType;
     price_granularity: PriceGranularityType;
   };
+
+export type BookingsType = Tables<"tbl_bookings"> & {
+  product_group_id: string;
+};
+
+export type BookingStatusType =
+  Database["public"]["Enums"]["enum_booking_status"];
 
 export type CartItemType = {
   [product_id: string]: {

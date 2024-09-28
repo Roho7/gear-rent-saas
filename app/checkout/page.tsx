@@ -83,97 +83,99 @@ const CheckoutPage = () => {
         phone: user.phone || "",
       });
     }
-  }, [user, methods]);
-
-  useEffect(() => {
-    console.log(methods.getValues());
-  }, [methods.watch()]);
+  }, [user]);
 
   return (
-    <FormProvider {...methods}>
-      <form>
-        <div className="grid grid-cols-3 w-full gap-2 relative">
-          <div className="col-span-2 flex flex-col gap-2">
-            <BackButton />
-            <CheckoutUserDetailsForm />
-            <CheckoutCustomerDetailsForm />
-          </div>
-          <Card className="max-h-fit sticky top-40">
-            <CardHeader>
-              <CardTitle>
-                <h1 className="text-2xl">Your order</h1>
-              </CardTitle>
-              <CardDescription>
-                <p>Review your order</p>
-              </CardDescription>
-            </CardHeader>
+    <>
+      <BackButton />
+      <FormProvider {...methods}>
+        <form
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
+        >
+          <div className="grid grid-cols-3 w-full gap-2 relative">
+            <div className="col-span-2 flex flex-col gap-2">
+              <CheckoutUserDetailsForm />
+              <CheckoutCustomerDetailsForm />
+            </div>
+            <Card className="max-h-fit sticky top-40">
+              <CardHeader>
+                <CardTitle>
+                  <h1 className="text-2xl">Your order</h1>
+                </CardTitle>
+                <CardDescription>
+                  <p>Review your order</p>
+                </CardDescription>
+              </CardHeader>
 
-            <CardContent className="flex flex-col items-center">
-              <div className="h-40 w-40 overflow-hidden rounded-md">
-                <img
-                  src={productDetails?.image_url || ""}
-                  alt=""
-                  className="object-cover w-full h-full"
+              <CardContent className="flex flex-col items-center">
+                <div className="h-40 w-40 overflow-hidden rounded-md">
+                  <img
+                    src={productDetails?.image_url || ""}
+                    alt=""
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <h2>
+                  {formatProductName({
+                    product_group_name: productDetails?.product_group_name,
+                    sport: productDetails?.sport,
+                    gender: listingDetails?.gender || "unisex",
+                    size: listingDetails?.size,
+                    type: listingDetails?.type,
+                  })}
+                </h2>
+              </CardContent>
+              <CardFooter className="flex flex-col w-full">
+                <div className="grid grid-cols-2 w-full text-muted text-xs">
+                  <span>
+                    {formatPrice({
+                      base_price: price,
+                      currency_code: listingDetails?.currency_code,
+                    })}{" "}
+                    x {quantity}
+                  </span>
+                  <span className="text-right text-primary text-sm">
+                    {!duration || !price || !quantity
+                      ? "-"
+                      : formatPrice({
+                          base_price: totalPriceBeforePlatformFee,
+                          currency_code: listingDetails?.currency_code,
+                        })}
+                    <p className="text-right text-xs text-muted">
+                      For {duration} {duration && duration > 1 ? "days" : "day"}
+                    </p>
+                  </span>
+                  <span>Platform fee</span>
+                  <span className="text-right text-primary text-sm">
+                    {formatPrice({
+                      base_price: totalPriceBeforePlatformFee * PLATFORM_FEE,
+                      currency_code: listingDetails?.currency_code,
+                    })}
+                  </span>
+                </div>
+                <Separator className="my-2" />
+                <div className="grid grid-cols-2 w-full">
+                  <span>Total</span>
+                  <span className="text-right text-primary">
+                    {formatPrice({
+                      base_price: totalPriceAfterPlatformFee,
+                      currency_code: listingDetails?.currency_code,
+                    })}
+                  </span>
+                </div>
+                <CheckoutButton
+                  listing={listingDetails}
+                  price={price}
+                  disabled={!methods.formState.isValid}
                 />
-              </div>
-              <h2>
-                {formatProductName({
-                  product_group_name: productDetails?.product_group_name,
-                  sport: productDetails?.sport,
-                  gender: listingDetails?.gender || "unisex",
-                  size: listingDetails?.size,
-                  type: listingDetails?.type,
-                })}
-              </h2>
-            </CardContent>
-            <CardFooter className="flex flex-col w-full">
-              <div className="grid grid-cols-2 w-full text-muted text-xs">
-                <span>
-                  {formatPrice({
-                    base_price: price,
-                    currency_code: listingDetails?.currency_code,
-                  })}{" "}
-                  x {quantity}
-                </span>
-                <span className="text-right text-primary text-sm">
-                  {!duration || !price || !quantity
-                    ? "-"
-                    : formatPrice({
-                        base_price: totalPriceBeforePlatformFee,
-                        currency_code: listingDetails?.currency_code,
-                      })}
-                  <p className="text-right text-xs text-muted">
-                    For {duration} {duration && duration > 1 ? "days" : "day"}
-                  </p>
-                </span>
-                <span>Platform fee</span>
-                <span className="text-right text-primary text-sm">
-                  {formatPrice({
-                    base_price: totalPriceBeforePlatformFee * PLATFORM_FEE,
-                    currency_code: listingDetails?.currency_code,
-                  })}
-                </span>
-              </div>
-              <Separator className="my-2" />
-              <div className="grid grid-cols-2 w-full">
-                <span>Total</span>
-                <span className="text-right text-primary">
-                  {formatPrice({
-                    base_price: totalPriceAfterPlatformFee,
-                    currency_code: listingDetails?.currency_code,
-                  })}
-                </span>
-              </div>
-              <CheckoutButton
-                listing={listingDetails}
-                price={price}
-                disabled={!methods.formState.isValid}
-              />
-            </CardFooter>
-          </Card>
-        </div>
-      </form>
-    </FormProvider>
+              </CardFooter>
+            </Card>
+          </div>
+        </form>
+      </FormProvider>
+    </>
   );
 };
 

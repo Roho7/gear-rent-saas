@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 px-4">
       <Hero />
       <Separator className="my-4" />
       <LogoRibbon />

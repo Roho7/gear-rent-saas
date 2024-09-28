@@ -443,6 +443,10 @@ export type Database = {
         }
         Returns: Json
       }
+      _func_get_user_bookings: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       _func_get_user_store_ids: {
         Args: Record<PropertyKey, never>
         Returns: string[]

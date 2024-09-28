@@ -79,10 +79,7 @@ export const ProductProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [cartItems, setCartItems] = useState<CartItemType | null>(() => {
-    const savedCart = localStorage.getItem("cart");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const [cartItems, setCartItems] = useState<CartItemType | null>(null);
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
   const [productGroups, setProductGroups] = useState<ProductGroupType[]>([]);
   const [allStores, setAllStores] = useState<StoreType[]>([]);
