@@ -4,6 +4,7 @@ import Script from "next/script";
 
 import { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
+import { LoginModal } from "./_components/_shared/login.modal";
 import { AuthProvider } from "./_providers/useAuth";
 import { ProductProvider } from "./_providers/useProducts";
 import "./globals.css";
@@ -45,6 +46,7 @@ export default function RootLayout({
             <ProductProvider>
               {children}
               <Toaster />
+              <LoginModal />
             </ProductProvider>
           </AuthProvider>
         </ThemeProvider>

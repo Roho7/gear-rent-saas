@@ -46,14 +46,12 @@ export const signInWithEmail = async (email: string, password: string) => {
 };
 
 export const signOut = async () => {
-  try {
-    const cookieStore = cookies();
-    const supabase = createServerActionClient({ cookies: cookieStore });
-    const { error } = await supabase.auth.signOut();
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: cookieStore });
+  const { error } = await supabase.auth.signOut();
 
-    return { success: true, message: "Logged out successfully" };
-  } catch (error: any) {
-    Sentry.captureException(error);
+  if (error) {
     throw new UnknownError("Unknown error", "signOut", error.message);
   }
+  return true;
 };

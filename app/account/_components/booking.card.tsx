@@ -113,6 +113,9 @@ const BookingCard = ({ bookingItem }: Props) => {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col items-end gap-1 mt-auto">
+          <span className="text-xs text-muted">
+            {dayjs(bookingItem.booking_date).format("ddd, MMM D, YY")}
+          </span>
           <BookingStatusBadge status={bookingItem.status} />
           <MiniStoreCard
             store_name={storeDetails?.store_name || ""}
