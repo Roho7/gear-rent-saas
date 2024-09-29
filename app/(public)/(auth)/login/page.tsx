@@ -9,22 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-type Props = {};
-
-const LoginPage = (props: Props) => {
+const LoginPage = () => {
   const { handleLoginWithEmail, handleSignInWithGoogle } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
 
   useEffect(() => {
-    if (localStorage.getItem("gearyo-user")) {
-      router.push("/");
-    }
-
     // Ensure Google API is loaded
     const script = document.createElement("script");
     script.src = "https://accounts.google.com/gsi/client";

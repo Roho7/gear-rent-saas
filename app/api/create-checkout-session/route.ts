@@ -73,9 +73,9 @@ export async function POST(
       ],
       mode: "payment",
       success_url:
-        `${DOMAIN}/checkout/status?booking_id=${bookingId}&payment_status=success`,
+        `${DOMAIN}/booking-status?booking_id=${bookingId}&payment_status=success`,
       cancel_url:
-        `${DOMAIN}/checkout/status?booking_id=${bookingId}&payment_status=failure`,
+        `${DOMAIN}/booking-status?booking_id=${bookingId}&payment_status=failure`,
       metadata: {
         productId,
         storeId,

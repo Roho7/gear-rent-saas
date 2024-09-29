@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { fetchUser } from "./app/(public)/account/_actions/user.actions";
 import { createMiddlewareClient } from "./app/_utils/supabase";
+import { fetchUser } from "./app/account/_actions/user.actions";
 
 // Define an array of protected routes
-const protectedRoutes = ["/inventory", "/account"]; // Add more routes as needed
+const protectedRoutes = ["/business", "/account"]; // Add more routes as needed
 const adminRoutes = ["/admin"]; // Routes that require admin access
 
 export async function middleware(request: NextRequest) {

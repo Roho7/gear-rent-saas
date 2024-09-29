@@ -1,12 +1,12 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 import {
+  Bell,
   Home,
   LineChart,
   ListChecksIcon,
-  Package,
-  Package2,
   ShoppingCart,
   Users,
 } from "lucide-react";
@@ -16,34 +16,37 @@ import { usePathname } from "next/navigation";
 const navItemClassName =
   "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
 
-const AdminSidebar = () => {
+const BusinessSidebar = () => {
   const pathname = usePathname();
   return (
     <div className="hidden border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
-        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6 justify-between">
-          <Link href="/home" className="text-white font-bold">
-            <img src="/logo-short.png" alt="" className="w-8" />
+        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+          <Link href="/home" className="text-white font-bold w-8">
+            <img src="/logo-short.png" alt="" className="w-full h-full" />
           </Link>
-          <h2>Admin</h2>
+          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+            <Bell className="h-4 w-4" />
+            <span className="sr-only">Toggle notifications</span>
+          </Button>
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
             <Link
-              href="/admin"
+              href="/business"
               className={clsx(
                 navItemClassName,
-                pathname === "/admin" && "bg-muted text-primary",
+                pathname === "/business" && "bg-muted text-primary",
               )}
             >
               <Home className="h-4 w-4" />
               Dashboard
             </Link>
             <Link
-              href="#"
+              href="/business/orders"
               className={clsx(
                 navItemClassName,
-                pathname === "/admin/orders" && "bg-muted text-primary",
+                pathname === "/business/orders" && "bg-muted text-primary",
               )}
             >
               <ShoppingCart className="h-4 w-4" />
@@ -53,7 +56,7 @@ const AdminSidebar = () => {
               </Badge>
             </Link>
             <Link
-              href="/admin/listings"
+              href="/business/listings"
               className={clsx(
                 pathname.includes("listings") && "bg-muted text-primary",
                 navItemClassName,
@@ -61,26 +64,6 @@ const AdminSidebar = () => {
             >
               <ListChecksIcon className="h-4 w-4" />
               Listings{" "}
-            </Link>
-            <Link
-              href="/admin/products"
-              className={clsx(
-                pathname.includes("products") && "bg-muted text-primary",
-                navItemClassName,
-              )}
-            >
-              <Package className="h-4 w-4" />
-              Products{" "}
-            </Link>
-            <Link
-              href="/admin/product-groups"
-              className={clsx(
-                pathname.includes("product-groups") && "bg-muted text-primary",
-                navItemClassName,
-              )}
-            >
-              <Package2 className="h-4 w-4" />
-              Product Groups
             </Link>
             <Link
               href="#"
@@ -125,4 +108,4 @@ const AdminSidebar = () => {
   );
 };
 
-export default AdminSidebar;
+export default BusinessSidebar;

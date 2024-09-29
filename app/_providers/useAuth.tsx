@@ -13,17 +13,30 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { fetchUser } from "../(public)/account/_actions/user.actions";
 import { createClientComponentClient } from "../_utils/supabase";
+import { fetchUser } from "../account/_actions/user.actions";
 
 interface AuthContextValue {
-  handleSignUpWithEmail: (email: string, password: string) => Promise<void>;
-  handleLoginWithEmail: (email: string, password: string) => Promise<void>;
-  handleSignInWithGoogle: (response: { credential: string }) => Promise<void>;
+  handleSignUpWithEmail: (
+    email: string,
+    password: string,
+    pathname?: string,
+  ) => Promise<void>;
+  handleLoginWithEmail: (
+    email: string,
+    password: string,
+    pathname?: string,
+  ) => Promise<void>;
+  handleSignInWithGoogle: (
+    response: { credential: string },
+    pathname?: string,
+  ) => Promise<void>;
   handleLogout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   user: GearyoUser | null;
   isLoading: boolean;
+  isLoginModalOpen: boolean;
+  setIsLoginModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -40,6 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const [user, setUser] = useState<GearyoUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // -------------------------------------------------------------------------- //
   //                                 HELPERS                                    //
@@ -103,7 +117,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // *                              GOOGLE SIGN IN                            * //
 
   const handleSignInWithGoogle = useCallback(
-    async (response: { credential: string }) => {
+    async (response: { credential: string }, pathname?: string) => {
       setIsLoading(true);
       try {
         const { data, error } = await supabase.auth.signInWithIdToken({
@@ -120,9 +134,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             description: "Logged in with Google successfully",
             variant: "default",
           });
-          window.history.state && window.history.state.idx > 0
-            ? router.back()
-            : router.push("/");
+          pathname ? router.push(pathname) : router.push("/");
         }
       } catch (error: any) {
         console.error(error);
@@ -143,7 +155,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // *                              EMAIL SIGN-UP                            * //
 
   const handleSignUpWithEmail = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, pathname?: string) => {
       setIsLoading(true);
       try {
         const { data, error } = await supabase.auth.signUp({
@@ -169,9 +181,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } finally {
         setIsLoading(false);
-        window.history.state && window.history.state.idx > 0
-          ? router.back()
-          : router.push("/");
+        pathname ? router.push(pathname) : router.push("/");
       }
     },
     [fetchAndSetUser, supabase.auth],
@@ -180,7 +190,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // *                               EMAIL SIGN-IN                             * //
 
   const handleLoginWithEmail = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, pathname?: string) => {
       setIsLoading(true);
       try {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -198,9 +208,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             variant: "default",
           });
 
-          window.history.state && window.history.state.idx > 0
-            ? router.back()
-            : router.push("/");
+          pathname ? router.push(pathname) : router.push("/");
         }
       } catch (error: any) {
         console.error(error);
@@ -220,8 +228,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const handleLogout = useCallback(async () => {
     setIsLoading(true);
     try {
-      const { success, message } = await signOut();
-      if (success) {
+      const res = await signOut();
+      if (res) {
         setUser(null);
         clearUserCache();
         toast({
@@ -284,6 +292,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       user,
       refreshUser,
       isLoading,
+      isLoginModalOpen,
+      setIsLoginModalOpen,
     }),
     [
       handleSignUpWithEmail,
@@ -293,6 +303,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       user,
       refreshUser,
       isLoading,
+      isLoginModalOpen,
     ],
   );
 

@@ -1,4 +1,5 @@
 import DateRangeSelector from "@/app/_components/_shared/date-range-selector";
+import { useAuth } from "@/app/_providers/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,6 +28,7 @@ type StoreBookingCardPropsType = {
 };
 
 const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
+  const { user, setIsLoginModalOpen } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [rentPeriod, setRentPeriod] = useState<DateRange | undefined>(() => {
@@ -51,6 +53,10 @@ const StoreBookingCard = ({ listing }: StoreBookingCardPropsType) => {
   const [quantity, setQuantity] = useState(1);
 
   const handleBookingBtnClick = () => {
+    if (!user) {
+      setIsLoginModalOpen(true);
+      return;
+    }
     const currentParams = new URLSearchParams(searchParams.toString());
     const from = dayjs(rentPeriod?.from).format("YYYY-MM-DD");
     const to = dayjs(rentPeriod?.to).format("YYYY-MM-DD");

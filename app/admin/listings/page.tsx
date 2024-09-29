@@ -234,7 +234,7 @@ const AdminListingsPage = () => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Link href={`/inventory/listings/${listing.listing_id}`}>
+                  <Link href={`/business/listings/${listing.listing_id}`}>
                     Edit Listing
                   </Link>
                 </DropdownMenuItem>

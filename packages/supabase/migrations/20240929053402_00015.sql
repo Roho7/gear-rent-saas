@@ -1,8 +1,11 @@
-DROP FUNCTION IF EXISTS _func_get_user_bookings;
+drop function if exists "public"."_func_get_user_bookings"();
 
-CREATE OR REPLACE FUNCTION _func_get_bookings(store_id_input UUID DEFAULT NULL)
-RETURNS JSONB
-STABLE SECURITY DEFINER
+set check_function_bodies = off;
+
+CREATE OR REPLACE FUNCTION public._func_get_bookings(store_id_input uuid DEFAULT NULL::uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
 AS $function$
 DECLARE
     return_data JSONB;
@@ -43,4 +46,7 @@ BEGIN
 
     RETURN COALESCE(return_data, '[]'::JSONB);
 END;
-$function$ LANGUAGE plpgsql;
+$function$
+;
+
+

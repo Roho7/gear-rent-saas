@@ -437,14 +437,16 @@ export type Database = {
       }
     }
     Functions: {
-      _func_get_business: {
+      _func_get_bookings: {
         Args: {
           store_id_input?: string
         }
         Returns: Json
       }
-      _func_get_user_bookings: {
-        Args: Record<PropertyKey, never>
+      _func_get_business: {
+        Args: {
+          store_id_input?: string
+        }
         Returns: Json
       }
       _func_get_user_store_ids: {
