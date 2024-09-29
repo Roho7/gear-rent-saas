@@ -8,7 +8,7 @@ export async function fetchBookings(): Promise<BookingsType[]> {
   const cookieStore = cookies();
   const supabase = createServerActionClient({ cookies: cookieStore });
   //   const user = await supabase.auth.getUser();
-  const { data, error } = await supabase.rpc("_func_get_user_bookings");
+  const { data, error } = await supabase.rpc("_func_get_bookings");
 
   if (error) {
     throw error;

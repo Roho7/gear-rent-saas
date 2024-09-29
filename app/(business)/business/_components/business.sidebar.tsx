@@ -7,7 +7,6 @@ import {
   Home,
   LineChart,
   ListChecksIcon,
-  Package,
   ShoppingCart,
   Users,
 } from "lucide-react";
@@ -44,7 +43,7 @@ const BusinessSidebar = () => {
               Dashboard
             </Link>
             <Link
-              href="#"
+              href="/business/orders"
               className={clsx(
                 navItemClassName,
                 pathname === "/business/orders" && "bg-muted text-primary",
@@ -65,16 +64,6 @@ const BusinessSidebar = () => {
             >
               <ListChecksIcon className="h-4 w-4" />
               Listings{" "}
-            </Link>
-            <Link
-              href="#"
-              className={clsx(
-                pathname.includes("products") && "bg-muted text-primary",
-                navItemClassName,
-              )}
-            >
-              <Package className="h-4 w-4" />
-              Products{" "}
             </Link>
             <Link
               href="#"
