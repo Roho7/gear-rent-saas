@@ -30,6 +30,7 @@ import { toast } from "@/components/ui/use-toast";
 import { ProductGroupType } from "@/src/entities/models/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -83,11 +84,11 @@ const ProductGroupsPage = () => {
     productGroupId: string,
   ): Promise<string | null> => {
     const fileExt = file.name.split(".").pop();
-    const fileName = `${sport}/${productGroupId}.${fileExt}`;
+    const fileName = `${sport}/${productGroupId}-${dayjs().toISOString()}.${fileExt}`;
     const supabase = createClientComponentClient();
     const { data, error } = await supabase.storage
       .from("product_thumbnails")
-      .upload(fileName, file);
+      .upload(fileName, file, { upsert: true });
     console.log(data);
     if (error) {
       throw new Error(error.message);
