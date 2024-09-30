@@ -31,7 +31,7 @@ const SportPicker = ({
 }: Props) => {
   return (
     <Popover>
-      <PopoverTrigger className="w-48">
+      <PopoverTrigger asChild className="w-48">
         {isForm ? (
           <FormControl>
             <Button

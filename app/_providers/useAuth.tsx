@@ -51,8 +51,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * * - States
    */
-  const [user, setUser] = useState<GearyoUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<GearyoUser | null>(() => getCachedUser());
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // -------------------------------------------------------------------------- //
@@ -61,35 +61,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchAndSetUser = useCallback(
     async (authUser: User | null, hardRefresh?: boolean) => {
-      if (authUser?.id) {
-        const cachedUser = getCachedUser();
-        if (cachedUser && !hardRefresh) {
-          setUser(cachedUser);
-          setIsLoading(false);
-          return;
-        }
+      if (!authUser?.id) {
+        setUser(null);
+        clearUserCache();
+        return;
+      }
 
-        try {
-          setIsLoading(true);
-          const userData = await fetchUser();
-          if (userData) {
-            setUser(userData);
-            cacheUser(userData);
-          } else {
-            console.error("Failed to fetch user data");
-            setUser(null);
-            clearUserCache();
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
+      const cachedUser = getCachedUser();
+      if (cachedUser && !hardRefresh) {
+        setUser(cachedUser);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const userData = await fetchUser();
+        if (userData) {
+          setUser(userData);
+          cacheUser(userData);
+        } else {
           setUser(null);
           clearUserCache();
         }
-      } else {
+      } catch (error) {
+        console.error("Error fetching user data:", error);
         setUser(null);
         clearUserCache();
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     },
     [],
   );
@@ -108,13 +108,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [fetchAndSetUser, supabase.auth]);
 
-  // -------------------------------------------------------------------------- //
-  //                               AUTH FUNCTIONS                               //
-  // -------------------------------------------------------------------------- //
-
-  // *                              GOOGLE SIGN IN                            * //
+  const handleAuthResponse = useCallback(
+    async (user: User | null, successMessage: string, pathname?: string) => {
+      if (user) {
+        await fetchAndSetUser(user);
+        toast({
+          title: "Success",
+          description: successMessage,
+          variant: "default",
+        });
+        router.push(pathname || "/");
+      }
+    },
+    [fetchAndSetUser, router],
+  );
 
   const handleSignInWithGoogle = useCallback(
     async (response: { credential: string }, pathname?: string) => {
@@ -124,18 +133,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           provider: "google",
           token: response.credential,
         });
-
         if (error) throw error;
-
-        if (data.user) {
-          await fetchAndSetUser(data.user);
-          toast({
-            title: "Success",
-            description: "Logged in with Google successfully",
-            variant: "default",
-          });
-          pathname ? router.push(pathname) : router.push("/");
-        }
+        await handleAuthResponse(
+          data.user,
+          "Logged in with Google successfully",
+          pathname,
+        );
       } catch (error: any) {
         console.error(error);
         toast({
@@ -149,28 +152,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading(false);
       }
     },
-    [fetchAndSetUser, router, supabase.auth],
+    [supabase.auth, handleAuthResponse],
   );
-
-  // *                              EMAIL SIGN-UP                            * //
 
   const handleSignUpWithEmail = useCallback(
     async (email: string, password: string, pathname?: string) => {
       setIsLoading(true);
       try {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-
+        const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-
-        await fetchAndSetUser(data.user);
-        toast({
-          title: "Account Created",
-          description: "Your account has been successfully created",
-          variant: "default",
-        });
+        await handleAuthResponse(
+          data.user,
+          "Your account has been successfully created",
+          pathname,
+        );
       } catch (error: any) {
         console.error(error);
         toast({
@@ -181,13 +176,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } finally {
         setIsLoading(false);
-        pathname ? router.push(pathname) : router.push("/");
       }
     },
-    [fetchAndSetUser, supabase.auth],
+    [supabase.auth, handleAuthResponse],
   );
-
-  // *                               EMAIL SIGN-IN                             * //
 
   const handleLoginWithEmail = useCallback(
     async (email: string, password: string, pathname?: string) => {
@@ -197,19 +189,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           email,
           password,
         });
-
         if (error) throw error;
-
-        if (data.user) {
-          await fetchAndSetUser(data.user);
-          toast({
-            title: "Welcome Back",
-            description: "You have successfully logged in",
-            variant: "default",
-          });
-
-          pathname ? router.push(pathname) : router.push("/");
-        }
+        await handleAuthResponse(
+          data.user,
+          "You have successfully logged in",
+          pathname,
+        );
       } catch (error: any) {
         console.error(error);
         toast({
@@ -221,9 +206,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading(false);
       }
     },
-    [fetchAndSetUser, router, supabase.auth],
+    [supabase.auth, handleAuthResponse],
   );
-  // *                                     LOGOUT                               * //
 
   const handleLogout = useCallback(async () => {
     setIsLoading(true);
@@ -250,13 +234,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [router]);
 
-  // -------------------------------------------------------------------------- //
-  // *                                  EFFECTS                              *  //
-  // -------------------------------------------------------------------------- //
-
-  /** Effect subscribe to auth change events */
   useEffect(() => {
     const setupAuth = async () => {
       const {
@@ -281,6 +260,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     setupAuth();
+  }, [supabase.auth, fetchAndSetUser]);
+
+  useEffect(() => {
+    console.log("auth called");
   }, [supabase.auth]);
 
   const value: AuthContextValue = useMemo(

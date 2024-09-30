@@ -1,3 +1,4 @@
+import { GenderSchema } from "@/src/entities/models/formSchemas";
 import { z } from "zod";
 /**
  * * - Schemas
@@ -17,14 +18,30 @@ export const SnowboardStyleSchema = z.enum([
   "splitboard",
 ]);
 
+const SkiStyleSchema = z.enum([
+  "all-mountain",
+  "powder",
+  "park",
+  "racing",
+  "touring",
+]);
+
 export const SnowboardFlexibilitySchema = z.enum(["soft", "medium", "stiff"]);
 
-const UserInputforSnowboardRecommendationSchema = z.object({
+export const UserInputforSnowboardRecommendationSchema = z.object({
   height: z.number().int().min(0),
   weight: z.number().int().min(0),
-  gender: z.enum(["male", "female", "unisex"]),
+  gender: GenderSchema,
   skillLevel: SkillLevelSchema,
   ridingStyle: SnowboardStyleSchema,
+});
+
+export const UserInputforSkiRecommendationSchema = z.object({
+  height: z.number().int().min(0),
+  weight: z.number().int().min(0),
+  gender: GenderSchema,
+  skillLevel: SkillLevelSchema,
+  skiingStyle: SkiStyleSchema,
 });
 
 /**
@@ -32,7 +49,7 @@ const UserInputforSnowboardRecommendationSchema = z.object({
  */
 
 // Snowboard Recommendation Type
-type SnowboardRecommendation = {
+export type SnowboardRecommendationType = {
   length: number; // in cm
   style: z.infer<typeof SnowboardStyleSchema>;
   flexibility: z.infer<typeof SnowboardFlexibilitySchema>;
@@ -44,12 +61,12 @@ type SnowboardRecommendation = {
 
 export const recommendSnowboard: (
   input: typeof UserInputforSnowboardRecommendationSchema["_output"],
-) => SnowboardRecommendation = (
+) => SnowboardRecommendationType = (
   input: typeof UserInputforSnowboardRecommendationSchema["_output"],
-): SnowboardRecommendation => {
+): SnowboardRecommendationType => {
   let length: number;
-  let style: SnowboardRecommendation["style"];
-  let flexibility: SnowboardRecommendation["flexibility"];
+  let style: SnowboardRecommendationType["style"];
+  let flexibility: SnowboardRecommendationType["flexibility"];
 
   // Determine base length based on height
   if (input.height < 150) length = 140;
