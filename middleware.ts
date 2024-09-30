@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   const supabase = createMiddlewareClient(request, response);
 
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
     const pathname = request.nextUrl.pathname;
 
     // Check if the current path starts with any of the protected routes
@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
     );
 
     if (isProtectedRoute || isAdminRoute) {
-      if (!user) {
+      if (!session?.expires_in) {
         return NextResponse.redirect(new URL("/login", request.url));
       }
 
