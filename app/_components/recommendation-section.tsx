@@ -52,10 +52,11 @@ const RecommendationSection = () => {
                     Length:{" "}
                     <span className="text-2xl font-bold">
                       {snowboardRecommendation?.lengthRange.min} cm
-                      {snowboardRecommendation.lengthRange.max !== Infinity ||
-                      snowboardRecommendation.lengthRange.max ===
-                        snowboardRecommendation.lengthRange.min
-                        ? `- ${snowboardRecommendation.lengthRange.max} cm`
+                      {snowboardRecommendation.lengthRange.max !== Infinity
+                        ? snowboardRecommendation.lengthRange.max ===
+                          snowboardRecommendation.lengthRange.min
+                          ? ""
+                          : `- ${snowboardRecommendation.lengthRange.max} cm`
                         : "+"}
                     </span>
                   </p>
