@@ -1,12 +1,5 @@
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Form,
   FormControl,
   FormField,
@@ -38,6 +31,9 @@ type SnowboardFormInputs = z.infer<
 >;
 type SkiFormInputs = z.infer<typeof UserInputforSkiRecommendationSchema>;
 
+const formItemClassName =
+  "p-4 bg-gradient-to-br from-muted to-border rounded-lg text-foreground";
+const inputClassName = "py-2 text-lg rounded-xl bg-background";
 const GearRecommendationForm = ({
   setSnowboardRecommendation,
 }: {
@@ -82,11 +78,8 @@ const GearRecommendationForm = ({
   };
 
   return (
-    <Card className="max-w-lg mx-auto">
-      <CardHeader>
-        <CardTitle>Gear Recommendation</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="max-w-md mx-auto bg-transparent shadow-none">
+      <div>
         <Tabs defaultValue="snowboard">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="snowboard">Snowboard</TabsTrigger>
@@ -218,7 +211,9 @@ const GearRecommendationForm = ({
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Get Snowboard Recommendation</Button>
+                <Button type="submit" className="col-span-2">
+                  Get Snowboard Recommendation
+                </Button>
               </form>
             </Form>
           </TabsContent>
@@ -346,16 +341,15 @@ const GearRecommendationForm = ({
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Get Ski Recommendation</Button>
+                <Button type="submit" className="col-span-2">
+                  Get Ski Recommendation
+                </Button>
               </form>
             </Form>
           </TabsContent>
         </Tabs>
-      </CardContent>
-      <CardFooter className="text-sm text-gray-500">
-        Fill in all fields for the best recommendation.
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 };
 

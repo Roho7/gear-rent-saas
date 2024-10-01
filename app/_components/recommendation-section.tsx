@@ -51,7 +51,10 @@ const RecommendationSection = () => {
                   <p className="flex justify-between items-center">
                     Length:{" "}
                     <span className="text-2xl font-bold">
-                      {snowboardRecommendation?.length} cm
+                      {snowboardRecommendation?.lengthRange.min} cm
+                      {snowboardRecommendation.lengthRange.max !== Infinity
+                        ? `- ${snowboardRecommendation.lengthRange.max} cm`
+                        : "+"}
                     </span>
                   </p>
                   <p className="flex justify-between items-center">

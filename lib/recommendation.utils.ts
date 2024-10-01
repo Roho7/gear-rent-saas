@@ -50,7 +50,7 @@ export const UserInputforSkiRecommendationSchema = z.object({
 
 // Snowboard Recommendation Type
 export type SnowboardRecommendationType = {
-  length: number; // in cm
+  lengthRange: { min: number; max: number }; // in cm
   style: z.infer<typeof SnowboardStyleSchema>;
   flexibility: z.infer<typeof SnowboardFlexibilitySchema>;
 };
@@ -59,65 +59,87 @@ export type SnowboardRecommendationType = {
  * * - Functions
  */
 
-export const recommendSnowboard: (
-  input: typeof UserInputforSnowboardRecommendationSchema["_output"],
-) => SnowboardRecommendationType = (
-  input: typeof UserInputforSnowboardRecommendationSchema["_output"],
+const sizeChart = [
+  { height: 147, weight: [110, 120], size: [128, 136] },
+  { height: 152, weight: [115, 130], size: [133, 141] },
+  { height: 158, weight: [125, 135], size: [139, 147] },
+  { height: 163, weight: [135, 145], size: [144, 152] },
+  { height: 168, weight: [140, 155], size: [149, 157] },
+  { height: 173, weight: [150, 165], size: [154, 162] },
+  { height: 178, weight: [160, 175], size: [159, 167] },
+  { height: 183, weight: [170, 185], size: [160, Infinity] },
+  { height: 188, weight: [180, 195], size: [160, Infinity] },
+  { height: 193, weight: [190, 205], size: [160, Infinity] },
+];
+
+export const recommendSnowboard = (
+  input: z.infer<typeof UserInputforSnowboardRecommendationSchema>,
 ): SnowboardRecommendationType => {
-  let length: number;
-  let style: SnowboardRecommendationType["style"];
-  let flexibility: SnowboardRecommendationType["flexibility"];
+  let lengthRange: { min: number; max: number };
+  let style: SnowboardRecommendationType["style"] = "all-mountain";
+  let flexibility: SnowboardRecommendationType["flexibility"] = "medium";
 
-  // Determine base length based on height
-  if (input.height < 150) length = 140;
-  else if (input.height < 160) length = 150;
-  else if (input.height < 170) length = 160;
-  else if (input.height < 180) length = 165;
-  else length = 170;
+  // Find the appropriate size range based on height and weight
+  const sizeRow = sizeChart.find((row) => input.height <= row.height);
+  if (sizeRow) {
+    if (
+      input.weight >= sizeRow.weight[0] && input.weight <= sizeRow.weight[1]
+    ) {
+      lengthRange = { min: sizeRow.size[0], max: sizeRow.size[1] };
+    } else if (input.weight < sizeRow.weight[0]) {
+      // If weight is below the range, use the lower end of the size range
+      lengthRange = { min: sizeRow.size[0], max: sizeRow.size[0] };
+    } else {
+      // If weight is above the range, use the upper end of the size range
+      lengthRange = { min: sizeRow.size[1], max: sizeRow.size[1] };
+    }
+  } else {
+    // If height is above the chart, use the largest size
+    lengthRange = { min: 160, max: Infinity };
+  }
 
-  // Adjust length based on weight
-  const weightAdjustment = Math.floor((input.weight - 70) / 10) * 2;
-  length += weightAdjustment;
-
-  // Adjust length and style based on riding style
+  // Adjust style based on riding style
   switch (input.ridingStyle) {
     case "freestyle":
-      length -= 5;
       style = "freestyle";
+      // Freestyle riders often prefer shorter boards
+      lengthRange.min = Math.max(lengthRange.min - 5, 128);
+      lengthRange.max = Math.max(lengthRange.max - 5, lengthRange.min);
       break;
     case "powder":
-      length += 5;
       style = "powder";
+      // Powder riders often prefer longer boards
+      lengthRange.min = Math.min(lengthRange.min + 5, 175);
+      lengthRange.max = Math.min(lengthRange.max + 5, 175);
       break;
     case "backcountry":
       style = "splitboard";
       break;
-    default:
-      style = "all-mountain";
+      // "all-mountain" is already the default
   }
 
   // Adjust flexibility based on skill level
   switch (input.skillLevel) {
     case "beginner":
       flexibility = "soft";
-      length -= 2; // Beginners often benefit from slightly shorter boards
-      break;
-    case "intermediate":
-      flexibility = "medium";
+      // Beginners often benefit from slightly shorter boards
+      lengthRange.min = Math.max(lengthRange.min - 2, 128);
+      lengthRange.max = Math.max(lengthRange.max - 2, lengthRange.min);
       break;
     case "advanced":
       flexibility = "stiff";
-      length += 2; // Advanced riders can handle longer boards
+      // Advanced riders can handle longer boards
+      lengthRange.min = Math.min(lengthRange.min + 2, 175);
+      lengthRange.max = Math.min(lengthRange.max + 2, 175);
       break;
+      // "intermediate" is already the default
   }
 
   // Fine-tune based on gender (on average, women's boards are slightly shorter)
   if (input.gender === "female") {
-    length -= 3;
+    lengthRange.min = Math.max(lengthRange.min - 3, 128);
+    lengthRange.max = Math.max(lengthRange.max - 3, lengthRange.min);
   }
 
-  // Ensure length stays within reasonable bounds
-  length = Math.max(140, Math.min(175, length));
-
-  return { length, style, flexibility };
+  return { lengthRange, style, flexibility };
 };
