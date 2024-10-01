@@ -248,28 +248,77 @@ const AddListingPage = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel className="text-gray-700">
-                        Product Description
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe your product condition and variant information in as much detail as possible."
-                          {...field}
+                <div className="flex gap-2">
+                  <FormField
+                    control={form.control}
+                    name="size"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col gap-2.5">
+                        <FormLabel className="text-gray-700">Size</FormLabel>
+                        <SingleSelectCombobox
+                          data={
+                            productGroups.find(
+                              (p) =>
+                                p.product_group_id ===
+                                form.getValues("product_group_id"),
+                            )?.sizes || []
+                          }
+                          value={field.value}
+                          setValue={form.setValue.bind(null, "size")}
+                          emptyMessage="Select a size"
                         />
-                      </FormControl>
-                      <FormDescription>
-                        Enter important details like sizes, colors etc.
-                      </FormDescription>
-                      <FormMessage className="text-red-700" />
-                    </FormItem>
-                  )}
-                />
-
+                        <FormDescription>
+                          The size or length of the product in centimeters
+                        </FormDescription>
+                        <FormMessage className="text-red-700" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col gap-2.5">
+                        <FormLabel className="text-gray-700">Gender</FormLabel>
+                        <SingleSelectCombobox
+                          data={genderMap}
+                          value={field.value}
+                          setValue={form.setValue.bind(null, "gender")}
+                          emptyMessage="Select a gender"
+                        />
+                        <FormMessage className="text-red-700" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel className="text-gray-700">Type</FormLabel>
+                        <FormControl>
+                          <SingleSelectCombobox
+                            data={
+                              productGroups.find(
+                                (p) =>
+                                  p.product_group_id ===
+                                  form.getValues("product_group_id"),
+                              )?.types || []
+                            }
+                            value={field.value}
+                            setValue={form.setValue.bind(null, "type")}
+                            emptyMessage="Select a type"
+                            hasSearch={true}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          The type that describes the product
+                        </FormDescription>
+                        <FormMessage className="text-red-700" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <div className="flex gap-2">
                   <FormField
                     control={form.control}
@@ -362,77 +411,7 @@ const AddListingPage = () => {
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-2">
-                  <FormField
-                    control={form.control}
-                    name="size"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2.5">
-                        <FormLabel className="text-gray-700">Size</FormLabel>
-                        <SingleSelectCombobox
-                          data={
-                            productGroups.find(
-                              (p) =>
-                                p.product_group_id ===
-                                form.getValues("product_group_id"),
-                            )?.sizes || []
-                          }
-                          value={field.value}
-                          setValue={form.setValue.bind(null, "size")}
-                          emptyMessage="Select a size"
-                        />
-                        <FormDescription>
-                          The size or length of the product in centimeters
-                        </FormDescription>
-                        <FormMessage className="text-red-700" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="gender"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2.5">
-                        <FormLabel className="text-gray-700">Gender</FormLabel>
-                        <SingleSelectCombobox
-                          data={genderMap}
-                          value={field.value}
-                          setValue={form.setValue.bind(null, "gender")}
-                          emptyMessage="Select a gender"
-                        />
-                        <FormMessage className="text-red-700" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel className="text-gray-700">Type</FormLabel>
-                        <FormControl>
-                          <SingleSelectCombobox
-                            data={
-                              productGroups.find(
-                                (p) =>
-                                  p.product_group_id ===
-                                  form.getValues("product_group_id"),
-                              )?.types || []
-                            }
-                            value={field.value}
-                            setValue={form.setValue.bind(null, "type")}
-                            emptyMessage="Select a type"
-                            hasSearch={true}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          The type that describes the product
-                        </FormDescription>
-                        <FormMessage className="text-red-700" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+
                 <FormField
                   control={form.control}
                   name="brands"
@@ -454,6 +433,27 @@ const AddListingPage = () => {
                       />
                       <FormDescription>
                         Select one or more brands for this listing
+                      </FormDescription>
+                      <FormMessage className="text-red-700" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel className="text-gray-700">
+                        Product Description
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe your product condition and variant information in as much detail as possible."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Enter important details like sizes, colors etc.
                       </FormDescription>
                       <FormMessage className="text-red-700" />
                     </FormItem>

@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import clsx from "clsx";
+import { ChevronsUpDown } from "lucide-react";
 
 type Props = {
   discount: number;
@@ -44,7 +45,7 @@ const DiscountCombobox = ({
             {discount
               ? discounts.find((curr) => curr === discount)
               : "Select discount"}
-            {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </FormControl>
       </PopoverTrigger>

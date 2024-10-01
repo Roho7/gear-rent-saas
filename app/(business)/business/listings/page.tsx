@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
+import React from "react";
 import { useInventory } from "../../_providers/useBusiness";
 import { ListingTable } from "../_components/listing.table";
 
@@ -40,7 +41,7 @@ const ListingsPage = () => {
           </div>
         </div>
       ) : (
-        <>
+        <React.Fragment>
           <Separator />
           <div className="">
             {/* {inventory?.map((item) => (
@@ -48,7 +49,7 @@ const ListingsPage = () => {
             ))} */}
             <ListingTable data={inventory} />
           </div>
-        </>
+        </React.Fragment>
       )}
     </main>
   );
