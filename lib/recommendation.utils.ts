@@ -60,16 +60,16 @@ export type SnowboardRecommendationType = {
  */
 
 const sizeChart = [
-  { height: 147, weight: [110, 120], size: [128, 136] },
-  { height: 152, weight: [115, 130], size: [133, 141] },
-  { height: 158, weight: [125, 135], size: [139, 147] },
-  { height: 163, weight: [135, 145], size: [144, 152] },
-  { height: 168, weight: [140, 155], size: [149, 157] },
-  { height: 173, weight: [150, 165], size: [154, 162] },
-  { height: 178, weight: [160, 175], size: [159, 167] },
-  { height: 183, weight: [170, 185], size: [160, Infinity] },
-  { height: 188, weight: [180, 195], size: [160, Infinity] },
-  { height: 193, weight: [190, 205], size: [160, Infinity] },
+  { height: 147, weight: [50, 54], size: [128, 136] },
+  { height: 152, weight: [52, 59], size: [133, 141] },
+  { height: 158, weight: [57, 61], size: [139, 147] },
+  { height: 163, weight: [61, 66], size: [144, 152] },
+  { height: 168, weight: [63, 70], size: [149, 157] },
+  { height: 173, weight: [68, 75], size: [154, 162] },
+  { height: 178, weight: [73, 79], size: [159, 167] },
+  { height: 183, weight: [77, 84], size: [160, Infinity] },
+  { height: 188, weight: [82, 88], size: [160, Infinity] },
+  { height: 193, weight: [86, 93], size: [160, Infinity] },
 ];
 
 export const recommendSnowboard = (
@@ -98,7 +98,6 @@ export const recommendSnowboard = (
     lengthRange = { min: 160, max: Infinity };
   }
 
-  // Adjust style based on riding style
   switch (input.ridingStyle) {
     case "freestyle":
       style = "freestyle";
