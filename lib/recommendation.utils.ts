@@ -98,7 +98,47 @@ export const recommendSnowboard = (
     lengthRange = { min: 160, max: Infinity };
   }
 
-  // ... (keep the rest of the function as is)
+  switch (input.ridingStyle) {
+    case "freestyle":
+      style = "freestyle";
+      // Freestyle riders often prefer shorter boards
+      lengthRange.min = Math.max(lengthRange.min - 5, 128);
+      lengthRange.max = Math.max(lengthRange.max - 5, lengthRange.min);
+      break;
+    case "powder":
+      style = "powder";
+      // Powder riders often prefer longer boards
+      lengthRange.min = Math.min(lengthRange.min + 5, 175);
+      lengthRange.max = Math.min(lengthRange.max + 5, 175);
+      break;
+    case "backcountry":
+      style = "splitboard";
+      break;
+      // "all-mountain" is already the default
+  }
+
+  // Adjust flexibility based on skill level
+  switch (input.skillLevel) {
+    case "beginner":
+      flexibility = "soft";
+      // Beginners often benefit from slightly shorter boards
+      lengthRange.min = Math.max(lengthRange.min - 2, 128);
+      lengthRange.max = Math.max(lengthRange.max - 2, lengthRange.min);
+      break;
+    case "advanced":
+      flexibility = "stiff";
+      // Advanced riders can handle longer boards
+      lengthRange.min = Math.min(lengthRange.min + 2, 175);
+      lengthRange.max = Math.min(lengthRange.max + 2, 175);
+      break;
+      // "intermediate" is already the default
+  }
+
+  // Fine-tune based on gender (on average, women's boards are slightly shorter)
+  if (input.gender === "female") {
+    lengthRange.min = Math.max(lengthRange.min - 3, 128);
+    lengthRange.max = Math.max(lengthRange.max - 3, lengthRange.min);
+  }
 
   return { lengthRange, style, flexibility };
 };
