@@ -232,6 +232,9 @@ const GearRecommendationCard = () => {
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className={formClassName}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") e.preventDefault();
+            }}
           >
             <main className="my-2">{questions[currentQuestion]}</main>
 
@@ -272,8 +275,15 @@ const GearRecommendationCard = () => {
           <SnowboardRecommendationResult
             snowboardRecommendation={snowboardRecommendation}
           />
-          <Button variant={"ghost"} size={"sm"}>
-            {" "}
+          <Button
+            variant={"ghost"}
+            size={"sm"}
+            onClick={() => {
+              setCurrentQuestion(0);
+              setSnowboardRecommendation(null);
+              form.reset();
+            }}
+          >
             <BiReset /> Reset
           </Button>
         </div>

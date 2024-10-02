@@ -21,7 +21,7 @@ const Hero = (props: Props) => {
         >
           <div className="flex flex-col gap-1 z-10">
             <img src="/logo-white-large.svg" alt="" width={500} />
-            <p>An Open marketplace for renting adventure gera</p>
+            <p>An open marketplace for renting Adventure Gear</p>
             <CTA
               callback={() => {
                 document.getElementById("main-search-location-input")?.click();
