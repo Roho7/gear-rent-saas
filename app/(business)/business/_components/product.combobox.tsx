@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ProductGroupType } from "@/src/entities/models/types";
-
+import { ChevronsUpDown } from "lucide-react";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 type Props = {
@@ -55,11 +55,11 @@ const InnerProductList = ({
               className="grid grid-cols-2"
             >
               <div className="h-20 w-20 ">
-                {/* <img
-                  src={product.image_url || ""}
+                <img
+                  src={product.image_url || "/placeholder_image.png"}
                   alt=""
                   className="object-contain h-full w-full"
-                /> */}
+                />
               </div>
               {product.product_group_name}
             </CommandItem>
@@ -106,7 +106,7 @@ const ProductCombobox = ({ productId, setProductId, disabled }: Props) => {
             ? productGroups.find((p) => p.product_group_id === productId)
                 ?.product_group_name
             : "Select product..."}
-          {/* <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className=" p-0">

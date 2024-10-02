@@ -15,33 +15,149 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   recommendSnowboard,
   SnowboardRecommendationType,
-  UserInputforSkiRecommendationSchema,
   UserInputforSnowboardRecommendationSchema,
 } from "@/lib/recommendation.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+import SnowboardRecommendationResult from "./snowboard-recommendation-result";
 
 type SnowboardFormInputs = z.infer<
   typeof UserInputforSnowboardRecommendationSchema
 >;
-type SkiFormInputs = z.infer<typeof UserInputforSkiRecommendationSchema>;
 
-const formItemClassName =
-  "p-4 bg-gradient-to-br from-muted to-border rounded-lg text-foreground";
-const inputClassName = "py-2 text-lg rounded-xl bg-background";
-const GearRecommendationForm = ({
-  setSnowboardRecommendation,
-}: {
-  setSnowboardRecommendation: React.Dispatch<
-    React.SetStateAction<SnowboardRecommendationType | null>
-  >;
-}) => {
-  const snowboardForm = useForm<SnowboardFormInputs>({
+const formClassName =
+  "mt-4 bg-background border border-border rounded-xl p-4 text-primary";
+
+const formItemClassName = "text-lg";
+const formInputClassName = "text-lg py-4 ";
+const QuestionHeight = ({ control }: { control: any }) => (
+  <FormField
+    control={control}
+    name="height"
+    render={({ field }) => (
+      <FormItem className={formItemClassName}>
+        <FormLabel>Height (cm)</FormLabel>
+        <FormControl>
+          <Input
+            type="number"
+            {...field}
+            onChange={(e) => field.onChange(parseInt(e.target.value))}
+            className={formInputClassName}
+          />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+);
+
+const QuestionWeight = ({ control }: { control: any }) => (
+  <FormField
+    control={control}
+    name="weight"
+    render={({ field }) => (
+      <FormItem className={formItemClassName}>
+        <FormLabel>Weight (kg)</FormLabel>
+        <FormControl>
+          <Input
+            type="number"
+            {...field}
+            onChange={(e) => field.onChange(parseInt(e.target.value))}
+            className={formInputClassName}
+          />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+);
+
+const QuestionGender = ({ control }: { control: any }) => (
+  <FormField
+    control={control}
+    name="gender"
+    render={({ field }) => (
+      <FormItem className={formItemClassName}>
+        <FormLabel>Gender</FormLabel>
+        <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <FormControl>
+            <SelectTrigger className={formInputClassName}>
+              <SelectValue placeholder="Select gender" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent>
+            <SelectItem value="male">Male</SelectItem>
+            <SelectItem value="female">Female</SelectItem>
+          </SelectContent>
+        </Select>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+);
+
+const QuestionSkillLevel = ({ control }: { control: any }) => (
+  <FormField
+    control={control}
+    name="skillLevel"
+    render={({ field }) => (
+      <FormItem className={formItemClassName}>
+        <FormLabel>Skill Level</FormLabel>
+        <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <FormControl>
+            <SelectTrigger className={formInputClassName}>
+              <SelectValue placeholder="Select skill level" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent>
+            <SelectItem value="beginner">Beginner</SelectItem>
+            <SelectItem value="intermediate">Intermediate</SelectItem>
+            <SelectItem value="advanced">Advanced</SelectItem>
+          </SelectContent>
+        </Select>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+);
+
+const QuestionRidingStyle = ({ control }: { control: any }) => (
+  <FormField
+    control={control}
+    name="ridingStyle"
+    render={({ field }) => (
+      <FormItem className={formItemClassName}>
+        <FormLabel>Riding Style</FormLabel>
+        <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <FormControl>
+            <SelectTrigger className={formInputClassName}>
+              <SelectValue placeholder="Select riding style" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent>
+            <SelectItem value="freestyle">Freestyle</SelectItem>
+            <SelectItem value="all-mountain">All-Mountain</SelectItem>
+            <SelectItem value="powder">Powder</SelectItem>
+            <SelectItem value="backcountry">Backcountry</SelectItem>
+            <SelectItem value="splitboard">Splitboard</SelectItem>
+          </SelectContent>
+        </Select>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+);
+
+const GearRecommendationCard = () => {
+  const [snowboardRecommendation, setSnowboardRecommendation] =
+    useState<SnowboardRecommendationType | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const form = useForm<SnowboardFormInputs>({
     resolver: zodResolver(UserInputforSnowboardRecommendationSchema),
     defaultValues: {
       height: 0,
@@ -52,305 +168,77 @@ const GearRecommendationForm = ({
     },
   });
 
-  const skiForm = useForm<SkiFormInputs>({
-    resolver: zodResolver(UserInputforSkiRecommendationSchema),
-    defaultValues: {
-      height: 0,
-      weight: 0,
-      gender: "male",
-      skillLevel: "beginner",
-      skiingStyle: "all-mountain",
-    },
-  });
+  const questions = [
+    <QuestionHeight key="height" control={form.control} />,
+    <QuestionWeight key="weight" control={form.control} />,
+    <QuestionGender key="gender" control={form.control} />,
+    <QuestionSkillLevel key="skillLevel" control={form.control} />,
+    <QuestionRidingStyle key="ridingStyle" control={form.control} />,
+  ];
 
-  const onSnowboardSubmit: SubmitHandler<SnowboardFormInputs> = (data) => {
+  const onSubmit = (data: SnowboardFormInputs) => {
     const result = recommendSnowboard(data);
-
     if (result) {
       setSnowboardRecommendation(result);
     }
-    // Here you would typically send this data to your recommendation algorithm
-  };
-
-  const onSkiSubmit: SubmitHandler<SkiFormInputs> = (data) => {
-    console.log("Ski recommendation for:", data);
-    // Here you would typically send this data to your recommendation algorithm
   };
 
   return (
-    <div className="max-w-md mx-auto bg-transparent shadow-none">
-      <div>
-        <Tabs defaultValue="snowboard">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="snowboard">Snowboard</TabsTrigger>
-            <TabsTrigger value="ski">Ski</TabsTrigger>
-          </TabsList>
-          <TabsContent value="snowboard">
-            <Form {...snowboardForm}>
-              <form
-                onSubmit={snowboardForm.handleSubmit(onSnowboardSubmit)}
-                className="space-y-4"
+    <div className="glass-dark px-2 py-4 rounded-xl max-w-md max-h-fit">
+      <header className="px-4">
+        <div className="text-sm mb-2 p-4 border rounded-full w-5 h-5 flex items-center justify-center mx-auto">
+          0{currentQuestion + 1}
+        </div>
+        <h2 className="text-3xl">Gear Recommendation</h2>
+        <p className="text-sm">Tell us about yourself</p>
+      </header>
+
+      {!snowboardRecommendation ? (
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className={formClassName}
+          >
+            <main className="my-2">{questions[currentQuestion]}</main>
+
+            <footer className="flex justify-between">
+              <Button
+                type="button"
+                variant={"outline"}
+                size={"sm"}
+                onClick={() =>
+                  setCurrentQuestion((prev) => Math.max(0, prev - 1))
+                }
+                disabled={currentQuestion === 0}
               >
-                <FormField
-                  control={snowboardForm.control}
-                  name="height"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Height (cm)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={snowboardForm.control}
-                  name="weight"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Weight (kg)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={snowboardForm.control}
-                  name="gender"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Gender</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={snowboardForm.control}
-                  name="skillLevel"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Skill Level</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select skill level" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="beginner">Beginner</SelectItem>
-                          <SelectItem value="intermediate">
-                            Intermediate
-                          </SelectItem>
-                          <SelectItem value="advanced">Advanced</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={snowboardForm.control}
-                  name="ridingStyle"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Riding Style</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select riding style" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="freestyle">Freestyle</SelectItem>
-                          <SelectItem value="all-mountain">
-                            All-Mountain
-                          </SelectItem>
-                          <SelectItem value="powder">Powder</SelectItem>
-                          <SelectItem value="backcountry">
-                            Backcountry
-                          </SelectItem>
-                          <SelectItem value="splitboard">Splitboard</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="col-span-2">
-                  Get Snowboard Recommendation
+                Previous
+              </Button>
+              {currentQuestion === questions.length - 1 ? (
+                <Button type="submit">Get Recommendation</Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  size={"sm"}
+                  onClick={() =>
+                    setCurrentQuestion((prev) =>
+                      Math.min(questions.length - 1, prev + 1),
+                    )
+                  }
+                >
+                  Next
                 </Button>
-              </form>
-            </Form>
-          </TabsContent>
-          <TabsContent value="ski">
-            <Form {...skiForm}>
-              <form
-                onSubmit={skiForm.handleSubmit(onSkiSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={skiForm.control}
-                  name="height"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Height (cm)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={skiForm.control}
-                  name="weight"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Weight (kg)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={skiForm.control}
-                  name="gender"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Gender</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={skiForm.control}
-                  name="skillLevel"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Skill Level</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select skill level" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="beginner">Beginner</SelectItem>
-                          <SelectItem value="intermediate">
-                            Intermediate
-                          </SelectItem>
-                          <SelectItem value="advanced">Advanced</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={skiForm.control}
-                  name="skiingStyle"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Skiing Style</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select skiing style" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="all-mountain">
-                            All-Mountain
-                          </SelectItem>
-                          <SelectItem value="powder">Powder</SelectItem>
-                          <SelectItem value="park">Park & Pipe</SelectItem>
-                          <SelectItem value="racing">Racing</SelectItem>
-                          <SelectItem value="touring">Touring</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="col-span-2">
-                  Get Ski Recommendation
-                </Button>
-              </form>
-            </Form>
-          </TabsContent>
-        </Tabs>
-      </div>
+              )}
+            </footer>
+          </form>
+        </Form>
+      ) : (
+        <SnowboardRecommendationResult
+          snowboardRecommendation={snowboardRecommendation}
+        />
+      )}
     </div>
   );
 };
 
-export default GearRecommendationForm;
+export default GearRecommendationCard;

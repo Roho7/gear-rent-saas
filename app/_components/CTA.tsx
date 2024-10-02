@@ -11,9 +11,9 @@ type Props = {
 const CTA = ({ children, callback, classNames }: Props) => {
   return (
     <Button
-      variant="secondary"
       className={clsx("rounded-full text-black flex gap-1", classNames)}
-      onClick={callback}>
+      onClick={callback}
+    >
       {children}
     </Button>
   );

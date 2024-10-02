@@ -73,6 +73,7 @@ const AddListingPage = () => {
       discount_2: 0,
       discount_3: 0,
       total_units: 1,
+      available_units: 0,
     },
   });
 
@@ -385,32 +386,62 @@ const AddListingPage = () => {
                     )}
                   />
                 </div>
-                <FormField
-                  control={form.control}
-                  name="total_units"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className="text-gray-700">
-                        Total Units
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Type here"
-                          type="number"
-                          min={1}
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(e.target.valueAsNumber)
-                          }
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        The number of units available for rent for this product
-                      </FormDescription>
-                      <FormMessage className="text-red-700" />
-                    </FormItem>
-                  )}
-                />
+                <div className="flex gap-2">
+                  <FormField
+                    control={form.control}
+                    name="total_units"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel className="text-gray-700">
+                          Total Units
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Type here"
+                            type="number"
+                            min={1}
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(e.target.valueAsNumber)
+                            }
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          The total number of units of this product in your
+                          inventory
+                        </FormDescription>
+                        <FormMessage className="text-red-700" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="available_units"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel className="text-gray-700">
+                          Available Units
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter available units"
+                            type="number"
+                            min={1}
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(e.target.valueAsNumber)
+                            }
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          The number of units of this product currently
+                          available for rent
+                        </FormDescription>
+                        <FormMessage className="text-red-700" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <FormField
                   control={form.control}
@@ -438,27 +469,7 @@ const AddListingPage = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel className="text-gray-700">
-                        Product Description
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe your product condition and variant information in as much detail as possible."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Enter important details like sizes, colors etc.
-                      </FormDescription>
-                      <FormMessage className="text-red-700" />
-                    </FormItem>
-                  )}
-                />
+
                 <div className="flex flex-wrap gap-2 flex-1">
                   <FormField
                     control={form.control}
@@ -515,6 +526,27 @@ const AddListingPage = () => {
                     )}
                   />
                 </div>
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel className="text-gray-700">
+                        Product Description
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe your product condition and variant information in as much detail as possible."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Enter important details like sizes, colors etc.
+                      </FormDescription>
+                      <FormMessage className="text-red-700" />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex gap-2 ml-auto mt-auto">
                   {params.listing_id !== "new" && (
                     <Button

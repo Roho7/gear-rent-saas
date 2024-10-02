@@ -81,7 +81,7 @@
   @apply bg-white rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-50;
 }
 .glass-dark {
-  @apply bg-gray-800 rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-20;
+  @apply bg-gray-900 border border-background rounded-[20px] bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20;
 }
 
 @keyframes scroll {
