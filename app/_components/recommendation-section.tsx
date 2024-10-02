@@ -4,7 +4,6 @@ import { ArrowLeft } from "lucide-react";
 import React from "react";
 import { FaSkiing, FaSnowboarding } from "react-icons/fa";
 import { FaTent } from "react-icons/fa6";
-import GearRecommendationForm from "./recommendation-card";
 
 const ScrollingIcons = () => {
   return (
@@ -33,9 +32,9 @@ const RecommendationSection = () => {
   return (
     <div className="flex gap-2 ">
       <div className="flex-1">
-        <GearRecommendationForm
+        {/* <GearRecommendationForm
           setSnowboardRecommendation={setSnowboardRecommendation}
-        />
+        /> */}
       </div>
       <div className="flex-1 flex items-center justify-center">
         <Card className="max-w-lg max-h-lg shadow-xl relative">

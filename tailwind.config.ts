@@ -21,7 +21,8 @@ const config = {
       glass:
         "h-full w-full bg-gray-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-20 border border-gray-100",
       backgroundImage: {
-        ski: "url('/ski.jpg')",
+        ski:
+          "url('https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/Ski%20Blades%20Blue%20Cable%20Car.jpg?t=2024-10-02T02%3A59%3A28.474Z')",
         snowski: "url('/snow.jpg')",
         summer: "url('/summer.jpg')",
       },
