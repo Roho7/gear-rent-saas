@@ -2,6 +2,7 @@ import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 import { BiCalendar, BiChart, BiGlobe, BiHeadphone } from "react-icons/bi";
 
 interface BusinessFeatureProps {
@@ -30,6 +31,7 @@ const BusinessFeatureCard: React.FC<BusinessFeatureProps> = ({
 );
 
 const ForBusinessesSection: React.FC = () => {
+  const router = useRouter();
   const businessFeatures: BusinessFeatureProps[] = [
     {
       icon: BiChart,
@@ -71,6 +73,12 @@ const ForBusinessesSection: React.FC = () => {
               sales and streamline operations. Our platform provides the tools
               and reach you need to grow your business.
             </p>
+            <Button
+              className="outline"
+              onClick={() => router.push("/business")}
+            >
+              Start Renting
+            </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {businessFeatures.map((feature, index) => (

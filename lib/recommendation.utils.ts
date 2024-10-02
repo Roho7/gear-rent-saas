@@ -29,16 +29,16 @@ const SkiStyleSchema = z.enum([
 export const SnowboardFlexibilitySchema = z.enum(["soft", "medium", "stiff"]);
 
 export const UserInputforSnowboardRecommendationSchema = z.object({
-  height: z.number().int().min(0),
-  weight: z.number().int().min(0),
+  height: z.number().min(0).nonnegative(),
+  weight: z.number().min(0).nonnegative(),
   gender: GenderSchema,
   skillLevel: SkillLevelSchema,
   ridingStyle: SnowboardStyleSchema,
 });
 
 export const UserInputforSkiRecommendationSchema = z.object({
-  height: z.number().int().min(0),
-  weight: z.number().int().min(0),
+  height: z.number().min(0),
+  weight: z.number().min(0),
   gender: GenderSchema,
   skillLevel: SkillLevelSchema,
   skiingStyle: SkiStyleSchema,

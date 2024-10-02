@@ -112,7 +112,7 @@ const BookingCard = ({ bookingItem }: Props) => {
             </Badge>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col items-end gap-1 mt-auto">
+        <CardFooter className="flex flex-col items-end gap-1 mt-auto pt-4">
           <span className="text-xs text-muted">
             {dayjs(bookingItem.booking_date).format("ddd, MMM D, YY")}
           </span>

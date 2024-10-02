@@ -1,5 +1,5 @@
 import { Toaster } from "@/components/ui/toaster";
-import { Inter } from "next/font/google";
+import { Urbanist } from "next/font/google";
 import Script from "next/script";
 
 import { Metadata } from "next";
@@ -10,7 +10,10 @@ import { ProductProvider } from "./_providers/useProducts";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
-const inter = Inter({ subsets: ["latin"] });
+const lato = Urbanist({
+  // weight: ["100", "300", "400", "700"],
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Gearyo",
@@ -33,7 +36,7 @@ export default function RootLayout({
       </head>
       <body
         className={
-          inter.className + "overflow-x-hidden flex flex-col min-h-screen "
+          lato.className + "overflow-x-hidden flex flex-col min-h-screen "
         }
       >
         <ThemeProvider
