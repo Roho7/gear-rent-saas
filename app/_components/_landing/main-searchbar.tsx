@@ -212,6 +212,7 @@ const MainSearchbar = ({
       />
       <Form {...form}>
         <form
+          id="main-search-form"
           onSubmit={form.handleSubmit(handleSearch)}
           onClick={() => {
             setIsSearchActive(true);

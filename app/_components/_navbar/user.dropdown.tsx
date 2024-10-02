@@ -26,6 +26,11 @@ const UserDropdown = () => {
         <DropdownMenuItem onClick={() => router.push("/account")}>
           {user ? "My Account" : "Login or Sign Up"}
         </DropdownMenuItem>
+        {user && (
+          <DropdownMenuItem onClick={() => router.push("/account/bookings")}>
+            My Bookings
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/business")}>
           {user?.store_id ? "My store" : "Rent my gear"}

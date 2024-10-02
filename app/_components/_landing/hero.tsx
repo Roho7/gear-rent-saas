@@ -19,17 +19,20 @@ const Hero = (props: Props) => {
             theme === "dark" ? "bg-summer" : "bg-ski",
           )}
         >
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 z-10">
             <img src="/logo-white-large.svg" alt="" width={500} />
             <p>An Open marketplace for renting adventure gera</p>
             <CTA
-              callback={() => router.replace("/store")}
+              callback={() => {
+                document.getElementById("main-search-location-input")?.click();
+              }}
               classNames="w-fit text-background my-2"
             >
               Explore <FaArrowRight />
             </CTA>
           </div>
           <GearRecommendationCard />
+          <div className="absolute bg-gradient-to-r from-black/20 to-transparent inset-0 w-full h-full rounded-lg"></div>
         </div>
       </div>
     </section>

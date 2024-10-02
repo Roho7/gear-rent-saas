@@ -185,6 +185,15 @@ const AddListingPage = () => {
   ]);
 
   useEffect(() => {
+    if (form.getValues("total_units") < form.getValues("available_units")) {
+      form.setError("available_units", {
+        type: "manual",
+        message: "Available units cannot be more than total units",
+      });
+    }
+  }, [form.watch("total_units"), form.watch("available_units")]);
+
+  useEffect(() => {
     if (params.listing_id && params.listing_id !== "new") {
       fetchInventoryItem(params.listing_id);
     }

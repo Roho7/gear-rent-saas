@@ -8,8 +8,8 @@ type Props = {
 
 const SnowboardRecommendationResult = ({ snowboardRecommendation }: Props) => {
   return (
-    <div className="flex-1 flex items-center justify-center mt-4">
-      <Card className="max-w-lg max-h-lg shadow-xl relative">
+    <div className="flex-1 flex items-center justify-center mt-4 w-full">
+      <Card className="max-w-xl max-h-lg shadow-xl relative">
         <CardContent className="pt-4">
           <div className="flex flex-col gap-2">
             <FaSnowboarding className="text-2xl text-muted mx-auto" />

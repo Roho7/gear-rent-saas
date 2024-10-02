@@ -21,8 +21,9 @@ import {
   UserInputforSnowboardRecommendationSchema,
 } from "@/lib/recommendation.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { BiReset } from "react-icons/bi";
 import { z } from "zod";
 import SnowboardRecommendationResult from "./snowboard-recommendation-result";
 
@@ -32,9 +33,9 @@ type SnowboardFormInputs = z.infer<
 
 const formClassName =
   "mt-4 bg-background border border-border rounded-xl p-4 text-primary";
-
 const formItemClassName = "text-lg";
 const formInputClassName = "text-lg py-4 ";
+
 const QuestionHeight = ({ control }: { control: any }) => (
   <FormField
     control={control}
@@ -46,6 +47,8 @@ const QuestionHeight = ({ control }: { control: any }) => (
           <Input
             type="number"
             {...field}
+            min={0}
+            placeholder="e.g. 180"
             onChange={(e) => field.onChange(parseInt(e.target.value))}
             className={formInputClassName}
           />
@@ -67,6 +70,8 @@ const QuestionWeight = ({ control }: { control: any }) => (
           <Input
             type="number"
             {...field}
+            min={0}
+            placeholder="e.g. 70"
             onChange={(e) => field.onChange(parseInt(e.target.value))}
             className={formInputClassName}
           />
@@ -160,8 +165,6 @@ const GearRecommendationCard = () => {
   const form = useForm<SnowboardFormInputs>({
     resolver: zodResolver(UserInputforSnowboardRecommendationSchema),
     defaultValues: {
-      height: 0,
-      weight: 0,
       gender: "male",
       skillLevel: "beginner",
       ridingStyle: "all-mountain",
@@ -183,8 +186,39 @@ const GearRecommendationCard = () => {
     }
   };
 
+  const isNextButtonDisabled = useCallback(() => {
+    const currentField = [
+      "height",
+      "weight",
+      "gender",
+      "skillLevel",
+      "ridingStyle",
+    ][currentQuestion];
+    const fieldState = form.getFieldState(
+      currentField as keyof SnowboardFormInputs,
+    );
+    const fieldValue = form.getValues(
+      currentField as keyof SnowboardFormInputs,
+    );
+
+    if (currentField === "height" || currentField === "weight") {
+      return (
+        fieldState.invalid ||
+        (typeof fieldValue === "number" && fieldValue <= 0) ||
+        fieldValue === undefined ||
+        !fieldValue
+      );
+    }
+
+    return (
+      fieldState.invalid ||
+      fieldValue === undefined ||
+      (typeof fieldValue === "number" && fieldValue <= 0)
+    );
+  }, [currentQuestion, form.watch("height"), form.watch("weight")]);
+
   return (
-    <div className="glass-dark px-2 py-4 rounded-xl max-w-md max-h-fit">
+    <div className="glass-dark px-2 py-4 rounded-xl max-w-md max-h-fit z-10">
       <header className="px-4">
         <div className="text-sm mb-2 p-4 border rounded-full w-5 h-5 flex items-center justify-center mx-auto">
           0{currentQuestion + 1}
@@ -218,8 +252,9 @@ const GearRecommendationCard = () => {
               ) : (
                 <Button
                   type="button"
-                  variant={"outline"}
+                  variant={"default"}
                   size={"sm"}
+                  disabled={isNextButtonDisabled()}
                   onClick={() =>
                     setCurrentQuestion((prev) =>
                       Math.min(questions.length - 1, prev + 1),
@@ -233,9 +268,15 @@ const GearRecommendationCard = () => {
           </form>
         </Form>
       ) : (
-        <SnowboardRecommendationResult
-          snowboardRecommendation={snowboardRecommendation}
-        />
+        <div className="flex flex-col gap-2">
+          <SnowboardRecommendationResult
+            snowboardRecommendation={snowboardRecommendation}
+          />
+          <Button variant={"ghost"} size={"sm"}>
+            {" "}
+            <BiReset /> Reset
+          </Button>
+        </div>
       )}
     </div>
   );

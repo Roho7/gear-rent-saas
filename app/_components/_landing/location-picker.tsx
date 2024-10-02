@@ -42,6 +42,7 @@ const LocationPicker = ({
               role="combobox"
               className="justify-between"
               ref={triggerRef}
+              id="main-search-location-input"
             >
               {searchLocation?.name ? searchLocation?.name : "Anywhere"}
               <BiSearch className="ml-2 h-4 w-4 shrink-0 opacity-50" />
