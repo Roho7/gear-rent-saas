@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { servicesList } from "@/src/entities/models/constants";
 import React from "react";
 
@@ -6,22 +6,31 @@ interface ServiceProps {
   icon: React.ElementType;
   title: string;
   description: string;
+  link: string;
 }
 
 const ServiceCard: React.FC<ServiceProps> = ({
   icon: Icon,
   title,
   description,
+  link,
 }) => (
-  <Card className="">
-    <CardHeader>
-      <Icon className="w-12 h-12 mb-4 text-primary" />
-      <CardTitle>{title}</CardTitle>
-    </CardHeader>
-    <CardContent>
+  <div
+    className={"relative h-[400px] rounded-2xl overflow-clip p-2 flex flex-col"}
+  >
+    {/* <Icon className="w-12 h-12 mb-4 text-primary" /> */}
+    <div className="bg-background p-4 rounded-xl flex flex-col mt-auto">
+      <Badge variant={"outline"} className="bg-muted/20 text-muted mx-auto">
+        {<Icon />}
+      </Badge>
+      <h4>{title}</h4>
       <p className="text-muted">{description}</p>
-    </CardContent>
-  </Card>
+    </div>
+
+    <div className="absolute inset-0 w-full h-full -z-10">
+      <img src={link} alt={title} className="object-cover w-full h-full" />
+    </div>
+  </div>
 );
 
 const ServicesSection: React.FC = () => {

@@ -62,8 +62,8 @@ const faqData = [
 ];
 const FAQSection = (props: Props) => {
   return (
-    <section className="mx-auto py-8">
-      <Card className="w-[50vw] ">
+    <section className="w-full py-8 flex items-center justify-center">
+      <Card className="md:w-[50vw]">
         <CardHeader>
           <h1 className="text-4xl">FAQ</h1>
         </CardHeader>

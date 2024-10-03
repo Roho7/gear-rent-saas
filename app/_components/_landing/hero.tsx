@@ -11,11 +11,11 @@ const Hero = (props: Props) => {
   const { theme } = useTheme();
   const router = useRouter();
   return (
-    <section className="rounded-lg h-[80vh]">
-      <div className="gap-2 items-center h-full relative flex w-full">
+    <section className="rounded-lg lg:h-[80vh] h-full">
+      <div className="gap-2 items-center h-full relative flex w-full ">
         <div
           className={clsx(
-            "text-white rounded-lg bg-cover p-4 h-full relative flex w-full justify-between items-center",
+            "text-white rounded-lg bg-cover p-4 h-full relative flex w-full max-md:flex-col justify-between items-center",
             theme === "dark" ? "bg-summer" : "bg-ski",
           )}
         >
