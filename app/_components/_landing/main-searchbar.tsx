@@ -30,7 +30,7 @@ import { useForm } from "react-hook-form";
 import { BiSearch } from "react-icons/bi";
 import { FaDice } from "react-icons/fa";
 import { MdCalendarMonth, MdLocationPin } from "react-icons/md";
-import { date, z } from "zod";
+import { z } from "zod";
 import LocationPicker from "./location-picker";
 import SportPicker from "./sport-picker";
 
@@ -55,27 +55,30 @@ const CollapsedSearchBar = ({
   return (
     <div
       className={clsx(
-        "flex items-center justify-center shadow-md gap-8 p-2 transition-all ease-in-out text-sm w-fit rounded-md bg-card mx-auto text-muted-foreground",
+        "flex items-center justify-center shadow-md gap-2 sm:gap-8 p-2 transition-all ease-in-out text-sm w-fit rounded-md bg-card mx-auto text-muted-foreground",
         !collapsed
-          ? "-translate-y-[100%] opacity-0 scale-0"
-          : "translate-y-10 opacity-100 scale-100",
+          ? "lg:-translate-y-[100%] lg:opacity-0 lg:scale-0"
+          : "lg:translate-y-0 lg:opacity-100 lg:scale-100 lg:max-md:top-0",
+        "md:flex",
       )}
       role="button"
       onClick={onClick}
     >
       <span className={collapsedItemsClassName}>
         <MdLocationPin />
-        {location ?? "Anywhere"}
+        <span className="hidden sm:inline">{location ?? "Anywhere"}</span>
       </span>
       <span className={collapsedItemsClassName}>
         <MdCalendarMonth />
-        {from
-          ? `${dayjs(from).format("D MMM")} - ${dayjs(to).format("D MMM")}`
-          : "Anytime"}
+        <span className="hidden sm:inline">
+          {from
+            ? `${dayjs(from).format("D MMM")} - ${dayjs(to).format("D MMM")}`
+            : "Anytime"}
+        </span>
       </span>
       <span className={collapsedItemsClassName}>
         {sport ? sportMap[sport].icon(<div />) : <FaDice />}
-        {sport ?? "Any Sport"}
+        <span className="hidden sm:inline">{sport ?? "Any Sport"}</span>
       </span>
     </div>
   );
@@ -196,7 +199,7 @@ const MainSearchbar = ({
   }, [searchParams, form]);
 
   return (
-    <div className="flex flex-col items-center relative">
+    <div className="flex flex-col items-center relative w-full">
       <CollapsedSearchBar
         location={form.getValues().location?.name}
         from={form.getValues().rentPeriod?.from}
@@ -218,17 +221,18 @@ const MainSearchbar = ({
             setIsSearchActive(true);
           }}
           className={clsx(
-            " rounded-md text-black flex gap-2 animate-in items-center p-2 transition-all delay-75 ease-out",
+            "w-full md:w-auto rounded-md text-black flex flex-col md:flex-row gap-4 md:gap-2 animate-in items-stretch md:items-center p-4 transition-all delay-75 ease-out",
             collapsed
-              ? "-translate-y-[100%] opacity-0"
-              : "translate-y-[-20%] opacity-100",
+              ? "lg:-translate-y-[100%] lg:opacity-0 max-h-0 hidden"
+              : "lg:translate-y-[-20%] lg:opacity-100 h-[60vh] md:h-auto",
+            "fixed top-14 left-0 right-0 bg-background md:relative md:top-auto md:left-auto md:right-auto",
           )}
         >
           <FormField
             control={form.control}
             name="location"
             render={({ field }) => (
-              <FormItem className="min-w-52 px-2 border-r border-gray-100 flex flex-col">
+              <FormItem className="w-full md:min-w-52 md:px-2 md:border-r md:border-gray-100 flex flex-col">
                 <FormLabel className="text-gray-400 text-xs pt-1">
                   Location
                 </FormLabel>
@@ -245,7 +249,7 @@ const MainSearchbar = ({
             control={form.control}
             name="rentPeriod"
             render={({ field }) => (
-              <FormItem className="min-w-60 px-2 border-r border-gray-100 flex flex-col">
+              <FormItem className="w-full md:min-w-60 md:px-2 md:border-r md:border-gray-100 flex flex-col">
                 <FormLabel className="text-gray-400 pt-1 text-xs">
                   Rent period
                 </FormLabel>
@@ -260,11 +264,11 @@ const MainSearchbar = ({
                         variant={"outline"}
                         onClick={() => setIsDatePopoverOpen(!isDatePopoverOpen)}
                         className={clsx(
-                          "min-w-48 w-full justify-start text-left font-normal",
-                          !date && "text-muted-foreground",
+                          "w-full justify-start text-left font-normal",
+                          !field.value?.from && "text-muted-foreground",
                         )}
                       >
-                        <CalendarIcon className=" h-4 w-4" />
+                        <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value?.from ? (
                           field.value?.to ? (
                             <>
@@ -299,7 +303,7 @@ const MainSearchbar = ({
             control={form.control}
             name="sport"
             render={({ field }) => (
-              <FormItem className="w-48 px-2 border-r border-gray-100 flex-col flex gap-0.5">
+              <FormItem className="w-full md:w-48 md:px-2 md:border-r md:border-gray-100 flex-col flex gap-0.5">
                 <Label className="text-gray-400 text-xs mb-0">Sport</Label>
                 <SportPicker
                   triggerRef={sportSelectorRef}
@@ -314,10 +318,11 @@ const MainSearchbar = ({
 
           <Button
             type="submit"
-            className="mt-auto ml-2 px-2 rounded-full w-10 h-10 shrink-0"
-            size={"icon"}
+            className="w-full md:w-10 md:h-10 md:mt-auto md:ml-2 md:px-2 md:rounded-full md:shrink-0"
+            size={"default"}
           >
-            <BiSearch />
+            <BiSearch className="mr-2 md:mr-0" />
+            <span className="md:hidden">Search</span>
           </Button>
         </form>
       </Form>

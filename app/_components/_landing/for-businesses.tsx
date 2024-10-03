@@ -59,8 +59,8 @@ const ForBusinessesSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-primary to-gray-900 text-white rounded-lg">
-      <div className="container mx-auto px-4">
+    <section className="relative py-16 text-white rounded-lg overflow-clip">
+      <div className="container mx-auto px-4 z-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div>
             <h2 className="text-4xl font-bold mb-4">
@@ -86,6 +86,14 @@ const ForBusinessesSection: React.FC = () => {
             ))}
           </div>
         </div>
+      </div>
+      <div className="w-full h-full bg-black/20 absolute inset-0 -z-[9]"></div>
+      <div className="absolute w-full h-full inset-0 -z-10">
+        <img
+          src="https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/Pic%20from%20Gearyo.png"
+          alt="businesses"
+          className="object-cover w-full h-full blur-[5px]"
+        />
       </div>
     </section>
   );

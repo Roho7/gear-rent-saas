@@ -84,23 +84,31 @@ export const servicesList = [
     title: "Wide Range of Gear",
     description:
       "From skis to surfboards, find the gear you need for every sport.",
+    link:
+      "https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/AI%20Image%20Generator%20raw%20(2).jpg",
   },
   {
     icon: FaBagShopping,
     title: "Easy Rentals",
     description:
       "Seamless online booking process to rent the gear you need with just a few clicks.",
+    link:
+      "https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/AI%20Image%20Generator%20raw%20(4).jpg",
   },
   {
     icon: PiUsersFill,
     title: "Local Shops",
     description:
       "Support local businesses by renting from nearby outdoor gear shops in your area.",
+    link:
+      "https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/AI%20Image%20Generator%20raw%20(6).jpg",
   },
   {
     icon: FaChessRook,
     title: "Trusted Sellers",
     description: "Gear you trust, from sellers you trust – anytime, anywhere.",
+    link:
+      "https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/AI%20Image%20Generator%20raw%20(3).jpg",
   },
 ];
 
