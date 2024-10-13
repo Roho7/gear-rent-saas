@@ -6,6 +6,7 @@ const nextConfig = {
       "res.cloudinary.com",
       "https://dummyjson.com",
       "avatar.iran.liara.run",
+      "cdn.sanity.io",
     ],
   },
   redirects: async () => {
