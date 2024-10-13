@@ -7,7 +7,7 @@ const Footer = (props: Props) => {
     <div className="bg-black p-8 h-40 grid grid-cols-4 text-muted text-xs">
       <ul>
         <li>
-          <Link href="/store">Shop</Link>
+          <Link href="/blogs">Blogs</Link>
         </li>
         <li>
           <Link href="/business">Business</Link>
