@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 
 export default function BlogPostPage() {
   const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const slug = pathname?.split("/").pop() || "";
 
@@ -23,39 +24,46 @@ export default function BlogPostPage() {
       const client = getClient();
       const fetchedPost = await getPost(client, slug);
       setPost(fetchedPost);
+      setLoading(false);
     };
 
     fetchPost();
   }, [slug]);
 
-  if (!post) {
+  if (loading) {
     return <Spinner />;
   }
 
   return (
     <article className="max-w-4xl mx-auto px-4 py-8">
-      <div className="pr-2 my-2 bg-muted/10 rounded-full w-fit">
-        <GearyoBreadcrumb />
-      </div>
-      {post.mainImage && (
-        <Image
-          src={urlFor(post.mainImage).width(500).height(300).url()}
-          alt={post.title || "Blog post cover image"}
-          width={1200}
-          height={630}
-          className="w-full h-auto rounded-lg shadow-lg mb-8"
-        />
+      {!post ? (
+        <div>Could not find this post</div>
+      ) : (
+        <>
+          <div className="pr-2 my-2 bg-muted/10 rounded-full w-fit">
+            <GearyoBreadcrumb />
+          </div>
+          {post.mainImage && (
+            <Image
+              src={urlFor(post.mainImage).width(500).height(300).url()}
+              alt={post.title || "Blog post cover image"}
+              width={1200}
+              height={630}
+              className="w-full h-auto rounded-lg shadow-lg mb-8"
+            />
+          )}
+          <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+          {post.excerpt && (
+            <p className="text-xl text-gray-600 mb-6">{post.excerpt}</p>
+          )}
+          <time className="text-sm text-gray-500 mb-8 block">
+            {dayjs(post._createdAt).format("MMMM D, YYYY")}
+          </time>
+          <div className="prose prose-lg max-w-none">
+            <PortableText value={post.body} />
+          </div>
+        </>
       )}
-      <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-      {post.excerpt && (
-        <p className="text-xl text-gray-600 mb-6">{post.excerpt}</p>
-      )}
-      <time className="text-sm text-gray-500 mb-8 block">
-        {dayjs(post._createdAt).format("MMMM D, YYYY")}
-      </time>
-      <div className="prose prose-lg max-w-none">
-        <PortableText value={post.body} />
-      </div>
     </article>
   );
 }
