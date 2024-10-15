@@ -12,7 +12,7 @@ export default async function BlogsPage() {
 
   return (
     <div className="px-4">
-      <section className="grid md:grid-cols-4 grid-cols-1">
+      <section className="grid md:grid-cols-4 grid-cols-1 gap-2">
         {posts.length
           ? posts.map((post) => <BlogCard key={post._id} post={post} />)
           : null}
