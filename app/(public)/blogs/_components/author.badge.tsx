@@ -1,9 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 
-type Props = {};
+type Props = {
+  name: string;
+};
 
-const AuthorBadge = (props: Props) => {
-  return <Badge variant={"outline"}></Badge>;
+const AuthorBadge = ({ name }: Props) => {
+  return <Badge variant={"outline"}>{name}</Badge>;
 };
 
 export default AuthorBadge;

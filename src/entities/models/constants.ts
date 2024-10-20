@@ -85,7 +85,7 @@ export const servicesList = [
     description:
       "From skis to surfboards, find the gear you need for every sport.",
     link:
-      "https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/AI%20Image%20Generator%20raw%20(2).jpg",
+      "https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/Gearyo%20bikes%20front.jpg",
   },
   {
     icon: FaBagShopping,
@@ -108,7 +108,7 @@ export const servicesList = [
     title: "Trusted Sellers",
     description: "Gear you trust, from sellers you trust – anytime, anywhere.",
     link:
-      "https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/AI%20Image%20Generator%20raw%20(3).jpg",
+      "https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/Front%20Pictures%20Rotation%20from%20Gearyo.jpg",
   },
 ];
 
