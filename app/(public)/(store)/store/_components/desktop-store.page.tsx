@@ -99,7 +99,7 @@ const DesktopStorePage = () => {
             );
           })}
         </Map>
-        <div className="flex flex-col gap-2 w-full h-[70vh] overflow-y-scroll">
+        <div className="flex flex-col gap-2 w-full h-[70vh] overflow-y-scroll p-4 bg-muted/10 rounded-md">
           {loading ||
             (storeLoading && Array(6).map((_, i) => <Skeleton key={i} />))}
           {searchedStores?.length ? (

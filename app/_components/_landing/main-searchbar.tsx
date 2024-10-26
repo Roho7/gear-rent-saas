@@ -221,11 +221,11 @@ const MainSearchbar = ({
             setIsSearchActive(true);
           }}
           className={clsx(
-            "w-full md:w-auto rounded-md text-black flex flex-col md:flex-row gap-4 md:gap-2 animate-in items-stretch md:items-center p-4 transition-all delay-75 ease-out",
+            "w-full md:w-auto rounded-md text-black flex flex-col md:flex-row gap-4 md:gap-2 animate-in md:items-center p-4 transition-all delay-75 ease-out",
             collapsed
               ? "lg:-translate-y-[100%] lg:opacity-0 max-h-0 hidden"
-              : "lg:translate-y-[-20%] lg:opacity-100 h-[60vh] md:h-auto",
-            "fixed top-14 left-0 right-0 bg-background md:relative md:top-auto md:left-auto md:right-auto",
+              : "lg:translate-y-[-20%] lg:opacity-100 h-[40vh] md:h-auto",
+            "fixed top-0 left-0 right-0 bg-background md:relative md:top-auto md:left-auto md:right-auto",
           )}
         >
           <FormField

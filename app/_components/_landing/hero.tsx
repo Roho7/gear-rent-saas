@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
 import { FaArrowRight } from "react-icons/fa";
 import CTA from "../CTA";
 import GearRecommendationCard from "../recommendation-card";
@@ -9,7 +8,6 @@ type Props = {};
 
 const Hero = (props: Props) => {
   const { theme } = useTheme();
-  const router = useRouter();
   return (
     <section className="rounded-lg lg:h-[80vh] h-full">
       <div className="gap-2 items-center h-full relative flex w-full ">

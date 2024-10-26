@@ -11,20 +11,12 @@ const Navbar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    if (isMobile) {
-      setCollapsed(true);
-    }
     const handleScroll = () => {
       if (window.scrollY > 18) {
         setCollapsed(true);
         setIsSearchActive(false);
       } else {
-        isMobile
-          ? () => {
-              console.log("itsmobile");
-              setCollapsed(true);
-            }
-          : setCollapsed(false);
+        isMobile ? setCollapsed(true) : setCollapsed(false);
       }
     };
 
@@ -34,6 +26,10 @@ const Navbar: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [window.scrollY]);
+
+  useEffect(() => {
+    setCollapsed(true);
+  }, [isMobile]);
 
   return (
     <div>
