@@ -13,7 +13,7 @@ const AccountLayout = ({ children }: Props) => {
       <AccountSidebar />
       <section className="flex relative h-full flex-col flex-1">
         <SecondaryNavbar />
-        <div className="h-full w-full p-4">{children}</div>
+        <div className="h-full w-full p-2 md:p-4">{children}</div>
       </section>
     </main>
   );

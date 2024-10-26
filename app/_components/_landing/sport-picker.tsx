@@ -37,7 +37,7 @@ const SportPicker = ({
             <Button
               variant="outline"
               role="combobox"
-              className="justify-between w-48"
+              className="justify-between md:w-48 w-full"
               ref={triggerRef}
             >
               {sport ? sportMap[sport].name : "Any Sport"}

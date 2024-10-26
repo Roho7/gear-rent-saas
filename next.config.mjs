@@ -18,6 +18,7 @@ const nextConfig = {
       },
     ];
   },
+  fastRefresh: true,
 };
 
 export default withSentryConfig(nextConfig, {

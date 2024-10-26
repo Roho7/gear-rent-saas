@@ -30,15 +30,15 @@ const UserPage = (props: Props) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col gap-2 flex-1">
+    <div className="min-h-screen flex flex-col gap-4 flex-1 px-2 sm:px-6 md:px-8 max-w-4xl mx-auto w-full">
       <BackButton />
       <Card>
         <CardHeader>
           <h2 className="text-2xl font-bold">Account</h2>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          <div className="flex justify-between">
-            <div>
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4">
+            <div className="space-y-2 text-center sm:text-left">
               <p>
                 <span className="text-muted">Email:</span> {user?.email}
               </p>
@@ -53,6 +53,7 @@ const UserPage = (props: Props) => {
               height={100}
               width={100}
               alt={user?.email || ""}
+              className="rounded-full"
             />
           </div>
 
@@ -70,9 +71,11 @@ const UserPage = (props: Props) => {
           <CardHeader>
             <h2 className="text-2xl font-bold">Your store</h2>
           </CardHeader>
-          <CardContent>
-            <span className="text-muted">Store Id:</span>{" "}
-            <Badge variant="outline">{user?.store_id}</Badge>
+          <CardContent className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-muted">Store Id:</span>
+              <Badge variant="outline">{user?.store_id}</Badge>
+            </div>
             <p>
               <Link href="/business" className="hover:underline text-muted">
                 Go to store
@@ -87,19 +90,21 @@ const UserPage = (props: Props) => {
         </CardHeader>
         <CardContent>
           <div>
-            <div className="flex gap-1">
-              <div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
                 <Input
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
+                  type="password"
                 />
-                <p className="text-gray-400 text-xs">
+                <p className="text-gray-400 text-xs mt-1">
                   Password should be at least 5 characters long
                 </p>
               </div>
               <Button
                 onClick={handleResetPassword}
                 disabled={password.length < 5}
+                className="w-full sm:w-auto"
               >
                 Reset Password
               </Button>
