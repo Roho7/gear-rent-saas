@@ -24,6 +24,8 @@ type Props = {
   isForm?: boolean;
   searchLocation: SearchLocationType | null;
   setSearchLocation: (location: SearchLocationType | null) => void;
+  isOpen?: boolean;
+  setIsOpen?: (open: boolean) => void;
 };
 
 const LocationPicker = ({
@@ -31,10 +33,17 @@ const LocationPicker = ({
   isForm = false,
   searchLocation,
   setSearchLocation,
+  isOpen,
+  setIsOpen,
 }: Props) => {
   return (
-    <Popover>
-      <PopoverTrigger asChild className="">
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger
+        asChild
+        className=""
+        ref={triggerRef}
+        data-state={triggerRef?.current?.dataset.state}
+      >
         {isForm ? (
           <FormControl>
             <Button

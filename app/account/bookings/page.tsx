@@ -1,4 +1,5 @@
 "use client";
+import EmptyState from "@/app/_components/_shared/empty-state";
 import { useAuth } from "@/app/_providers/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
@@ -54,6 +55,11 @@ const BookingsPage = () => {
           bookings.map((booking) => (
             <BookingCard key={booking.booking_id} bookingItem={booking} />
           ))
+        )}
+        {!bookings.length && (
+          <EmptyState>
+            <p>No bookings found</p>
+          </EmptyState>
         )}
       </div>
     </div>
