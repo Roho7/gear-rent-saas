@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { sportMap } from "@/src/entities/models/product";
+import { PopoverClose } from "@radix-ui/react-popover";
 import React from "react";
 
 type Props = {
@@ -21,6 +22,8 @@ type Props = {
   isForm?: boolean;
   sport: string | undefined;
   setSport: (sport: string | undefined) => void;
+  isOpen?: boolean;
+  setIsOpen?: (open: boolean) => void;
 };
 
 const SportPicker = ({
@@ -28,9 +31,11 @@ const SportPicker = ({
   isForm = false,
   sport,
   setSport,
+  isOpen,
+  setIsOpen,
 }: Props) => {
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild className="w-48">
         {isForm ? (
           <FormControl>
@@ -68,26 +73,28 @@ const SportPicker = ({
           <CommandList>
             <CommandEmpty>No sport found.</CommandEmpty>
             <CommandGroup>
-              <CommandItem
-                onSelect={() => {
-                  setSport(undefined);
-                }}
-              >
-                Any Sport
-              </CommandItem>
-              {Object.entries(sportMap).map(([category, value]) => (
+              <PopoverClose className="w-full">
                 <CommandItem
-                  key={category}
                   onSelect={() => {
-                    setSport(category);
+                    setSport(undefined);
                   }}
                 >
-                  <div className="flex items-center gap-2">
-                    {value.icon({ className: "text-muted" })}
-                    {value.name}
-                  </div>
+                  Any Sport
                 </CommandItem>
-              ))}
+                {Object.entries(sportMap).map(([category, value]) => (
+                  <CommandItem
+                    key={category}
+                    onSelect={() => {
+                      setSport(category);
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      {value.icon({ className: "text-muted" })}
+                      {value.name}
+                    </div>
+                  </CommandItem>
+                ))}
+              </PopoverClose>
             </CommandGroup>
           </CommandList>
         </Command>

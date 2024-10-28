@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
   }, [window.scrollY]);
 
   useEffect(() => {
-    setCollapsed(true);
+    isMobile && setCollapsed(true);
   }, [isMobile]);
 
   return (
@@ -36,8 +36,8 @@ const Navbar: React.FC = () => {
       <nav
         className={clsx(
           "navbar px-4 sm:px-8 py-4 mb-2 flex justify-between border-b items-center w-full fixed top-0 z-20 transition-all ease-in-out",
+          isSearchActive && "!h-36",
           collapsed ? "h-14 glass" : "h-20 sm:h-28 bg-background",
-          isSearchActive && "h-36",
         )}
       >
         <a href="/" className="text-white font-bold">

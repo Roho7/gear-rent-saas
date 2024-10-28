@@ -98,6 +98,14 @@ const MainSearchbar = ({
   const locationSelectorRef = useRef<HTMLButtonElement>(null);
   const sportSelectorRef = useRef<HTMLButtonElement>(null);
   const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
+  const [isLocationPopoverOpen, setIsLocationPopoverOpen] = useState(false);
+  const [isSportPopoverOpen, setIsSportPopoverOpen] = useState(false);
+
+  const closeAllPopovers = () => {
+    setIsDatePopoverOpen(false);
+    setIsLocationPopoverOpen(false);
+    setIsSportPopoverOpen(false);
+  };
 
   const form = useForm<z.infer<typeof MainSearchFormSchema>>({
     resolver: zodResolver(MainSearchFormSchema),
@@ -148,9 +156,8 @@ const MainSearchbar = ({
   // EFFECT FOR RESETING FORM FIELDS WHEN SEARCH BAR IS COLLAPSED
   useEffect(() => {
     if (collapsed) {
-      if (isDatePopoverOpen) {
-        setIsDatePopoverOpen(false);
-      }
+      closeAllPopovers();
+
       const currentValues = form.getValues();
       const sport = searchParams.get("sport");
       const rentFrom = searchParams.get("rentFrom");
@@ -198,6 +205,16 @@ const MainSearchbar = ({
     }
   }, [searchParams, form]);
 
+  // Add scroll effect to close popovers
+  useEffect(() => {
+    const handleScroll = () => {
+      closeAllPopovers();
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="flex flex-col items-center relative w-full">
       <CollapsedSearchBar
@@ -210,6 +227,7 @@ const MainSearchbar = ({
           setCollapsed(false);
           if (locationSelectorRef.current) {
             locationSelectorRef.current.click();
+            locationSelectorRef.current.dataset["state"] = "open";
           }
         }}
       />
@@ -241,6 +259,8 @@ const MainSearchbar = ({
                   setSearchLocation={field.onChange}
                   searchLocation={field.value}
                   isForm={true}
+                  isOpen={isLocationPopoverOpen}
+                  setIsOpen={setIsLocationPopoverOpen}
                 />
               </FormItem>
             )}
@@ -310,6 +330,8 @@ const MainSearchbar = ({
                   isForm={true}
                   sport={field.value}
                   setSport={(value) => field.onChange(value)}
+                  isOpen={isSportPopoverOpen}
+                  setIsOpen={setIsSportPopoverOpen}
                 />
                 <FormMessage />
               </FormItem>
