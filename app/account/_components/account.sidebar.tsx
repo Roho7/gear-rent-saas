@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FaSnowboarding } from "react-icons/fa";
 const navItemClassName =
   "flex md:w-full w-fit items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
 const AccountSidebar = () => {
@@ -40,6 +41,16 @@ const AccountSidebar = () => {
         >
           <ShoppingCart className="h-4 w-4" />
           {!isMobile && "Bookings"}
+        </Link>
+        <Link
+          href="/account/my-gear"
+          className={clsx(
+            navItemClassName,
+            pathname === "/account/my-gear" && "bg-muted text-primary",
+          )}
+        >
+          <FaSnowboarding className="h-4 w-4" />
+          {!isMobile && "My Gear"}
         </Link>
       </nav>
     </aside>
