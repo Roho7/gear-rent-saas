@@ -18,13 +18,15 @@ export const SnowboardStyleSchema = z.enum([
   "splitboard",
 ]);
 
-const SkiStyleSchema = z.enum([
+export const SkiStyleSchema = z.enum([
   "all-mountain",
   "powder",
   "park",
   "racing",
   "touring",
 ]);
+
+export const SurfboardStyleSchema = z.enum([""]);
 
 export const SnowboardFlexibilitySchema = z.enum(["soft", "medium", "stiff"]);
 

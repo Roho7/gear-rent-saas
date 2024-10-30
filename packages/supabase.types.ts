@@ -356,8 +356,10 @@ export type Database = {
           name: string | null
           phone: string | null
           picture: string | null
+          sports_metadata: Json | null
           store_id: string | null
           user_id: string
+          user_metadata: Json | null
         }
         Insert: {
           created_at?: string | null
@@ -367,8 +369,10 @@ export type Database = {
           name?: string | null
           phone?: string | null
           picture?: string | null
+          sports_metadata?: Json | null
           store_id?: string | null
           user_id?: string
+          user_metadata?: Json | null
         }
         Update: {
           created_at?: string | null
@@ -378,8 +382,10 @@ export type Database = {
           name?: string | null
           phone?: string | null
           picture?: string | null
+          sports_metadata?: Json | null
           store_id?: string | null
           user_id?: string
+          user_metadata?: Json | null
         }
         Relationships: [
           {
