@@ -29,4 +29,6 @@ export const RegisterShopFormSchema = z.object({
   postcode: z.string().min(5, {
     message: "Please enter a valid postcode.",
   }),
+  longitude: z.string().optional(),
+  latitude: z.string().optional(),
 });

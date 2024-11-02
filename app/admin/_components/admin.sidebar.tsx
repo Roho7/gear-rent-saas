@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BiStore } from "react-icons/bi";
+import { MdOutlineStorefront } from "react-icons/md";
 
 const navItemClassName =
   "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
@@ -22,7 +24,7 @@ const AdminSidebar = () => {
     <div className="hidden border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6 justify-between">
-          <Link href="/home" className="text-white font-bold">
+          <Link href="/" className="text-white font-bold">
             <img src="/logo-short.png" alt="" className="w-8" />
           </Link>
           <h2>Admin</h2>
@@ -101,6 +103,26 @@ const AdminSidebar = () => {
             >
               <LineChart className="h-4 w-4" />
               Analytics
+            </Link>
+            <Link
+              href="/admin/gearyo-stores"
+              className={clsx(
+                navItemClassName,
+                pathname === "/admin/gearyo-stores" && "bg-muted text-primary",
+              )}
+            >
+              <MdOutlineStorefront className="h-4 w-4" />
+              Gearyo Stores
+            </Link>
+            <Link
+              href="/admin/stores"
+              className={clsx(
+                navItemClassName,
+                pathname === "/admin/stores" && "bg-muted text-primary",
+              )}
+            >
+              <BiStore className="h-4 w-4" />
+              Stores
             </Link>
           </nav>
         </div>

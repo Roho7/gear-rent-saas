@@ -21,7 +21,7 @@ const BusinessLayout = ({ children }: { children: React.ReactElement }) => {
       }
     } catch (error: any) {
       setBusinessData(null);
-      throw new Error(error.message);
+      // throw new Error(error.message);
     } finally {
       setIsBusinessLoading(false);
     }

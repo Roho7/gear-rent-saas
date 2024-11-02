@@ -4,7 +4,7 @@ import { cacheUser, clearUserCache, getCachedUser } from "@/lib/useCache";
 import { signOut } from "@/src/controllers/signin.controller";
 import { GearyoUser } from "@/src/entities/models/types";
 import { User } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, {
   createContext,
   useCallback,
@@ -55,6 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
+  const pathname = usePathname();
   // -------------------------------------------------------------------------- //
   //                                 HELPERS                                    //
   // -------------------------------------------------------------------------- //
@@ -139,6 +140,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           "Logged in with Google successfully",
           pathname,
         );
+        router.push(pathname || "/");
       } catch (error: any) {
         console.error(error);
         toast({
@@ -166,6 +168,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           "Your account has been successfully created",
           pathname,
         );
+        router.push(pathname || "/");
       } catch (error: any) {
         console.error(error);
         toast({
@@ -195,6 +198,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           "You have successfully logged in",
           pathname,
         );
+        router.push(pathname || "/");
       } catch (error: any) {
         console.error(error);
         toast({
@@ -221,7 +225,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           description: "You have been successfully logged out",
           variant: "default",
         });
-        router.push("/login");
+        router.push(`/login?returnUrl=${pathname}`);
       }
     } catch (error: any) {
       console.error(error);

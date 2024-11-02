@@ -6,6 +6,7 @@ import {
   GearyoServerActionResponse,
   ListingType,
   ProductType,
+  StoreType,
 } from "@/src/entities/models/types";
 
 import * as Sentry from "@sentry/nextjs";
@@ -87,4 +88,25 @@ export async function getInventory(): Promise<
       { success: false, message: error.message ?? "Error fetching inventory" },
     );
   }
+}
+
+export async function getGearyoStores(): Promise<
+  GearyoServerActionResponse<StoreType[] | null>
+> {
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: cookieStore });
+  const { data, error } = await supabase
+    .from("tbl_gearyo_stores")
+    .select("*")
+    .returns<StoreType[]>();
+
+  if (error) {
+    handleError(error, "getGearyoStores");
+  }
+
+  return createServerResponse({
+    success: true,
+    message: "Gearyo stores fetched successfully",
+    data,
+  });
 }

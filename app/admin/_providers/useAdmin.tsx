@@ -1,6 +1,6 @@
 "use client";
 
-import { ListingType } from "@/src/entities/models/types";
+import { ListingType, StoreType } from "@/src/entities/models/types";
 import React, {
   createContext,
   useContext,
@@ -8,17 +8,20 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { getInventory } from "../_actions/admin.actions";
+import { getGearyoStores, getInventory } from "../_actions/admin.actions";
 
 interface AdminContext {
   allListings: ListingType[] | undefined;
+  gearyoStores: StoreType[] | undefined;
   isLoading: boolean;
+  refreshGearyoStores: () => Promise<void>;
 }
 
 const AdminContext = createContext<AdminContext | undefined>(undefined);
 
 export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
   const [allListings, setAllListings] = useState<ListingType[]>();
+  const [gearyoStores, setGearyoStores] = useState<StoreType[]>();
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchAllInventory = async () => {
@@ -28,16 +31,32 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false);
   };
 
+  const fetchGearyoStores = async () => {
+    setIsLoading(true);
+    const res = await getGearyoStores();
+    if (res.success) {
+      setGearyoStores(res.data as StoreType[]);
+    }
+    setIsLoading(false);
+  };
+
+  const refreshGearyoStores = async () => {
+    await fetchGearyoStores();
+  };
+
   useEffect(() => {
     fetchAllInventory();
+    refreshGearyoStores();
   }, []);
 
   const value: AdminContext = useMemo(
     () => ({
       allListings,
+      gearyoStores,
       isLoading,
+      refreshGearyoStores,
     }),
-    [allListings, isLoading],
+    [allListings, gearyoStores, isLoading, refreshGearyoStores],
   );
   return (
     <AdminContext.Provider value={value}>{children}</AdminContext.Provider>

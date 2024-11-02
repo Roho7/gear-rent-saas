@@ -25,7 +25,7 @@ export const popularLocations: SearchLocationType[] = [
     name: "Zermatt, Switzerland",
     lat: 46.0207,
     lng: 7.7491,
-    radius: 10000, // 8km radius
+    radius: 10000, // 10km radius
   },
   {
     id: "aspen",

@@ -9,15 +9,6 @@ const nextConfig = {
       "cdn.sanity.io",
     ],
   },
-  redirects: async () => {
-    return [
-      {
-        source: "/",
-        destination: "/home",
-        permanent: true,
-      },
-    ];
-  },
   fastRefresh: true,
 };
 
