@@ -15,11 +15,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AdminProvider>
-      <div className="grid h-screen overflow-y-hidden w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] max-w-screen">
+      <div className="grid h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <AdminSidebar />
-        <div className="flex flex-col">
+        <div className="flex flex-col h-screen max-h-screen">
           <SecondaryNavbar />
-          {children}
+          <div className="overflow-y-auto flex-1 min-h-0">{children}</div>
         </div>
       </div>
     </AdminProvider>

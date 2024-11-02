@@ -1,9 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import StoreVerificationBadge from "@/app/_components/_shared/store-verification.badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StoreType } from "@/src/entities/models/types";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -13,15 +9,21 @@ import { FaLocationPin } from "react-icons/fa6";
 const StoreRow = ({
   store,
   showFooter = true,
+  callback,
 }: {
   store: StoreType;
   showFooter?: boolean;
+  callback?: () => void;
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [locationString, setLocationString] = useState<string>("Loading...");
 
   const handleClick = () => {
+    if (callback) {
+      callback();
+      return;
+    }
     const currentParams = new URLSearchParams(searchParams.toString());
 
     // Construct the new URL
@@ -74,20 +76,15 @@ const StoreRow = ({
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 w-full p-4">
-        <h3 className="font-bold">{store?.store_name}</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold">{store?.store_name}</h3>
+          <StoreVerificationBadge isVerified={!!store.location} />
+        </div>
         <div className="text-muted flex items-center gap-1 text-xs bg-muted/10 p-2 min-w-40 w-fit rounded-md">
           <FaLocationPin />
           {locationString}
         </div>
       </CardContent>
-      {showFooter && (
-        <CardFooter className="flex flex-col items-start gap-1 mt-auto">
-          <span className="text-xs text-muted">From</span>
-          {/* <span className="text-xl font-bold text-primary">
-            {formattedPrice}/{store.price_granularity}
-          </span> */}
-        </CardFooter>
-      )}
     </Card>
   );
 };

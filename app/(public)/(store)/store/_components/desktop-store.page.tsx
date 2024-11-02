@@ -36,7 +36,7 @@ const DesktopStorePage = () => {
         const searchData = {
           lat: parseFloat(lat),
           lng: parseFloat(lng),
-          radius: radius ? parseFloat(radius) : 10000,
+          radius: radius ? parseFloat(radius) : 100000,
         };
 
         const locationDetails = popularLocations.find(

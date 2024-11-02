@@ -7,12 +7,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { BiUser } from "react-icons/bi";
 
 const UserDropdown = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const { handleLogout, user } = useAuth();
   return (
     <DropdownMenu>
@@ -23,7 +24,13 @@ const UserDropdown = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => router.push("/account")}>
+        <DropdownMenuItem
+          onClick={() =>
+            user
+              ? router.push("/account")
+              : router.push(`/login?returnUrl=${pathname}`)
+          }
+        >
           {user ? "My Account" : "Login or Sign Up"}
         </DropdownMenuItem>
         {user && (

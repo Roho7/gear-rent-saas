@@ -125,6 +125,72 @@ export type Database = {
           },
         ]
       }
+      tbl_gearyo_stores: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          business_email: string | null
+          business_number: string | null
+          categories: string[] | null
+          city: string | null
+          closing_time: string | null
+          country: string | null
+          description: string | null
+          google_place_id: string | null
+          google_rating: number | null
+          latitude: number | null
+          location: unknown | null
+          longitude: number | null
+          postcode: string | null
+          store_id: string
+          store_img: string | null
+          store_name: string
+          user_id: string
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          business_email?: string | null
+          business_number?: string | null
+          categories?: string[] | null
+          city?: string | null
+          closing_time?: string | null
+          country?: string | null
+          description?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          latitude?: number | null
+          location?: unknown | null
+          longitude?: number | null
+          postcode?: string | null
+          store_id?: string
+          store_img?: string | null
+          store_name: string
+          user_id: string
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          business_email?: string | null
+          business_number?: string | null
+          categories?: string[] | null
+          city?: string | null
+          closing_time?: string | null
+          country?: string | null
+          description?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          latitude?: number | null
+          location?: unknown | null
+          longitude?: number | null
+          postcode?: string | null
+          store_id?: string
+          store_img?: string | null
+          store_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tbl_listings: {
         Row: {
           available_units: number | null
@@ -459,6 +525,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string[]
       }
+      _func_is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       _func_search_active_listings: {
         Args: {
           sport_input?: string
@@ -478,6 +548,18 @@ export type Database = {
           radius: number
         }
         Returns: Json
+      }
+      _func_update_gearyo_store_locations: {
+        Args: {
+          store_id_input: string
+        }
+        Returns: undefined
+      }
+      _func_update_store_locations: {
+        Args: {
+          store_id_input: string
+        }
+        Returns: undefined
       }
       _postgis_deprecate: {
         Args: {

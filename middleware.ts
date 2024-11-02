@@ -24,7 +24,9 @@ export async function middleware(request: NextRequest) {
 
     if (isProtectedRoute || isAdminRoute) {
       if (!session?.expires_in) {
-        return NextResponse.redirect(new URL("/login", request.url));
+        return NextResponse.redirect(
+          new URL(`/login?returnUrl=${pathname}`, request.url),
+        );
       }
 
       if (isAdminRoute) {

@@ -78,10 +78,13 @@ const ProductRow = ({
   const [collapsed, setCollapsed] = useState<
     Record<keyof ProductMetadataType, boolean>
   >(
-    [...Object.keys(productMetadata), "experience"].reduce((acc, key) => {
-      acc[key as keyof ProductMetadataType] = true;
-      return acc;
-    }, {} as Record<keyof ProductMetadataType, boolean>),
+    [...Object.keys(productMetadata), "experience"].reduce(
+      (acc, key) => {
+        acc[key as keyof ProductMetadataType] = true;
+        return acc;
+      },
+      {} as Record<keyof ProductMetadataType, boolean>,
+    ),
   );
 
   const { handleProductMetadataUpdate } = useProducts();
@@ -416,7 +419,7 @@ const AllProducstPage = (props: Props) => {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-full overflow-hidden">
       <StoreSidebar />
       <div className="flex-1 flex flex-col">
         <div className="p-4 border-b border-gray-200">

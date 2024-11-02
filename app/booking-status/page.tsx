@@ -31,7 +31,7 @@ const Page = () => {
       <p className="text-sm text-muted">
         Something went wrong while processing your booking. Please try again.
       </p>
-      <RedirectButton link="/home">Back to store</RedirectButton>
+      <RedirectButton link="/">Back to store</RedirectButton>
     </div>
   );
 };
