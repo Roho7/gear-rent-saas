@@ -14,18 +14,18 @@ export default function TermsPage() {
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
         <p className="mb-4">
-          Welcome to Gearyo ("we," "us," or "our"). These Terms and Conditions ("Terms") govern your access to and use of the Gearyo website, mobile application, and services (collectively, the "Platform"). By accessing or using our Platform, you agree to be bound by these Terms.
+          Welcome to Gearyo (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). These Terms and Conditions (&quot;Terms&quot;) govern your access to and use of the Gearyo website, mobile application, and services (collectively, the &quot;Platform&quot;). By accessing or using our Platform, you agree to be bound by these Terms.
         </p>
       </section>
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">2. Definitions</h2>
         <ul className="list-disc pl-6 space-y-2">
-          <li>"Platform" refers to the Gearyo website, mobile application, and related services</li>
-          <li>"Renter" refers to any user who rents gear through our Platform</li>
-          <li>"Rental Shop" refers to any business that lists gear for rent on our Platform</li>
-          <li>"Gear" refers to any outdoor equipment or items available for rent through our Platform</li>
-          <li>"Rental Period" refers to the duration for which gear is rented</li>
+          <li>&quot;Platform&quot; refers to the Gearyo website, mobile application, and related services</li>
+          <li>&quot;Renter&quot; refers to any user who rents gear through our Platform</li>
+          <li>&quot;Rental Shop&quot; refers to any business that lists gear for rent on our Platform</li>
+          <li>&quot;Gear&quot; refers to any outdoor equipment or items available for rent through our Platform</li>
+          <li>&quot;Rental Period&quot; refers to the duration for which gear is rented</li>
         </ul>
       </section>
 
@@ -52,7 +52,7 @@ export default function TermsPage() {
         <h3 className="text-xl font-medium mb-3">4.1 General Conduct</h3>
         <ul className="list-disc pl-6 space-y-2 mb-4">
           <li>Users must not engage in fraudulent, abusive, or illegal activities</li>
-          <li>Users must not interfere with the Platform's operation</li>
+          <li>Users must not interfere with the Platform&apos;s operation</li>
           <li>Users must not attempt to access restricted areas of the Platform</li>
         </ul>
 
@@ -62,7 +62,7 @@ export default function TermsPage() {
           <li>Damaged or unsafe equipment</li>
           <li>Items prohibited by law</li>
           <li>Personal protective equipment that requires professional fitting</li>
-          <li>Modified equipment that doesn't meet manufacturer specifications</li>
+          <li>Modified equipment that doesn&apos;t meet manufacturer specifications</li>
         </ul>
       </section>
 
