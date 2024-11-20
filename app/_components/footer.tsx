@@ -23,6 +23,9 @@ const Footer = (props: Props) => {
         <li>
           <Link href="/admin">Admin</Link>
         </li>
+        <li>
+          <Link href="/terms">Terms and Conditions</Link>
+        </li>
       </ul>
       <ul></ul>
       <ul>
