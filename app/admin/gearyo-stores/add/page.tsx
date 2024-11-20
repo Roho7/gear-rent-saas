@@ -303,9 +303,9 @@ const RegisterGearyoStore = () => {
                   name="latitude"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700">Longitude</FormLabel>
+                      <FormLabel className="text-gray-700">Latitude</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your postcode" {...field} />
+                        <Input placeholder="Enter Latitude" {...field} />
                       </FormControl>
                       <FormMessage className="text-red-700" />
                     </FormItem>

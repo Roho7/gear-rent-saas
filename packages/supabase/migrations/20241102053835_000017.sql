@@ -165,36 +165,4 @@ using (true);
 
 
 
-create policy "ALL for stores 1tcrtt_0"
-on "storage"."objects"
-as permissive
-for select
-to authenticated
-using ((bucket_id = 'store'::text));
-
-
-create policy "ALL for stores 1tcrtt_1"
-on "storage"."objects"
-as permissive
-for insert
-to authenticated
-with check ((bucket_id = 'store'::text));
-
-
-create policy "ALL for stores 1tcrtt_2"
-on "storage"."objects"
-as permissive
-for update
-to authenticated
-using ((bucket_id = 'store'::text));
-
-
-create policy "ALL for stores 1tcrtt_3"
-on "storage"."objects"
-as permissive
-for delete
-to authenticated
-using ((bucket_id = 'store'::text));
-
-
 

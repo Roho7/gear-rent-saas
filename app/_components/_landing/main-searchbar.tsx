@@ -269,7 +269,7 @@ const MainSearchbar = ({
             control={form.control}
             name="rentPeriod"
             render={({ field }) => (
-              <FormItem className="w-full md:min-w-60 md:px-2 md:border-r md:border-gray-100 flex flex-col">
+              <FormItem className="w-full md:min-w-72 md:px-2 md:border-r md:border-gray-100 flex flex-col">
                 <FormLabel className="text-gray-400 pt-1 text-xs">
                   Rent period
                 </FormLabel>
@@ -284,11 +284,11 @@ const MainSearchbar = ({
                         variant={"outline"}
                         onClick={() => setIsDatePopoverOpen(!isDatePopoverOpen)}
                         className={clsx(
-                          "w-full justify-start text-left font-normal",
+                          "w-full justify-start font-normal",
                           !field.value?.from && "text-muted-foreground",
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
                         {field.value?.from ? (
                           field.value?.to ? (
                             <>
@@ -307,6 +307,7 @@ const MainSearchbar = ({
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       initialFocus
+                      fromDate={new Date()}
                       mode="range"
                       defaultMonth={field.value?.from}
                       selected={field.value}

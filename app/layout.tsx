@@ -15,10 +15,34 @@ const lato = Urbanist({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Gearyo",
-  description: "An open marketplace for renting adventure gear",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const title_input = 'Gearyo';
+  const description_input = 'Rent the perfect gear for your next adventure';
+
+  return {
+    title: title_input,
+    description: description_input,
+    openGraph: {
+      title: title_input,
+      description: description_input,
+      images: {
+        url: `https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/logo_bg_white.png`,
+        alt: title_input,
+      },
+    },
+    twitter: {
+      images: {
+        url: `https://wysxkbvponpkbvsaawmd.supabase.co/storage/v1/object/public/assets/logo_bg_white.png`,
+        alt: title_input,
+      },
+      creator: '@rohosen_',
+      card: 'summary_large_image',
+      site: '@rohosen_',
+      title: title_input,
+      description: description_input,
+    },
+  };
+}
 
 export default function RootLayout({
   children,

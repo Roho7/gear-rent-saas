@@ -41,13 +41,13 @@ export const popularLocations: SearchLocationType[] = [
     lng: 10.2687,
     radius: 10000, // 10km radius
   },
-  {
-    id: "niseko",
-    name: "Niseko, Japan",
-    lat: 42.8048,
-    lng: 140.6874,
-    radius: 10000, // 20km radius
-  },
+  // {
+  //   id: "niseko",
+  //   name: "Niseko, Japan",
+  //   lat: 42.8048,
+  //   lng: 140.6874,
+  //   radius: 10000, // 20km radius
+  // },
   {
     id: "verbier",
     name: "Verbier, Switzerland",
@@ -62,19 +62,33 @@ export const popularLocations: SearchLocationType[] = [
     lng: -106.3781,
     radius: 10000, // 15km radius
   },
-  {
-    id: "cortina",
-    name: "Cortina d'Ampezzo, Italy",
-    lat: 46.5404,
-    lng: 12.1356,
-    radius: 10000, // 10km radius
-  },
+  // {
+  //   id: "cortina",
+  //   name: "Cortina d'Ampezzo, Italy",
+  //   lat: 46.5404,
+  //   lng: 12.1356,
+  //   radius: 10000, // 10km radius
+  // },
   {
     id: "kitzbuhel",
     name: "Kitzbühel, Austria",
     lat: 47.4449,
     lng: 12.3918,
     radius: 10000, // 8km radius
+  },
+  {
+    id: "sydney",
+    name: "Sydney, Australia",
+    lat: -33.8688,
+    lng: 151.2153,
+    radius: 10000,
+  },
+  {
+    id: "manali",
+    name: "Manali, India",
+    lat: 31.8979,
+    lng: 77.1791,
+    radius: 10000,
   },
 ];
 
