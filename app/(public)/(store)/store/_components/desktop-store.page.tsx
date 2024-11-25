@@ -4,10 +4,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { popularLocations } from "@/src/entities/models/constants";
 import { StoreType } from "@/src/entities/models/types";
-import { Map, Marker, useMarkerRef } from "@vis.gl/react-google-maps";
+import { Map, useMarkerRef } from "@vis.gl/react-google-maps";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchSearchedStores } from "../_actions/fetch-searched-stores.actions";
+import { CustomMarker } from "./custom-marker";
 import StoreRow from "./store.row";
 
 const DesktopStorePage = () => {
@@ -77,6 +78,7 @@ const DesktopStorePage = () => {
       </h2>
       <section className="flex gap-4 w-full relative">
         <Map
+          mapId={'a30a1e81d3767f3c'}
           style={{ width: "100vw", height: "70vh" }}
           defaultCenter={{
             lat: searchResults.location.lat,
@@ -87,16 +89,7 @@ const DesktopStorePage = () => {
           disableDefaultUI={true}
         >
           {searchedStores?.map((store) => {
-            return (
-              <Marker
-                ref={markerRef}
-                key={store.store_id}
-                position={{
-                  lat: store.latitude || 0,
-                  lng: store.longitude || 0,
-                }}
-              />
-            );
+            return <CustomMarker key={store.store_id} store={store} />;
           })}
         </Map>
         <div className="flex flex-col gap-2 w-full h-[70vh] overflow-y-scroll p-4 bg-muted/10 rounded-md">
