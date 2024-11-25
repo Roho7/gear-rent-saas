@@ -3,7 +3,6 @@ import { useProducts } from "@/app/_providers/useProducts";
 import { MainSearchFormOutputType } from "@/src/entities/models/formSchemas";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import StoreFilterBar from "../_components/filter.bar";
 import StoreListingRow from "../_components/store.listing.row";
 
 const StorePage = ({ params }: { params: { store_id: string } }) => {
@@ -44,7 +43,7 @@ const StorePage = ({ params }: { params: { store_id: string } }) => {
 
   return (
     <main className="flex flex-col gap-2 min-h-screen">
-      <StoreFilterBar />
+      {/* <StoreFilterBar /> */}
       <h2 className="text-md capitalize my-4">
         {searchResults.sport} Gear from{" "}
         <strong>{storeDetails?.store_name}</strong>

@@ -23,9 +23,9 @@ const BusinessFeatureCard: React.FC<BusinessFeatureProps> = ({
     </CardHeader>
     <CardContent>
       <p className="text-sm text-gray-300">{description}</p>
-      <Button variant="link" className="text-white mt-2 p-0">
+      {/* <Button variant="link" className="text-white mt-2 p-0">
         Learn more →
-      </Button>
+      </Button> */}
     </CardContent>
   </Card>
 );
@@ -71,7 +71,7 @@ const ForBusinessesSection: React.FC = () => {
             <p className="text-gray-300 mb-4">
               Gearyo empowers outdoor gear rental businesses to boost their
               sales and streamline operations. Our platform provides the tools
-              and reach you need to grow your business.
+              to help you grow your business.
             </p>
             <Button
               className="outline"

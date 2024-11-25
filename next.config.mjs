@@ -7,6 +7,8 @@ const nextConfig = {
       "https://dummyjson.com",
       "avatar.iran.liara.run",
       "cdn.sanity.io",
+      "wysxkbvponpkbvsaawmd.supabase.co",
+      "media.istockphoto.com"
     ],
   },
   fastRefresh: true,
