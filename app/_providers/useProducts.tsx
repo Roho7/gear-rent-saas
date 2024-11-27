@@ -204,12 +204,15 @@ export const ProductProvider = ({
     } else {
       console.log("Fetching stores from Supabase");
       const { data, error } = await supabase.from("tbl_stores").select("*");
+      const { data: gearyoStores, error: gearyoError } = await supabase
+        .from("tbl_gearyo_stores")
+        .select("*");
 
       localStorage.setItem("stores_last_updated_at", new Date().toISOString());
-      if (error) {
-        console.error("Error fetching stores:", error);
+      if (error || gearyoError) {
+        console.error("Error fetching stores:", error || gearyoError);
       } else {
-        const sortedData = data.sort((a, b) =>
+        const sortedData = [...data, ...gearyoStores].sort((a, b) =>
           a.store_id.localeCompare(b.store_id),
         );
         setAllStores(sortedData);
