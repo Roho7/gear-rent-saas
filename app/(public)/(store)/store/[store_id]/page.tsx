@@ -1,9 +1,13 @@
 "use client";
 import { useProducts } from "@/app/_providers/useProducts";
+
 import { MainSearchFormOutputType } from "@/src/entities/models/formSchemas";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import StoreListingRow from "../_components/store.listing.row";
+import RequestForm from "./_components/request.form";
+
+
 
 const StorePage = ({ params }: { params: { store_id: string } }) => {
   const { loading, availableListings, fetchListings, allStores } =
@@ -41,6 +45,8 @@ const StorePage = ({ params }: { params: { store_id: string } }) => {
     fetchListings(searchData as MainSearchFormOutputType);
   }, [searchParams]);
 
+  
+
   return (
     <main className="flex flex-col gap-2 min-h-screen">
       {/* <StoreFilterBar /> */}
@@ -48,17 +54,24 @@ const StorePage = ({ params }: { params: { store_id: string } }) => {
         {searchResults.sport} Gear from{" "}
         <strong>{storeDetails?.store_name}</strong>
       </h2>
-      <section className="flex gap-4 w-full relative">
-        <div className="flex flex-col gap-2 w-full">
-          {availableListings?.map((d) => (
+      {availableListings?.length ? (
+        <section className="flex gap-4 w-full relative">
+          <div className="flex flex-col gap-2 w-full">
+            {availableListings?.map((d) => (
             <StoreListingRow
               listing={d}
               key={d.product_group_id}
               loading={loading}
             />
           ))}
+          </div>
+        </section>
+      ) : (
+        <div className="flex flex-col gap-4 p-4 items-center w-full">
+          <p className="text-lg font-medium">This store has no listings yet</p>
+          <RequestForm storeName={storeDetails?.store_name ?? ""} storeId={params.store_id} />
         </div>
-      </section>
+      )}
     </main>
   );
 };
