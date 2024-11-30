@@ -1,12 +1,13 @@
-import { Button } from "@/components/ui/button";
+import ProductCombobox from "@/app/(business)/business/_components/product.combobox";
+import { FormStep, StepForm } from "@/app/_components/step.form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -76,6 +77,8 @@ const RequestForm = ({ storeName, storeId }: { storeName: string, storeId: strin
             method="POST"
             className="flex flex-col gap-3"
           >
+            <StepForm form={form}>
+              <FormStep stepNumber={1}>
             <FormField
               control={form.control}
               name="name"
@@ -106,6 +109,7 @@ const RequestForm = ({ storeName, storeId }: { storeName: string, storeId: strin
                 </FormItem>
               )}
             />
+            
             <FormField
               control={form.control}
               name="phone_number"
@@ -123,17 +127,23 @@ const RequestForm = ({ storeName, storeId }: { storeName: string, storeId: strin
                 </FormItem>
               )}
             />
+            </FormStep>
+            <FormStep stepNumber={2}>
             <FormField
               control={form.control}
               name="gearType"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormLabel>Type of Gear</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="What gear are you looking for?"
-                      {...field}
-                    />
+                    <ProductCombobox
+                      disabled={false}
+                          productId={field.value}
+                          setProductId={form.setValue.bind(
+                            null,
+                            "gearType",
+                          )}
+                        />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -156,7 +166,9 @@ const RequestForm = ({ storeName, storeId }: { storeName: string, storeId: strin
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit Request</Button>
+            </FormStep>
+            </StepForm>
+            {/* <Button type="submit">Submit Request</Button> */}
           </form>
         </Form>
       </CardContent>

@@ -7,8 +7,6 @@ import Hero from "../_components/_landing/hero";
 import LogoRibbon from "../_components/_landing/logo-ribbon";
 import ServicesSection from "../_components/services-card";
 
-
-
 export default function Home() {
   return (
     <div className="flex flex-col gap-4 px-4">
