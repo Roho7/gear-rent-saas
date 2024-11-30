@@ -5,17 +5,12 @@ import FAQSection from "../_components/_landing/faq";
 import ForBusinessesSection from "../_components/_landing/for-businesses";
 import Hero from "../_components/_landing/hero";
 import LogoRibbon from "../_components/_landing/logo-ribbon";
-import { ExampleForm } from "../_components/exampleform";
 import ServicesSection from "../_components/services-card";
-
-
-
 
 export default function Home() {
   return (
     <div className="flex flex-col gap-4 px-4">
     <Hero />
-    <ExampleForm />
     {/* <RecommendationSection /> */}
     <Separator className="my-4" />
     <LogoRibbon />
