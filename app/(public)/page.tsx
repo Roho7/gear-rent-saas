@@ -3,7 +3,7 @@
 import { Metadata, Viewport } from "next";
 import MainPublicPage from "./mainpage";
 
-export const GEARYO_META_TAGS = {
+const GEARYO_META_TAGS = {
   title: 'Gearyo - Rent the perfect gear for your next adventure',
   description:
     'Gearyo is a platform to rent the perfect gear for your next adventure',
